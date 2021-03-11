@@ -2,9 +2,9 @@ version: "3.2"
 
 services:
   base-api:
-    image: base-api
+    image: notes-api
     build:
-      context: BaseApi/
+      context: NotesApi/
       dockerfile: ./Dockerfile
     ports:
       - 3000:3000
@@ -23,7 +23,7 @@ services:
     image: base-api-test
     build:
       context: .
-      dockerfile: BaseApi.Tests/Dockerfile
+      dockerfile: NotesApi.Tests/Dockerfile
     environment:
       - DB_HOST=test-database
       - DB_PORT=5432
