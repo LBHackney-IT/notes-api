@@ -1,7 +1,7 @@
 version: "3.2"
 
 services:
-  base-api:
+  notes-api:
     image: notes-api
     build:
       context: NotesApi/
@@ -19,8 +19,8 @@ services:
     volumes:
       - ./database:/docker-entrypoint-initdb.d
 
-  base-api-test:
-    image: base-api-test
+  notes-api-test:
+    image: notes-api-test
     build:
       context: .
       dockerfile: NotesApi.Tests/Dockerfile
