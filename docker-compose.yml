@@ -1,10 +1,10 @@
 version: "3.2"
 
 services:
-  base-api:
-    image: base-api
+  notes-api:
+    image: notes-api
     build:
-      context: BaseApi/
+      context: NotesApi/
       dockerfile: ./Dockerfile
     ports:
       - 3000:3000
@@ -19,11 +19,11 @@ services:
     volumes:
       - ./database:/docker-entrypoint-initdb.d
 
-  base-api-test:
-    image: base-api-test
+  notes-api-test:
+    image: notes-api-test
     build:
       context: .
-      dockerfile: BaseApi.Tests/Dockerfile
+      dockerfile: NotesApi.Tests/Dockerfile
     environment:
       - DB_HOST=test-database
       - DB_PORT=5432
