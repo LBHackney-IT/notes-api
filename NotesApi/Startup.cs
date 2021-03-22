@@ -118,7 +118,7 @@ namespace NotesApi
             var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             services.AddDbContext<DatabaseContext>(
-                opt => opt.UseNpgsql(connectionString));
+                opt => opt.UseNpgsql(connectionString).AddXRayInterceptor(true));
         }
 
         private static void RegisterGateways(IServiceCollection services)
@@ -144,6 +144,8 @@ namespace NotesApi
             {
                 app.UseHsts();
             }
+
+            app.UseXRay("notes-api");
 
             //Get All ApiVersions,
             var api = app.ApplicationServices.GetService<IApiVersionDescriptionProvider>();
