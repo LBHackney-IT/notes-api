@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace NotesApi.Tests.V1.Gateways
 {
     //For instruction on how to run tests please see the wiki: https://github.com/LBHackney-IT/lbh-base-api/wiki/Running-the-test-suite.
-    [TestFixture]//, Ignore("Database type not confirmed yet")]
+    [TestFixture]
     public class NotesApiGatewayTests : DatabaseTests
     {
         private readonly Fixture _fixture = new Fixture();
@@ -20,6 +20,7 @@ namespace NotesApi.Tests.V1.Gateways
             _classUnderTest = new NotesApiGateway(DatabaseContext);
         }
 
+        [Ignore("Database details to be added")]
         [Test]
         public void GetEntityByIdReturnsNullIfEntityDoesntExist()
         {
@@ -28,6 +29,7 @@ namespace NotesApi.Tests.V1.Gateways
             response.Should().BeNull();
         }
 
+        [Ignore("Database details to be added")]
         [Test]
         public void GetEntityByIdReturnsTheEntityIfItExists()
         {

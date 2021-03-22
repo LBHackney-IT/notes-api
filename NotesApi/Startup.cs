@@ -19,6 +19,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using NotesApi.V1;
+using Amazon.XRay.Recorder.Handlers.AwsSdk;
 
 namespace NotesApi
 {
@@ -27,6 +29,7 @@ namespace NotesApi
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            AWSSDKHandler.RegisterXRayForAllServices();
         }
 
         public IConfiguration Configuration { get; }
@@ -132,6 +135,7 @@ namespace NotesApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCorrelation();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

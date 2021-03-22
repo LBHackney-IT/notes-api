@@ -5,9 +5,10 @@ using NUnit.Framework;
 
 namespace NotesApi.Tests.V1.Infrastructure
 {
-    [TestFixture]//, Ignore("Database type not confirmed yet")]
+    [TestFixture]
     public class DatabaseContextTest : DatabaseTests
     {
+        [Ignore("Database details to be added")]
         [Test]
         public void CanGetADatabaseEntity()
         {
