@@ -179,7 +179,7 @@ workflows:
               only: development
       - deploy-to-development:
           requires:
-            - assume-role-development
+            - terraform-init-and-apply-to-development
           filters:
             branches:
               only: development
@@ -205,7 +205,7 @@ workflows:
               only: release
       - deploy-to-staging:
           requires:
-            - assume-role-staging
+            - terraform-init-and-apply-to-staging
           filters:
             branches:
               only: release
@@ -236,7 +236,7 @@ workflows:
       - deploy-to-production:
           requires:
             - permit-production-release
-            - assume-role-production
+            - terraform-init-and-apply-to-production
           filters:
             branches:
               only: release
