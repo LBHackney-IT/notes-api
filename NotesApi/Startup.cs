@@ -117,14 +117,6 @@ namespace NotesApi
             RegisterUseCases(services);
         }
 
-        private static void ConfigureDbContext(IServiceCollection services)
-        {
-            var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-
-            services.AddDbContext<DatabaseContext>(
-                opt => opt.UseNpgsql(connectionString).AddXRayInterceptor(true));
-        }
-
         private static void ConfigureLogging(IServiceCollection services, IConfiguration configuration)
         {
             // We rebuild the logging stack so as to ensure the console logger is not used in production.
@@ -147,7 +139,6 @@ namespace NotesApi
 
         private static void RegisterGateways(IServiceCollection services)
         {
-            services.AddScoped<INotesApiGateway, NotesApiGateway>();
             services.AddScoped<INotesApiGateway, DynamoDbGateway>();
         }
 

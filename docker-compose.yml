@@ -15,13 +15,7 @@ services:
       - AWS_ACCESS_KEY_ID=local
       - AWS_SECRET_ACCESS_KEY=local
     links:
-      - dev-database
-  dev-database:
-    env_file:
-      - database.env
-    image: postgres:12
-    volumes:
-      - ./database:/docker-entrypoint-initdb.d
+      - dynamodb-database
 
   notes-api-test:
     image: notes-api-test
