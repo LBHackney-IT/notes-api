@@ -21,6 +21,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using NotesApi.V1;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
+using Microsoft.Extensions.Logging;
 
 namespace NotesApi
 {
@@ -38,7 +39,7 @@ namespace NotesApi
         private const string ApiName = "Notes";
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public static void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services
                 .AddMvc()
@@ -108,7 +109,10 @@ namespace NotesApi
                 if (File.Exists(xmlPath))
                     c.IncludeXmlComments(xmlPath);
             });
-            ConfigureDbContext(services);
+
+            ConfigureLogging(services, Configuration);
+
+            services.ConfigureDynamoDB();
             RegisterGateways(services);
             RegisterUseCases(services);
         }
@@ -121,9 +125,30 @@ namespace NotesApi
                 opt => opt.UseNpgsql(connectionString).AddXRayInterceptor(true));
         }
 
+        private static void ConfigureLogging(IServiceCollection services, IConfiguration configuration)
+        {
+            // We rebuild the logging stack so as to ensure the console logger is not used in production.
+            // See here: https://weblog.west-wind.com/posts/2018/Dec/31/Dont-let-ASPNET-Core-Default-Console-Logging-Slow-your-App-down
+            services.AddLogging(config =>
+            {
+                // clear out default configuration
+                config.ClearProviders();
+
+                config.AddConfiguration(configuration.GetSection("Logging"));
+                config.AddDebug();
+                config.AddEventSourceLogger();
+
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development)
+                {
+                    config.AddConsole();
+                }
+            });
+        }
+
         private static void RegisterGateways(IServiceCollection services)
         {
             services.AddScoped<INotesApiGateway, NotesApiGateway>();
+            services.AddScoped<INotesApiGateway, DynamoDbGateway>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)

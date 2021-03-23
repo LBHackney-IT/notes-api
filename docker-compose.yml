@@ -9,7 +9,11 @@ services:
     ports:
       - 3000:3000
     environment:
-      - CONNECTION_STRING=Host=dev-database;Port=5432;Database=testdb;Username=postgres;Password=mypassword
+      - DynamoDb_LocalMode=true
+      - DynamoDb_LocalServiceUrl=http://dynamodb-database:8000
+      - AWS_REGION=eu-west-2
+      - AWS_ACCESS_KEY_ID=local
+      - AWS_SECRET_ACCESS_KEY=local
     links:
       - dev-database
   dev-database:
@@ -25,19 +29,14 @@ services:
       context: .
       dockerfile: NotesApi.Tests/Dockerfile
     environment:
-      - DB_HOST=test-database
-      - DB_PORT=5432
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=mypassword
-      - DB_DATABASE=testdb
+      - DynamoDb_LocalMode=true
+      - DynamoDb_LocalServiceUrl=http://dynamodb-database:8000
+      - AWS_REGION=eu-west-2
+      - AWS_ACCESS_KEY_ID=local
+      - AWS_SECRET_ACCESS_KEY=local
     links:
-      - test-database
-  test-database:
-    image: test-database
-    build:
-      context: .
-      dockerfile: database/Dockerfile
+      - dynamodb-database
+  dynamodb-database:
+    image: amazon/dynamodb-local
     ports:
-      - 5432:5432
-    env_file:
-      - database.env
+      - 8000:8000
