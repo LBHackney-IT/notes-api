@@ -63,7 +63,7 @@ commands:
       stage:
         type: string
       aws-account:
-        type: string 
+        type: string
     steps:
       - *attach_workspace
       - checkout
@@ -177,6 +177,7 @@ workflows:
             branches:
               only: master
       - deploy-to-development:
+          context: api-assume-role-housing-development-context
           requires:
             - terraform-init-and-apply-to-development
           filters:
@@ -203,6 +204,7 @@ workflows:
             branches:
               only: release
       - deploy-to-staging:
+          context: api-assume-role-housing-staging-context
           requires:
             - terraform-init-and-apply-to-staging
           filters:
@@ -233,9 +235,10 @@ workflows:
             branches:
               only: release
       - deploy-to-production:
+          context: api-assume-role-housing-production-context                                
           requires:
             - permit-production-release
-            - terraform-init-and-apply-to-production
+            - assume-role-production
           filters:
             branches:
               only: release
