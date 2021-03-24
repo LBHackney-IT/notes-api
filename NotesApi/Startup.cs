@@ -19,6 +19,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using NotesApi.V1;
+using Amazon.XRay.Recorder.Handlers.AwsSdk;
+using Microsoft.Extensions.Logging;
 
 namespace NotesApi
 {
@@ -27,6 +30,7 @@ namespace NotesApi
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            AWSSDKHandler.RegisterXRayForAllServices();
         }
 
         public IConfiguration Configuration { get; }
@@ -35,7 +39,7 @@ namespace NotesApi
         private const string ApiName = "Notes";
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public static void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services
                 .AddMvc()
@@ -105,22 +109,37 @@ namespace NotesApi
                 if (File.Exists(xmlPath))
                     c.IncludeXmlComments(xmlPath);
             });
-            ConfigureDbContext(services);
+
+            ConfigureLogging(services, Configuration);
+
+            services.ConfigureDynamoDB();
             RegisterGateways(services);
             RegisterUseCases(services);
         }
 
-        private static void ConfigureDbContext(IServiceCollection services)
+        private static void ConfigureLogging(IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            // We rebuild the logging stack so as to ensure the console logger is not used in production.
+            // See here: https://weblog.west-wind.com/posts/2018/Dec/31/Dont-let-ASPNET-Core-Default-Console-Logging-Slow-your-App-down
+            services.AddLogging(config =>
+            {
+                // clear out default configuration
+                config.ClearProviders();
 
-            services.AddDbContext<DatabaseContext>(
-                opt => opt.UseNpgsql(connectionString));
+                config.AddConfiguration(configuration.GetSection("Logging"));
+                config.AddDebug();
+                config.AddEventSourceLogger();
+
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development)
+                {
+                    config.AddConsole();
+                }
+            });
         }
 
         private static void RegisterGateways(IServiceCollection services)
         {
-            services.AddScoped<INotesApiGateway, NotesApiGateway>();
+            services.AddScoped<INotesApiGateway, DynamoDbGateway>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)
@@ -132,6 +151,7 @@ namespace NotesApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCorrelation();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -140,6 +160,8 @@ namespace NotesApi
             {
                 app.UseHsts();
             }
+
+            app.UseXRay("notes-api");
 
             //Get All ApiVersions,
             var api = app.ApplicationServices.GetService<IApiVersionDescriptionProvider>();

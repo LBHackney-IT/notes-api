@@ -2,8 +2,13 @@ service: notes-api
 provider:
   name: aws
   runtime: dotnetcore3.1
+  memorySize: 2048
+  tracing:
+    lambda: true
+    apiGateway: true
   vpc: ${self:custom.vpc.${opt:stage}}
   stage: ${opt:stage}
+  account: ${opt:account}
   region: eu-west-2
   apiKeys:
     - secureAccess:
@@ -22,9 +27,6 @@ functions:
     name: ${self:service}-${self:provider.stage}
     handler: NotesApi::NotesApi.LambdaEntryPoint::FunctionHandlerAsync
     role: lambdaExecutionRole
-    environment:
-      # TODO: Create ssm variables for this API's postgres mirror then rename base-api below to match api name
-      CONNECTION_STRING: Host=${ssm:/notes-api/${self:provider.stage}/postgres-hostname};Port=${ssm:/notes-api/${self:provider.stage}/postgres-port};Database=notes-api-mirror;Username=${ssm:/notes-api/${self:provider.stage}/postgres-username};Password=${ssm:/notes-api/${self:provider.stage}/postgres-password}
     events:
       - http:
           path: /{proxy+}
@@ -47,6 +49,9 @@ resources:
               Action: sts:AssumeRole
         ManagedPolicyArns:
           - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+          - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+          - arn:aws:iam::${self:provider.account}:policy/notes-api/lambda-dynamodb-notes-api
+
         Policies:
           - PolicyName: manageLogs
             PolicyDocument:
