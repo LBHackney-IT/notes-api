@@ -177,6 +177,7 @@ workflows:
             branches:
               only: master
       - deploy-to-development:
+          context: api-assume-role-housing-development-context
           requires:
             - terraform-init-and-apply-to-development
           filters:
