@@ -3,10 +3,16 @@ resource "aws_dynamodb_table" "notesapi_dynamodb_table" {
     billing_mode          = "PROVISIONED"
     read_capacity         = 10
     write_capacity        = 10
-    hash_key              = "id"
+    hash_key              = "targetId"
+    range_key             = "id"
 
     attribute {
         name              = "id"
+        type              = "S"
+    }
+
+    attribute {
+        name              = "targetId"
         type              = "S"
     }
 
@@ -30,12 +36,15 @@ resource "aws_iam_policy" "notesapi_dynamodb_table_policy" {
         {
             "Effect": "Allow",
             "Action": [
-                        "dynamodb:BatchGetItem",
-                        "dynamodb:GetItem",
+                        "dynamodb:BatchGet*",
+                        "dynamodb:BatchWrite*",
+                        "dynamodb:DeleteItem",
+                        "dynamodb:DescribeStream",
+                        "dynamodb:DescribeTable",
+                        "dynamodb:Get*",
+                        "dynamodb:PutItem",
                         "dynamodb:Query",
                         "dynamodb:Scan",
-                        "dynamodb:BatchWriteItem",
-                        "dynamodb:PutItem",
                         "dynamodb:UpdateItem"
                      ],
             "Resource": "${aws_dynamodb_table.notesapi_dynamodb_table.arn}"
