@@ -41,7 +41,7 @@ resources:
         GroupDescription: Allow all outbound traffic
         SecurityGroupEgress:
           - IpProtocol: -1
-          - CidrIp: 0.0.0.0/0
+            CidrIp: 0.0.0.0/0
         VpcId: ${self:custom.vpcId.${opt:stage}}
     lambdaExecutionRole:
       Type: AWS::IAM::Role
