@@ -1,27 +1,29 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using NotesApi.V1.Gateways;
-using NotesApi.V1.Infrastructure;
-using NotesApi.V1.UseCase;
-using NotesApi.V1.UseCase.Interfaces;
-using NotesApi.Versioning;
+using Amazon;
+using Amazon.XRay.Recorder.Core;
+using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using NotesApi.V1;
-using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using NotesApi.V1;
+using NotesApi.V1.Gateways;
+using NotesApi.V1.Infrastructure;
+using NotesApi.V1.UseCase;
+using NotesApi.V1.UseCase.Interfaces;
+using NotesApi.Versioning;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace NotesApi
 {
@@ -43,6 +45,10 @@ namespace NotesApi
         {
             services
                 .AddMvc()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddApiVersioning(o =>
             {
@@ -111,6 +117,8 @@ namespace NotesApi
             });
 
             ConfigureLogging(services, Configuration);
+            AWSXRayRecorder.InitializeInstance(Configuration);
+            AWSXRayRecorder.RegisterLogger(LoggingOptions.SystemDiagnostics);
 
             services.ConfigureDynamoDB();
             RegisterGateways(services);
@@ -144,8 +152,7 @@ namespace NotesApi
 
         private static void RegisterUseCases(IServiceCollection services)
         {
-            services.AddScoped<IGetAllUseCase, GetAllUseCase>();
-            services.AddScoped<IGetByIdUseCase, GetByIdUseCase>();
+            services.AddScoped<IGetByTargetIdUseCase, GetByTargetIdUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -161,6 +168,8 @@ namespace NotesApi
                 app.UseHsts();
             }
 
+            app.UseCustomExceptionHandler();
+            app.UseCorrelation();
             app.UseXRay("notes-api");
 
             //Get All ApiVersions,

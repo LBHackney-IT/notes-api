@@ -1,52 +1,47 @@
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using AutoFixture;
+using FluentAssertions;
+using Moq;
 using NotesApi.Tests.V1.Helper;
 using NotesApi.V1.Domain;
 using NotesApi.V1.Gateways;
 using NotesApi.V1.Infrastructure;
-using FluentAssertions;
-using Moq;
-using NUnit.Framework;
+using System;
+using System.Threading.Tasks;
+using Xunit;
 
-namespace NotesApi.Tests.V1.Gateways
-{
-    [TestFixture]
-    public class DynamoDbGatewayTests
-    {
-        private readonly Fixture _fixture = new Fixture();
-        private Mock<IDynamoDBContext> _dynamoDb;
-        private DynamoDbGateway _classUnderTest;
+// The DynamoDbGateway.GetByTargetIdAsync() method is untestable, because due to the need to implement pagination
+// we are forced to use GetTargetTable and then perform the necessary operation on the Table object.
+// However the Table class is a concrete one and does not have a public default constructor, meaning that
+// it cannot be mocked or used in isloation, without connecting to a real database instance.
+// See here: https://github.com/aws/aws-sdk-net/issues/1310
 
-        [SetUp]
-        public void Setup()
-        {
-            _dynamoDb = new Mock<IDynamoDBContext>();
-            _classUnderTest = new DynamoDbGateway(_dynamoDb.Object);
-        }
+// This class can be kept here commented out until the time other gateway methods are implemented that can be unit tested.
 
-        [Test]
-        public void GetEntityByIdReturnsNullIfEntityDoesntExist()
-        {
-            var response = _classUnderTest.GetEntityById(123);
+//namespace NotesApi.Tests.V1.Gateways
+//{
+//    public class DynamoDbGatewayTests
+//    {
+//        //private readonly Fixture _fixture = new Fixture();
+//        private readonly Mock<IDynamoDBContext> _dynamoDb;
+//        private readonly Mock<Table> _mockTable;
+//        private readonly DynamoDbGateway _classUnderTest;
 
-            response.Should().BeNull();
-        }
+//        public DynamoDbGatewayTests()
+//        {
+//            _dynamoDb = new Mock<IDynamoDBContext>();
+//            _mockTable = new Mock<Table>();
+//            _dynamoDb.Setup(x => x.GetTargetTable<NoteDb>(null)).Returns(_mockTable.Object);
+//            _classUnderTest = new DynamoDbGateway(_dynamoDb.Object);
+//        }
 
-        [Test]
-        public void GetEntityByIdReturnsTheEntityIfItExists()
-        {
-            var entity = _fixture.Create<Entity>();
-            var dbEntity = DatabaseEntityHelper.CreateDatabaseEntityFrom(entity);
+//        [Fact]
+//        public async Task GetByTargetIdReturnsEmptyIfNoRecords()
+//        {
+//            var response = await _classUnderTest.GetByTargetIdAsync(Guid.NewGuid()).ConfigureAwait(false);
+//            response.Should().BeEmpty();
+//        }
 
-            _dynamoDb.Setup(x => x.LoadAsync<DatabaseEntity>(entity.Id, default))
-                     .ReturnsAsync(dbEntity);
-
-            var response = _classUnderTest.GetEntityById(entity.Id);
-
-            _dynamoDb.Verify(x => x.LoadAsync<DatabaseEntity>(entity.Id, default), Times.Once);
-
-            entity.Id.Should().Be(response.Id);
-            entity.CreatedAt.Should().BeSameDateAs(response.CreatedAt);
-        }
-    }
-}
+//    }
+//}
