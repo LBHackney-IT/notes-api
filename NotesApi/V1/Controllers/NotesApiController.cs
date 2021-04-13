@@ -1,11 +1,11 @@
-using NotesApi.V1.Boundary.Response;
-using NotesApi.V1.UseCase.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
+using NotesApi.V1.Boundary.Response;
+using NotesApi.V1.Domain.Queries;
+using NotesApi.V1.UseCase.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace NotesApi.V1.Controllers
 {
@@ -21,9 +21,10 @@ namespace NotesApi.V1.Controllers
             _getByTargetIdUseCase = getByTargetIdUseCase;
         }
 
-        //TO DO: add xml comments containing information that will be included in the auto generated swagger docs (https://github.com/LBHackney-IT/lbh-base-api/wiki/Controllers-and-Response-Objects)
         /// <summary>
-        /// Retrieves all notes for the supplied targetId
+        /// Retrieves all notes for the supplied targetId.
+        /// If a pagination token is provided (returned from a previous call where the results set > 10)
+        /// then the query will continue from the last record returned in the preivious query.
         /// </summary>
         /// <response code="200">Returns the list of notes for the supplied target id.</response>
         /// <response code="400">Invalid Query Parameter.</response>
@@ -33,12 +34,12 @@ namespace NotesApi.V1.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet]
-        public async Task<IActionResult> GetByTargetIdAsync([FromQuery] Guid targetId)
+        public async Task<IActionResult> GetByTargetIdAsync([FromQuery] GetNotesByTargetIdQuery query)
         {
-            var notes = await _getByTargetIdUseCase.ExecuteAsync(targetId).ConfigureAwait(false);
-            if ((null == notes) || !notes.Any()) return NotFound(targetId);
+            var response = await _getByTargetIdUseCase.ExecuteAsync(query).ConfigureAwait(false);
+            if ((null == response) || !response.Results.Any()) return NotFound(query.TargetId);
 
-            return Ok(notes);
+            return Ok(response);
         }
 
     }

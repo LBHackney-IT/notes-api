@@ -1,4 +1,5 @@
 using FluentAssertions;
+using NotesApi.V1;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Infrastructure;
 using System;
@@ -44,11 +45,11 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
             _lastResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var responseContent = await _lastResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var apiNotes = JsonSerializer.Deserialize<List<NoteResponseObject>>(responseContent, CreateJsonOptions());
+            var apiResult = JsonSerializer.Deserialize<PagedResult<NoteResponseObject>>(responseContent, CreateJsonOptions());
 
-            apiNotes.Should().BeEquivalentTo(expectedNotes);
+            apiResult.Results.Should().BeEquivalentTo(expectedNotes);
 
-            IsDateTimeListInDescendingOrder(apiNotes.Select(x => x.DateTime)).Should().BeTrue();
+            IsDateTimeListInDescendingOrder(apiResult.Results.Select(x => x.DateTime)).Should().BeTrue();
         }
 
         private static bool IsDateTimeListInDescendingOrder(IEnumerable<DateTime> dateTimeList)

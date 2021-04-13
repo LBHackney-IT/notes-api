@@ -2,6 +2,7 @@ using AutoFixture;
 using FluentAssertions;
 using NotesApi.V1.Domain;
 using NotesApi.V1.Factories;
+using System.Collections.Generic;
 using Xunit;
 
 namespace NotesApi.Tests.V1.Factories
@@ -24,6 +25,24 @@ namespace NotesApi.Tests.V1.Factories
             note.Tags.Should().Be(responseNote.Tags);
             note.TargetId.Should().Be(responseNote.TargetId);
             note.TargetType.Should().Be(responseNote.TargetType);
+        }
+
+        [Fact]
+        public void CanMapDomainNotesToANoteResponsesList()
+        {
+            var notes = _fixture.CreateMany<Note>(10);
+            var responseNotes = notes.ToResponse();
+
+            responseNotes.Should().BeEquivalentTo(notes);
+        }
+
+        [Fact]
+        public void CanMapNullDomainNotesToAnEmptyNoteResponsesList()
+        {
+            List<Note> notes = null;
+            var responseNotes = notes.ToResponse();
+
+            responseNotes.Should().BeEmpty();
         }
     }
 }

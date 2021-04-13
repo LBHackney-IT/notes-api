@@ -16,7 +16,7 @@ namespace NotesApi.Tests.V1.E2ETests.Fixtures
         public Guid TargetId { get; private set; }
         public string InvalidTargetId { get; private set; }
 
-        private const int MAXNOTES = 10;
+        public const int MAXNOTES = 10;
 
         public NotesFixture(IDynamoDBContext dbContext)
         {

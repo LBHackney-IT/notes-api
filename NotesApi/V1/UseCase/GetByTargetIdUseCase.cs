@@ -1,9 +1,8 @@
 using NotesApi.V1.Boundary.Response;
+using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Gateways;
 using NotesApi.V1.UseCase.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace NotesApi.V1.UseCase
@@ -17,9 +16,10 @@ namespace NotesApi.V1.UseCase
             _gateway = gateway;
         }
 
-        public async Task<List<NoteResponseObject>> ExecuteAsync(Guid targetId)
+        public async Task<PagedResult<NoteResponseObject>> ExecuteAsync(GetNotesByTargetIdQuery query)
         {
-            return (await _gateway.GetByTargetIdAsync(targetId).ConfigureAwait(false)).ToResponse();
+            var gatewayResult = await _gateway.GetByTargetIdAsync(query).ConfigureAwait(false);
+            return new PagedResult<NoteResponseObject>(gatewayResult.Results.ToResponse(), gatewayResult.PaginationToken);
         }
     }
 }

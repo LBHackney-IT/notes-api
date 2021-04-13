@@ -1,9 +1,9 @@
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using NotesApi.V1.Domain;
+using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Infrastructure;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -13,6 +13,10 @@ namespace NotesApi.V1.Gateways
 {
     public class DynamoDbGateway : INotesApiGateway
     {
+        private const int MAX_RESULTS = 10;
+        private const string GETNOTESBYTARGETIDINDEX = "NotesByDate";
+        private const string TARGETID = "targetId";
+
         private readonly IDynamoDBContext _dynamoDbContext;
 
         public DynamoDbGateway(IDynamoDBContext dynamoDbContext)
@@ -24,7 +28,7 @@ namespace NotesApi.V1.Gateways
         // which returns an unmockable concrete class.
         // See here: https://github.com/aws/aws-sdk-net/issues/1310
         [ExcludeFromCodeCoverage]
-        public async Task<List<Note>> GetByTargetIdAsync(Guid targetId)
+        public async Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query)
         {
             List<NoteDb> dbNotes = new List<NoteDb>();
 
@@ -33,10 +37,12 @@ namespace NotesApi.V1.Gateways
             var table = _dynamoDbContext.GetTargetTable<NoteDb>();
             var search = table.Query(new QueryOperationConfig
             {
-                IndexName = "NotesByDate",
+                IndexName = GETNOTESBYTARGETIDINDEX,
                 BackwardSearch = true,
                 ConsistentRead = true,
-                Filter = new QueryFilter(nameof(targetId), QueryOperator.Equal, targetId)
+                Limit = MAX_RESULTS,
+                PaginationToken = query.PaginationToken,
+                Filter = new QueryFilter(TARGETID, QueryOperator.Equal, query.TargetId)
             });
             var resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
             while (resultsSet.Any())
@@ -45,7 +51,7 @@ namespace NotesApi.V1.Gateways
                 resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
             }
 
-            return dbNotes.Select(x => x.ToDomain()).ToList();
+            return new PagedResult<Note>(dbNotes.Select(x => x.ToDomain()), search.PaginationToken);
         }
     }
 }
