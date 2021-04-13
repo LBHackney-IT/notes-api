@@ -27,9 +27,6 @@ namespace NotesApi.V1.Gateways
         public async Task<IEnumerable<Note>> GetByTargetIdAsync(Guid targetId)
         {
             var dbNotes = new List<NoteDb>();
-
-            // We query directly on the Table (rather than using _dynamoDbContext.QueryAsync())
-            // so that we can access the pagination token
             var table = _dynamoDbContext.GetTargetTable<NoteDb>();
             var search = table.Query(new QueryOperationConfig
             {
