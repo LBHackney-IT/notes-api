@@ -62,6 +62,35 @@ resources:
           - arn:aws:iam::${self:provider.account}:policy/notes-api/lambda-dynamodb-notes-api
 
         Policies:
+          - PolicyName: dynamoDBAccess
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - "dynamodb:BatchGet*"
+                    - "dynamodb:BatchWrite"
+                    - "dynamodb:DeleteItem"
+                    - "dynamodb:DescribeStream"
+                    - "dynamodb:DescribeTable"
+                    - "dynamodb:Get*"
+                    - "dynamodb:PutItem"
+                    - "dynamodb:Query"
+                    - "dynamodb:Scan"
+                    - "dynamodb:UpdateItem"
+                  Resource:
+                    - 'Fn::Join':
+                        - ':'
+                        - - 'arn:aws:dynamodb'
+                          - Ref: 'AWS::Region'
+                          - Ref: 'AWS::AccountId'
+                          - 'table/Notes'
+                    - 'Fn::Join':
+                        - ':'
+                        - - 'arn:aws:dynamodb'
+                          - Ref: 'AWS::Region'
+                          - Ref: 'AWS::AccountId'
+                          - 'table/Notes/index/*'
           - PolicyName: manageLogs
             PolicyDocument:
               Version: '2012-10-17'
