@@ -7,15 +7,25 @@ namespace NotesApi.V1.Factories
 {
     public static class ResponseFactory
     {
-        //TODO: Map the fields in the domain object(s) to fields in the response object(s).
-        // More information on this can be found here https://github.com/LBHackney-IT/lbh-base-api/wiki/Factory-object-mappings
-        public static ResponseObject ToResponse(this Entity domain)
+        public static NoteResponseObject ToResponse(this Note domain)
         {
-            return new ResponseObject();
+            return new NoteResponseObject
+            {
+                Author = domain.Author,
+                Categorisation = domain.Categorisation,
+                DateTime = domain.DateTime,
+                Description = domain.Description,
+                Id = domain.Id,
+                Tags = domain.Tags,
+                TargetId = domain.TargetId,
+                TargetType = domain.TargetType
+            };
         }
 
-        public static List<ResponseObject> ToResponse(this IEnumerable<Entity> domainList)
+        public static List<NoteResponseObject> ToResponse(this IEnumerable<Note> domainList)
         {
+            if (null == domainList) return new List<NoteResponseObject>();
+
             return domainList.Select(domain => domain.ToResponse()).ToList();
         }
     }

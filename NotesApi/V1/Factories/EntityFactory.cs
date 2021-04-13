@@ -5,26 +5,33 @@ namespace NotesApi.V1.Factories
 {
     public static class EntityFactory
     {
-        public static Entity ToDomain(this DatabaseEntity databaseEntity)
+        public static Note ToDomain(this NoteDb databaseNote)
         {
-            //TODO: Map the rest of the fields in the domain object.
-            // More information on this can be found here https://github.com/LBHackney-IT/lbh-base-api/wiki/Factory-object-mappings
-
-            return new Entity
+            return new Note
             {
-                Id = databaseEntity.Id,
-                CreatedAt = databaseEntity.CreatedAt
+                Author = databaseNote.Author,
+                Categorisation = databaseNote.Categorisation,
+                DateTime = databaseNote.DateTime,
+                Description = databaseNote.Description,
+                Id = databaseNote.Id,
+                Tags = databaseNote.Tags,
+                TargetId = databaseNote.TargetId,
+                TargetType = databaseNote.TargetType
             };
         }
 
-        public static DatabaseEntity ToDatabase(this Entity entity)
+        public static NoteDb ToDatabase(this Note note)
         {
-            //TODO: Map the rest of the fields in the database object.
-
-            return new DatabaseEntity
+            return new NoteDb
             {
-                Id = entity.Id,
-                CreatedAt = entity.CreatedAt
+                Author = note.Author,
+                Categorisation = note.Categorisation,
+                DateTime = note.DateTime,
+                Description = note.Description,
+                Id = note.Id,
+                Tags = note.Tags,
+                TargetId = note.TargetId,
+                TargetType = note.TargetType
             };
         }
     }

@@ -1,9 +1,33 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesApi", "NotesApi\NotesApi.csproj", "{6F482163-3F51-487F-8F7D-37A1D4DAEA8B}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesApi", "NotesApi\NotesApi.csproj", "{6F482163-3F51-487F-8F7D-37A1D4DAEA8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesApi.Tests", "NotesApi.Tests\NotesApi.Tests.csproj", "{DE8E4E61-EB76-416B-8417-E8F2F6A0C0D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesApi.Tests", "NotesApi.Tests\NotesApi.Tests.csproj", "{DE8E4E61-EB76-416B-8417-E8F2F6A0C0D3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Terraform", "Terraform", "{C806B551-7EA0-4146-8708-B3605E20281C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Development", "Development", "{65D04B58-B77B-4F36-938F-8CADE6AF041D}"
+	ProjectSection(SolutionItems) = preProject
+		terraform\development\dynamodb.tf = terraform\development\dynamodb.tf
+		terraform\development\main.tf = terraform\development\main.tf
+		terraform\development\variables.tf = terraform\development\variables.tf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Staging", "Staging", "{94830052-1DF6-40B1-80DF-226E12211C95}"
+	ProjectSection(SolutionItems) = preProject
+		terraform\staging\dynamodb.tf = terraform\staging\dynamodb.tf
+		terraform\staging\main.tf = terraform\staging\main.tf
+		terraform\staging\variables.tf = terraform\staging\variables.tf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Production", "Production", "{FAFA07D4-223D-4459-A1BB-4CEA9C4D75F1}"
+	ProjectSection(SolutionItems) = preProject
+		terraform\production\dynamodb.tf = terraform\production\dynamodb.tf
+		terraform\production\main.tf = terraform\production\main.tf
+		terraform\production\variables.tf = terraform\production\variables.tf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,5 +43,16 @@ Global
 		{DE8E4E61-EB76-416B-8417-E8F2F6A0C0D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE8E4E61-EB76-416B-8417-E8F2F6A0C0D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE8E4E61-EB76-416B-8417-E8F2F6A0C0D3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{65D04B58-B77B-4F36-938F-8CADE6AF041D} = {C806B551-7EA0-4146-8708-B3605E20281C}
+		{94830052-1DF6-40B1-80DF-226E12211C95} = {C806B551-7EA0-4146-8708-B3605E20281C}
+		{FAFA07D4-223D-4459-A1BB-4CEA9C4D75F1} = {C806B551-7EA0-4146-8708-B3605E20281C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {74F5C3F1-056C-457D-9EEA-4DAF1A91596F}
 	EndGlobalSection
 EndGlobal

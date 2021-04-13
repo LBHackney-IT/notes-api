@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace NotesApi.V1
 {
+    // TODO: This should go in a common NuGet package...
+
     public class CorrelationMiddleware
     {
         private readonly RequestDelegate _next;
@@ -18,23 +19,34 @@ namespace NotesApi.V1
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if (context.Request.Headers["x-correlation-id"].Count == 0)
+            var correlationIdProvided =
+                context.Request.Headers.TryGetValue(CorrelationConstants.CorrelationId, out var correlationId);
+            if (!correlationIdProvided)
             {
-                context.Request.Headers["x-correlation-id"] = Guid.NewGuid().ToString();
+                correlationId = new StringValues(Guid.NewGuid().ToString());
+                context.Request.Headers.Add(CorrelationConstants.CorrelationId, correlationId);
             }
+
+            context.Response.OnStarting(() =>
+            {
+                if (!context.Response.Headers.ContainsKey(CorrelationConstants.CorrelationId))
+                {
+                    context.Response.Headers.Add(CorrelationConstants.CorrelationId, correlationId);
+                }
+
+                return Task.CompletedTask;
+            });
+
             if (_next != null)
-                await _next.Invoke(context).ConfigureAwait(false);
+                await _next(context).ConfigureAwait(false);
         }
-
-
     }
 
-    public static class CorrelationMiddlewareExtension
+    public static class CorrelationMiddlewareExtensions
     {
-        public static IApplicationBuilder UseCorrelation(this IApplicationBuilder applicationBuilder)
+        public static IApplicationBuilder UseCorrelation(this IApplicationBuilder builder)
         {
-            return applicationBuilder.UseMiddleware<CorrelationMiddleware>();
+            return builder.UseMiddleware<CorrelationMiddleware>();
         }
     }
-
 }

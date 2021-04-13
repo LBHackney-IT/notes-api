@@ -1,39 +1,46 @@
+using AutoFixture;
+using FluentAssertions;
+using NotesApi.V1.Domain;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Infrastructure;
-using FluentAssertions;
-using NUnit.Framework;
-using AutoFixture;
-using NotesApi.V1.Domain;
+using Xunit;
 
 namespace NotesApi.Tests.V1.Factories
 {
-    [TestFixture]
     public class EntityFactoryTest
     {
         private readonly Fixture _fixture = new Fixture();
 
-        //TODO: add assertions for all the fields being mapped in `EntityFactory.ToDomain()`. Also be sure to add test cases for
-        // any edge cases that might exist.
-        [Test]
+        [Fact]
         public void CanMapADatabaseEntityToADomainObject()
         {
-            var databaseEntity = _fixture.Create<DatabaseEntity>();
-            var entity = databaseEntity.ToDomain();
+            var databaseNote = _fixture.Create<NoteDb>();
+            var note = databaseNote.ToDomain();
 
-            databaseEntity.Id.Should().Be(entity.Id);
-            databaseEntity.CreatedAt.Should().BeSameDateAs(entity.CreatedAt);
+            databaseNote.Id.Should().Be(note.Id);
+            databaseNote.Author.Should().BeEquivalentTo(note.Author);
+            databaseNote.Categorisation.Should().BeEquivalentTo(note.Categorisation);
+            databaseNote.DateTime.Should().Be(note.DateTime);
+            databaseNote.Description.Should().Be(note.Description);
+            databaseNote.Tags.Should().Be(note.Tags);
+            databaseNote.TargetId.Should().Be(note.TargetId);
+            databaseNote.TargetType.Should().Be(note.TargetType);
         }
 
-        //TODO: add assertions for all the fields being mapped in `EntityFactory.ToDatabase()`. Also be sure to add test cases for
-        // any edge cases that might exist.
-        [Test]
+        [Fact]
         public void CanMapADomainEntityToADatabaseObject()
         {
-            var entity = _fixture.Create<Entity>();
-            var databaseEntity = entity.ToDatabase();
+            var note = _fixture.Create<Note>();
+            var databaseNote = note.ToDatabase();
 
-            entity.Id.Should().Be(databaseEntity.Id);
-            entity.CreatedAt.Should().BeSameDateAs(databaseEntity.CreatedAt);
+            note.Id.Should().Be(databaseNote.Id);
+            note.Author.Should().BeEquivalentTo(databaseNote.Author);
+            note.Categorisation.Should().BeEquivalentTo(databaseNote.Categorisation);
+            note.DateTime.Should().Be(databaseNote.DateTime);
+            note.Description.Should().Be(databaseNote.Description);
+            note.Tags.Should().Be(databaseNote.Tags);
+            note.TargetId.Should().Be(databaseNote.TargetId);
+            note.TargetType.Should().Be(databaseNote.TargetType);
         }
     }
 }

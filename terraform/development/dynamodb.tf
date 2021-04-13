@@ -16,6 +16,17 @@ resource "aws_dynamodb_table" "notesapi_dynamodb_table" {
         type              = "S"
     }
 
+    attribute {
+        name              = "dateTime"
+        type              = "S"
+    }
+
+    local_secondary_index {
+        name              = "NotesByDate"
+        range_key         = "dateTime"
+        projection_type   = "ALL"
+    }
+
     tags = {
         Name              = "notes-api-${var.environment_name}"
         Environment       = var.environment_name

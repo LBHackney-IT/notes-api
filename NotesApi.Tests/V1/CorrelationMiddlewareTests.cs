@@ -1,43 +1,47 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using NotesApi.V1;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace NotesApi.Tests.V1
 {
-    [TestFixture]
-    public class CorrelationMiddlewareTests
+    public class CorrelationMiddlewareTest
     {
-        private CorrelationMiddleware _classUnderTest;
+        private readonly CorrelationMiddleware _sut;
 
-        [SetUp]
-        public void Setup()
+        public CorrelationMiddlewareTest()
         {
-            _classUnderTest = new CorrelationMiddleware(null);
+            _sut = new CorrelationMiddleware(null);
         }
 
-        [Test]
-        public async Task AddCorrelationIdIfItDoesNotExist()
+        [Fact]
+        public async Task DoesNotReplaceCorrelationIdIfOneExists()
         {
+            // Arrange
             var httpContext = new DefaultHttpContext();
-            await _classUnderTest.InvokeAsync(httpContext).ConfigureAwait(false);
+            var headerValue = "123";
+
+            httpContext.HttpContext.Request.Headers.Add(CorrelationConstants.CorrelationId, headerValue);
+
+            // Act
+            await _sut.InvokeAsync(httpContext).ConfigureAwait(false);
+
+            // Assert
+            httpContext.HttpContext.Request.Headers[CorrelationConstants.CorrelationId].Should().BeEquivalentTo(headerValue);
+        }
+
+        [Fact]
+        public async Task AddsCorrelationIdIfOneDoesNotExist()
+        {
+            // Arrange
+            var httpContext = new DefaultHttpContext();
+
+            // Act
+            await _sut.InvokeAsync(httpContext).ConfigureAwait(false);
+
+            // Assert
             httpContext.HttpContext.Request.Headers[CorrelationConstants.CorrelationId].Should().HaveCountGreaterThan(0);
-        }
-
-        [Test]
-        public async Task DoesNotAddNewCorrelationIdIfAlreadyExist()
-        {
-            var httpContext = new DefaultHttpContext();
-            var correlationIdValue = "11234";
-            httpContext.HttpContext.Request.Headers.Add(CorrelationConstants.CorrelationId, correlationIdValue);
-            await _classUnderTest.InvokeAsync(httpContext).ConfigureAwait(false);
-            httpContext.HttpContext.Request.Headers[CorrelationConstants.CorrelationId].Should().BeEquivalentTo(correlationIdValue);
-
-
         }
     }
 }

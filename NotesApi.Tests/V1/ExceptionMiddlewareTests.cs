@@ -1,0 +1,98 @@
+using FluentAssertions;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
+using Moq;
+using NotesApi.V1;
+using NotesApi.V1.Controllers;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace NotesApi.Tests.V1
+{
+    public class ExceptionMiddlewareTests
+    {
+        private readonly string _traceId = Guid.NewGuid().ToString();
+        private readonly string _correlationId = Guid.NewGuid().ToString();
+        private const int DEFAULTERRORCODE = 500;
+        private const string DEFAULTERRORMESSAGE = "Internal Server Error.";
+
+        private readonly HttpContext _httpContext;
+        private readonly Mock<IExceptionHandlerFeature> _mockExHandlerFeature;
+        private readonly InMemoryTraceListener _traceListener = new InMemoryTraceListener();
+
+        public ExceptionMiddlewareTests()
+        {
+            _httpContext = new DefaultHttpContext();
+            _httpContext.TraceIdentifier = _traceId;
+            _httpContext.Request.Headers.Add(CorrelationConstants.CorrelationId, new StringValues(_correlationId));
+            _httpContext.Response.Body = new MemoryStream();
+            _httpContext.Response.StatusCode = DEFAULTERRORCODE;
+
+            _mockExHandlerFeature = new Mock<IExceptionHandlerFeature>();
+            _httpContext.Features.Set(_mockExHandlerFeature.Object);
+
+            _traceListener.Reset();
+            Trace.Listeners.Add(_traceListener);
+        }
+
+        private async Task VerifyResponse(string resultMessage = DEFAULTERRORMESSAGE, int statusCode = DEFAULTERRORCODE)
+        {
+            _httpContext.Response.ContentType.Should().Be("application/json");
+
+            var expected = new ExceptionResult(resultMessage, _traceId, _correlationId, statusCode).ToString();
+            _httpContext.Response.Body.Position = 0;
+            using (StreamReader streamReader = new StreamReader(_httpContext.Response.Body))
+            {
+                string actual = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+                expected.Should().Be(actual);
+            }
+        }
+
+        [Fact]
+        public async Task HandleExceptionsTestNoExceptionHandlerWritesResponse()
+        {
+            // Arrange
+            _httpContext.Features.Set<IExceptionHandlerFeature>(null);
+
+            // Act
+            await ExceptionMiddlewareExtensions.HandleExceptions(_httpContext)
+                                               .ConfigureAwait(false);
+
+            // Assert
+            await VerifyResponse().ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task HandleExceptionsTestWithHandlerButNoExceptionWritesResponse()
+        {
+            // Act
+            await ExceptionMiddlewareExtensions.HandleExceptions(_httpContext)
+                                               .ConfigureAwait(false);
+
+            // Assert
+            await VerifyResponse().ConfigureAwait(false);
+            _traceListener.ContainsTrace("Request failed. ").Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task HandleExceptionsTestWithHandlerWithExceptionWritesResponse()
+        {
+            // Arrange
+            var exMessage = "This is an exception";
+            var exception = new Exception(exMessage);
+            _mockExHandlerFeature.SetupGet(x => x.Error).Returns(exception);
+
+            // Act
+            await ExceptionMiddlewareExtensions.HandleExceptions(_httpContext)
+                                               .ConfigureAwait(false);
+
+            // Assert
+            await VerifyResponse(exMessage).ConfigureAwait(false);
+            _traceListener.ContainsTrace($"Request failed. {exMessage}").Should().BeTrue();
+        }
+    }
+}
