@@ -5,8 +5,8 @@ using NotesApi.V1.Domain;
 
 namespace NotesApi.V1.Gateways
 {
-    public interface INotesApiGateway
+    public interface INotesGateway
     {
-        Task<List<Note>> GetByTargetIdAsync(Guid targetId);
+        Task<IEnumerable<Note>> GetByTargetIdAsync(Guid targetId);
     }
 }

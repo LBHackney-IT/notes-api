@@ -17,12 +17,12 @@ namespace NotesApi.Tests.V1.UseCase
     public class GetByTargetIdUseCaseTests
     {
         private readonly Fixture _fixture = new Fixture();
-        private readonly Mock<INotesApiGateway> _mockGateway;
+        private readonly Mock<INotesGateway> _mockGateway;
         private readonly GetByTargetIdUseCase _classUnderTest;
 
         public GetByTargetIdUseCaseTests()
         {
-            _mockGateway = new Mock<INotesApiGateway>();
+            _mockGateway = new Mock<INotesGateway>();
             _classUnderTest = new GetByTargetIdUseCase(_mockGateway.Object);
         }
 

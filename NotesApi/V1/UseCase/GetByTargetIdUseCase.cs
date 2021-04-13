@@ -10,9 +10,9 @@ namespace NotesApi.V1.UseCase
 {
     public class GetByTargetIdUseCase : IGetByTargetIdUseCase
     {
-        private readonly INotesApiGateway _gateway;
+        private readonly INotesGateway _gateway;
 
-        public GetByTargetIdUseCase(INotesApiGateway gateway)
+        public GetByTargetIdUseCase(INotesGateway gateway)
         {
             _gateway = gateway;
         }

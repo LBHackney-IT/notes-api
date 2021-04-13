@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace NotesApi.V1.Gateways
 {
-    public class DynamoDbGateway : INotesApiGateway
+    public class NotesDbGateway : INotesGateway
     {
         private readonly IDynamoDBContext _dynamoDbContext;
 
-        public DynamoDbGateway(IDynamoDBContext dynamoDbContext)
+        public NotesDbGateway(IDynamoDBContext dynamoDbContext)
         {
             _dynamoDbContext = dynamoDbContext;
         }
@@ -24,9 +24,9 @@ namespace NotesApi.V1.Gateways
         // which returns an unmockable concrete class.
         // See here: https://github.com/aws/aws-sdk-net/issues/1310
         [ExcludeFromCodeCoverage]
-        public async Task<List<Note>> GetByTargetIdAsync(Guid targetId)
+        public async Task<IEnumerable<Note>> GetByTargetIdAsync(Guid targetId)
         {
-            List<NoteDb> dbNotes = new List<NoteDb>();
+            var dbNotes = new List<NoteDb>();
 
             // We query directly on the Table (rather than using _dynamoDbContext.QueryAsync())
             // so that we can access the pagination token
