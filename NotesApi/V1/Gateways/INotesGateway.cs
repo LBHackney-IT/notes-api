@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace NotesApi.V1.Gateways
 {
-    public interface INotesApiGateway
+    public interface INotesGateway
     {
         Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query);
     }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace NotesApi.V1.Gateways
 {
-    public class DynamoDbGateway : INotesApiGateway
+    public class NotesDbGateway : INotesGateway
     {
         private const int MAX_RESULTS = 10;
         private const string GETNOTESBYTARGETIDINDEX = "NotesByDate";
@@ -19,7 +19,7 @@ namespace NotesApi.V1.Gateways
 
         private readonly IDynamoDBContext _dynamoDbContext;
 
-        public DynamoDbGateway(IDynamoDBContext dynamoDbContext)
+        public NotesDbGateway(IDynamoDBContext dynamoDbContext)
         {
             _dynamoDbContext = dynamoDbContext;
         }
@@ -30,10 +30,7 @@ namespace NotesApi.V1.Gateways
         [ExcludeFromCodeCoverage]
         public async Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query)
         {
-            List<NoteDb> dbNotes = new List<NoteDb>();
-
-            // We query directly on the Table (rather than using _dynamoDbContext.QueryAsync())
-            // so that we can access the pagination token
+            var dbNotes = new List<NoteDb>();
             var table = _dynamoDbContext.GetTargetTable<NoteDb>();
             var search = table.Query(new QueryOperationConfig
             {

@@ -21,7 +21,7 @@ using Xunit;
 
 //namespace NotesApi.Tests.V1.Gateways
 //{
-//    public class DynamoDbGatewayTests
+//    public class NotesDbGatewayTests
 //    {
 //        //private readonly Fixture _fixture = new Fixture();
 //        private readonly Mock<IDynamoDBContext> _dynamoDb;

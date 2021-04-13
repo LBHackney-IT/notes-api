@@ -147,7 +147,7 @@ namespace NotesApi
 
         private static void RegisterGateways(IServiceCollection services)
         {
-            services.AddScoped<INotesApiGateway, DynamoDbGateway>();
+            services.AddScoped<INotesGateway, NotesDbGateway>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)

@@ -3,15 +3,17 @@ using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Gateways;
 using NotesApi.V1.UseCase.Interfaces;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace NotesApi.V1.UseCase
 {
     public class GetByTargetIdUseCase : IGetByTargetIdUseCase
     {
-        private readonly INotesApiGateway _gateway;
+        private readonly INotesGateway _gateway;
 
-        public GetByTargetIdUseCase(INotesApiGateway gateway)
+        public GetByTargetIdUseCase(INotesGateway gateway)
         {
             _gateway = gateway;
         }
