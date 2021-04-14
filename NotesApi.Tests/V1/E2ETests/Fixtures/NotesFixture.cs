@@ -64,6 +64,11 @@ namespace NotesApi.Tests.V1.E2ETests.Fixtures
             }
         }
 
+        public void GivenTargetNotesWithMultiplePagesAlreadyExist()
+        {
+            GivenTargetNotesAlreadyExist(35);
+        }
+
         public void GivenATargetIdHasNoNotes()
         {
             TargetId = Guid.NewGuid();

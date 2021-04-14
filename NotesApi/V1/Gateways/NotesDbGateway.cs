@@ -42,11 +42,8 @@ namespace NotesApi.V1.Gateways
                 Filter = new QueryFilter(TARGETID, QueryOperator.Equal, query.TargetId)
             });
             var resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
-            while (resultsSet.Any())
-            {
+            if (resultsSet.Any())
                 dbNotes.AddRange(_dynamoDbContext.FromDocuments<NoteDb>(resultsSet));
-                resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
-            }
 
             return new PagedResult<Note>(dbNotes.Select(x => x.ToDomain()), search.PaginationToken);
         }
