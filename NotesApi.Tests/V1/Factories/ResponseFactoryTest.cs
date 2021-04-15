@@ -22,7 +22,6 @@ namespace NotesApi.Tests.V1.Factories
             note.Categorisation.Should().BeEquivalentTo(responseNote.Categorisation);
             note.DateTime.Should().Be(responseNote.DateTime);
             note.Description.Should().Be(responseNote.Description);
-            note.Tags.Should().Be(responseNote.Tags);
             note.TargetId.Should().Be(responseNote.TargetId);
             note.TargetType.Should().Be(responseNote.TargetType);
         }

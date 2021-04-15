@@ -22,7 +22,6 @@ namespace NotesApi.Tests.V1.Factories
             databaseNote.Categorisation.Should().BeEquivalentTo(note.Categorisation);
             databaseNote.DateTime.Should().Be(note.DateTime);
             databaseNote.Description.Should().Be(note.Description);
-            databaseNote.Tags.Should().Be(note.Tags);
             databaseNote.TargetId.Should().Be(note.TargetId);
             databaseNote.TargetType.Should().Be(note.TargetType);
         }
@@ -38,7 +37,6 @@ namespace NotesApi.Tests.V1.Factories
             note.Categorisation.Should().BeEquivalentTo(databaseNote.Categorisation);
             note.DateTime.Should().Be(databaseNote.DateTime);
             note.Description.Should().Be(databaseNote.Description);
-            note.Tags.Should().Be(databaseNote.Tags);
             note.TargetId.Should().Be(databaseNote.TargetId);
             note.TargetType.Should().Be(databaseNote.TargetType);
         }

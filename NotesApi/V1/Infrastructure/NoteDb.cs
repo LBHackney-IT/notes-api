@@ -26,8 +26,5 @@ namespace NotesApi.V1.Infrastructure
 
         [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<AuthorDetails>))]
         public AuthorDetails Author { get; set; }
-
-        [DynamoDBProperty(Converter = typeof(DynamoDbEnumConverter<Tag>))]
-        public Tag Tags { get; set; }
     }
 }

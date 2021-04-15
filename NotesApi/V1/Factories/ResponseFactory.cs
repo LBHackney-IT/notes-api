@@ -16,7 +16,6 @@ namespace NotesApi.V1.Factories
                 DateTime = domain.DateTime,
                 Description = domain.Description,
                 Id = domain.Id,
-                Tags = domain.Tags,
                 TargetId = domain.TargetId,
                 TargetType = domain.TargetType
             };

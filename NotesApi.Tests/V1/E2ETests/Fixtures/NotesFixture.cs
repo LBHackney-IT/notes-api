@@ -56,7 +56,6 @@ namespace NotesApi.Tests.V1.E2ETests.Fixtures
                 Notes.AddRange(_fixture.Build<NoteDb>()
                                        .With(x => x.DateTime, funcDT)
                                        .With(x => x.TargetType, TargetType.person)
-                                       .With(x => x.Tags, Tag.person)
                                        .With(x => x.TargetId, TargetId)
                                        .CreateMany(count));
                 foreach (var note in Notes)

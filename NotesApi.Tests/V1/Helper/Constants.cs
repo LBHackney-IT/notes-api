@@ -12,7 +12,6 @@ namespace NotesApi.Tests.V1.Helper
         public static DateTime DATETIME { get; } = DateTime.UtcNow.AddDays(-20);
         public const string PREFSURNAME = "Roberts";
         public const string FIRSTNAME = "Robert";
-        public const Tag TAG = Tag.person;
 
         public const string CATEGORISATIONCATEGORY = "Categroy";
         public const string CATEGORISATIONSUBCATEGORY = "Some sub categroy";
@@ -30,7 +29,6 @@ namespace NotesApi.Tests.V1.Helper
             note.TargetType = Constants.TARGETTYPE;
             note.Description = Constants.DESCRIPTION;
             note.DateTime = Constants.DATETIME;
-            note.Tags = Constants.TAG;
             note.Categorisation = new Categorisation
             {
                 Category = CATEGORISATIONCATEGORY,

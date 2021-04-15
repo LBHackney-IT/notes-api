@@ -11,6 +11,5 @@ namespace NotesApi.V1.Domain
         public DateTime DateTime { get; set; }
         public Categorisation Categorisation { get; set; }
         public AuthorDetails Author { get; set; }
-        public Tag Tags { get; set; }
     }
 }
