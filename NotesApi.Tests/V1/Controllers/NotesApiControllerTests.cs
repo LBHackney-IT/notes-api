@@ -2,8 +2,10 @@ using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using NotesApi.V1;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Controllers;
+using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.UseCase.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -25,47 +27,60 @@ namespace NotesApi.Tests.V1.Controllers
             _sut = new NotesApiController(_mockGetByTargetIdUseCase.Object);
         }
 
-        [Fact]
-        public async Task GetPersonByIdAsyncNotFoundReturnsNotFound()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("some-value")]
+        public async Task GetPersonByIdAsyncNotFoundReturnsNotFound(string paginationToken)
         {
             // Arrange
             var id = Guid.NewGuid();
-            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(id)).ReturnsAsync((List<NoteResponseObject>) null);
+            var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
+            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query)).ReturnsAsync((PagedResult<NoteResponseObject>) null);
 
             // Act
-            var response = await _sut.GetByTargetIdAsync(id).ConfigureAwait(false);
+            var response = await _sut.GetByTargetIdAsync(query).ConfigureAwait(false);
 
             // Assert
             response.Should().BeOfType(typeof(NotFoundObjectResult));
             (response as NotFoundObjectResult).Value.Should().Be(id);
         }
 
-        [Fact]
-        public async Task GetPersonByIdAsyncFoundReturnsResponse()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("some-value")]
+        public async Task GetPersonByIdAsyncFoundReturnsResponse(string paginationToken)
         {
             // Arrange
             var id = Guid.NewGuid();
-            var notesResponse = _fixture.CreateMany<NoteResponseObject>(5).ToList();
-            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(id)).ReturnsAsync(notesResponse);
+            var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
+            var notes = _fixture.CreateMany<NoteResponseObject>(5).ToList();
+            var pagedResult = new PagedResult<NoteResponseObject>(notes, paginationToken);
+            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query)).ReturnsAsync(pagedResult);
 
             // Act
-            var response = await _sut.GetByTargetIdAsync(id).ConfigureAwait(false);
+            var response = await _sut.GetByTargetIdAsync(query).ConfigureAwait(false);
 
             // Assert
             response.Should().BeOfType(typeof(OkObjectResult));
-            (response as OkObjectResult).Value.Should().BeEquivalentTo(notesResponse);
+            (response as OkObjectResult).Value.Should().BeEquivalentTo(pagedResult);
         }
 
-        [Fact]
-        public void GetPersonByIdAsyncExceptionIsThrown()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("some-value")]
+        public void GetPersonByIdAsyncExceptionIsThrown(string paginationToken)
         {
             // Arrange
             var id = Guid.NewGuid();
+            var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var exception = new ApplicationException("Test exception");
-            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(id)).ThrowsAsync(exception);
+            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query)).ThrowsAsync(exception);
 
             // Act
-            Func<Task<IActionResult>> func = async () => await _sut.GetByTargetIdAsync(id).ConfigureAwait(false);
+            Func<Task<IActionResult>> func = async () => await _sut.GetByTargetIdAsync(query).ConfigureAwait(false);
 
             // Assert
             func.Should().Throw<ApplicationException>().WithMessage(exception.Message);

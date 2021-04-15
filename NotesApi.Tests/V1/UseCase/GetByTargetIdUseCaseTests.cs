@@ -11,6 +11,8 @@ using FluentAssertions;
 using System.Linq;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Boundary.Response;
+using NotesApi.V1;
+using NotesApi.V1.Domain.Queries;
 
 namespace NotesApi.Tests.V1.UseCase
 {
@@ -26,59 +28,83 @@ namespace NotesApi.Tests.V1.UseCase
             _classUnderTest = new GetByTargetIdUseCase(_mockGateway.Object);
         }
 
-        [Fact]
-        public async Task GetByTargetIdUseCaseGatewayReturnsNullReturnsEmptyList()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("some-value")]
+        public async Task GetByTargetIdUseCaseGatewayReturnsNullReturnsEmptyList(string paginationToken)
         {
             // Arrange
             var id = Guid.NewGuid();
-            _mockGateway.Setup(x => x.GetByTargetIdAsync(id)).ReturnsAsync((List<Note>) null);
+            var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
+            var gatewayResult = new PagedResult<Note>(null, paginationToken);
+            _mockGateway.Setup(x => x.GetByTargetIdAsync(query)).ReturnsAsync(gatewayResult);
 
             // Act
-            var response = await _classUnderTest.ExecuteAsync(id).ConfigureAwait(false);
+            var response = await _classUnderTest.ExecuteAsync(query).ConfigureAwait(false);
 
             // Assert
-            response.Should().BeEmpty();
+            response.Results.Should().BeEmpty();
         }
 
-        [Fact]
-        public async Task GetByTargetIdUseCaseGatewayReturnsEmptyReturnsEmptyList()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("some-value")]
+        public async Task GetByTargetIdUseCaseGatewayReturnsEmptyReturnsEmptyList(string paginationToken)
         {
             // Arrange
             var id = Guid.NewGuid();
-            _mockGateway.Setup(x => x.GetByTargetIdAsync(id)).ReturnsAsync(new List<Note>());
+            var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
+            var gatewayResult = new PagedResult<Note>(new List<Note>(), null);
+            _mockGateway.Setup(x => x.GetByTargetIdAsync(query)).ReturnsAsync(gatewayResult);
 
             // Act
-            var response = await _classUnderTest.ExecuteAsync(id).ConfigureAwait(false);
+            var response = await _classUnderTest.ExecuteAsync(query).ConfigureAwait(false);
 
             // Assert
-            response.Should().BeEmpty();
+            response.Results.Should().BeEmpty();
         }
 
-        [Fact]
-        public async Task GetByTargetIdUseCaseGatewayReturnsListReturnsResponseList()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("some-value")]
+        public async Task GetByTargetIdUseCaseGatewayReturnsListReturnsResponseList(string paginationToken)
         {
             // Arrange
             var id = Guid.NewGuid();
+            var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var notes = _fixture.CreateMany<Note>(5).ToList();
-            _mockGateway.Setup(x => x.GetByTargetIdAsync(id)).ReturnsAsync(notes);
+            var gatewayResult = new PagedResult<Note>(notes, paginationToken);
+            _mockGateway.Setup(x => x.GetByTargetIdAsync(query)).ReturnsAsync(gatewayResult);
 
             // Act
-            var response = await _classUnderTest.ExecuteAsync(id).ConfigureAwait(false);
+            var response = await _classUnderTest.ExecuteAsync(query).ConfigureAwait(false);
 
             // Assert
-            response.Should().BeEquivalentTo(notes.ToResponse());
+            response.Results.Should().BeEquivalentTo(notes.ToResponse());
+            if (string.IsNullOrEmpty(paginationToken))
+                response.PaginationToken.Should().BeNull();
+            else
+                response.PaginationToken.Should().Be(paginationToken);
         }
 
-        [Fact]
-        public void GetByTargetIdExceptionIsThrown()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("some-value")]
+        public void GetByTargetIdExceptionIsThrown(string paginationToken)
         {
             // Arrange
             var id = Guid.NewGuid();
+            var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var exception = new ApplicationException("Test exception");
-            _mockGateway.Setup(x => x.GetByTargetIdAsync(id)).ThrowsAsync(exception);
+            _mockGateway.Setup(x => x.GetByTargetIdAsync(query)).ThrowsAsync(exception);
 
             // Act
-            Func<Task<List<NoteResponseObject>>> func = async () => await _classUnderTest.ExecuteAsync(id).ConfigureAwait(false);
+            Func<Task<PagedResult<NoteResponseObject>>> func = async () =>
+                await _classUnderTest.ExecuteAsync(query).ConfigureAwait(false);
 
             // Assert
             func.Should().Throw<ApplicationException>().WithMessage(exception.Message);

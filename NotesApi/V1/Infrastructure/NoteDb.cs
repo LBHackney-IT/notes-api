@@ -21,8 +21,10 @@ namespace NotesApi.V1.Infrastructure
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
         public DateTime DateTime { get; set; }
 
+        [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<Categorisation>))]
         public Categorisation Categorisation { get; set; }
 
+        [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<AuthorDetails>))]
         public AuthorDetails Author { get; set; }
 
         [DynamoDBProperty(Converter = typeof(DynamoDbEnumConverter<Tag>))]

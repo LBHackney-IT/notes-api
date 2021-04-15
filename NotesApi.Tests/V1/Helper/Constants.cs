@@ -7,12 +7,12 @@ namespace NotesApi.Tests.V1.Helper
     {
         public static Guid ID { get; } = Guid.NewGuid();
         public static Guid TARGETID { get; } = Guid.NewGuid();
-        public const TargetType TARGETTYPE = TargetType.Person;
+        public const TargetType TARGETTYPE = TargetType.person;
         public const string DESCRIPTION = "This is some note description";
         public static DateTime DATETIME { get; } = DateTime.UtcNow.AddDays(-20);
         public const string PREFSURNAME = "Roberts";
         public const string FIRSTNAME = "Robert";
-        public const Tag TAG = Tag.Person;
+        public const Tag TAG = Tag.person;
 
         public const string CATEGORISATIONCATEGORY = "Categroy";
         public const string CATEGORISATIONSUBCATEGORY = "Some sub categroy";

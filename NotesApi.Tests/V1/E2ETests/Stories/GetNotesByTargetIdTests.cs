@@ -55,6 +55,26 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
 
         [Fact]
         [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
+        public void ServiceReturnsFirstPageOfRequestedNotesWithPaginationToken()
+        {
+            this.Given(g => _notesFixture.GivenTargetNotesWithMultiplePagesAlreadyExist())
+                .When(w => _steps.WhenTheTargetNotesAreRequested(_notesFixture.TargetId.ToString()))
+                .Then(t => _steps.ThenTheFirstPageOfTargetNotesAreReturned(_notesFixture.Notes))
+                .BDDfy();
+        }
+
+        [Fact]
+        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
+        public void ServiceReturnsAllPagesNotesUsingPaginationToken()
+        {
+            this.Given(g => _notesFixture.GivenTargetNotesWithMultiplePagesAlreadyExist())
+                .When(w => _steps.WhenAllTheTargetNotesAreRequested(_notesFixture.TargetId.ToString()))
+                .Then(t => _steps.ThenAllTheTargetNotesAreReturned(_notesFixture.Notes))
+                .BDDfy();
+        }
+
+        [Fact]
+        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
         public void ServiceReturnsNotFoundIfNoNotesExist()
         {
             this.Given(g => _notesFixture.GivenATargetIdHasNoNotes())
