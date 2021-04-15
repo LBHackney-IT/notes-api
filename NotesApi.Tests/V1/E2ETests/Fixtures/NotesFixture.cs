@@ -55,8 +55,8 @@ namespace NotesApi.Tests.V1.E2ETests.Fixtures
                 Func<DateTime> funcDT = () => DateTime.UtcNow.AddDays(0 - random.Next(100));
                 Notes.AddRange(_fixture.Build<NoteDb>()
                                        .With(x => x.DateTime, funcDT)
-                                       .With(x => x.TargetType, TargetType.Person)
-                                       .With(x => x.Tags, Tag.Person)
+                                       .With(x => x.TargetType, TargetType.person)
+                                       .With(x => x.Tags, Tag.person)
                                        .With(x => x.TargetId, TargetId)
                                        .CreateMany(count));
                 foreach (var note in Notes)

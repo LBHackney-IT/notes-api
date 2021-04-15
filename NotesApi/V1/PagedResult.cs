@@ -22,11 +22,12 @@ namespace NotesApi.V1
 
         private static string ValidatePaginationToken(string paginationToken)
         {
-            // The AWS SDK can return an empty JSON object (i.e. '{}') when there are no more results.
+            // The AWS SDK can either return an empty JSON object (i.e. '{}') when there are no more results.
             if (string.IsNullOrWhiteSpace(paginationToken?.Trim(' ', '{', '}')))
                 return null;
 
-            return paginationToken;
+            // Or a JSON object with escaped double quotes (i.e. '\"')
+            return paginationToken.Replace("\"", "'");
         }
     }
 }

@@ -45,11 +45,11 @@ namespace NotesApi.Tests.V1
 
         [Theory]
         [InlineData("some value")]
-        [InlineData("{ 'id': '123', 'name': 'some name'  }")]
+        [InlineData("{ \"id\": \"123\", \"name\": \"some name\"  }")]
         public void PagedResultConstructorSetPaginationTokenValue(string token)
         {
             var sut = new PagedResult<string>(null, token);
-            sut.PaginationToken.Should().Be(token);
+            sut.PaginationToken.Should().Be(token.Replace("\"", "'"));
         }
 
         [Theory]
@@ -66,12 +66,12 @@ namespace NotesApi.Tests.V1
 
         [Theory]
         [InlineData("some value")]
-        [InlineData("{ 'id': '123', 'name': 'some name'  }")]
+        [InlineData("{ \"id\": \"123\", \"name\": \"some name\"  }")]
         public void PagedResultPaginationTokenSetsValue(string token)
         {
             var sut = new PagedResult<string>();
             sut.PaginationToken = token;
-            sut.PaginationToken.Should().Be(token);
+            sut.PaginationToken.Should().Be(token.Replace("\"", "'"));
         }
     }
 }
