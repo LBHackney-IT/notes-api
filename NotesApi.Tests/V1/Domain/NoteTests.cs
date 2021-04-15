@@ -17,7 +17,6 @@ namespace NotesApi.Tests.V1.Domain
             note.TargetType.Should().Be(Constants.TARGETTYPE);
             note.Description.Should().Be(Constants.DESCRIPTION);
             note.DateTime.Should().Be(Constants.DATETIME);
-            note.Tags.Should().Be(Constants.TAG);
             note.Categorisation.Category.Should().Be(Constants.CATEGORISATIONCATEGORY);
             note.Categorisation.SubCategory.Should().Be(Constants.CATEGORISATIONSUBCATEGORY);
             note.Categorisation.Description.Should().Be(Constants.CATEGORISATIONDESCRIPTION);

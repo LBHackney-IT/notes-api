@@ -12,6 +12,5 @@ namespace NotesApi.V1.Boundary.Response
         public DateTime DateTime { get; set; }
         public Categorisation Categorisation { get; set; }
         public AuthorDetails Author { get; set; }
-        public Tag Tags { get; set; }
     }
 }

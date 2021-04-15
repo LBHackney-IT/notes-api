@@ -10,12 +10,4 @@ namespace NotesApi.V1.Domain
         tenure,
         repair
     }
-
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum Tag
-    {
-        person,
-        update,
-        complaint
-    }
 }

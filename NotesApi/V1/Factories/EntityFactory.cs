@@ -14,7 +14,6 @@ namespace NotesApi.V1.Factories
                 DateTime = databaseNote.DateTime,
                 Description = databaseNote.Description,
                 Id = databaseNote.Id,
-                Tags = databaseNote.Tags,
                 TargetId = databaseNote.TargetId,
                 TargetType = databaseNote.TargetType
             };
@@ -29,7 +28,6 @@ namespace NotesApi.V1.Factories
                 DateTime = note.DateTime,
                 Description = note.Description,
                 Id = note.Id,
-                Tags = note.Tags,
                 TargetId = note.TargetId,
                 TargetType = note.TargetType
             };
