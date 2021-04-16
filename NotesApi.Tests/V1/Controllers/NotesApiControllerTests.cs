@@ -56,7 +56,7 @@ namespace NotesApi.Tests.V1.Controllers
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var notes = _fixture.CreateMany<NoteResponseObject>(5).ToList();
-            var pagedResult = new PagedResult<NoteResponseObject>(notes, paginationToken);
+            var pagedResult = new PagedResult<NoteResponseObject>(notes, new PaginationDetails(paginationToken));
             _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query)).ReturnsAsync(pagedResult);
 
             // Act

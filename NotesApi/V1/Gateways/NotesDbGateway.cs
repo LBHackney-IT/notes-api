@@ -38,14 +38,14 @@ namespace NotesApi.V1.Gateways
                 BackwardSearch = true,
                 ConsistentRead = true,
                 Limit = MAX_RESULTS,
-                PaginationToken = query.PaginationToken,
+                PaginationToken = PaginationDetails.DecodeToken(query.PaginationToken),
                 Filter = new QueryFilter(TARGETID, QueryOperator.Equal, query.TargetId)
             });
             var resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
             if (resultsSet.Any())
                 dbNotes.AddRange(_dynamoDbContext.FromDocuments<NoteDb>(resultsSet));
 
-            return new PagedResult<Note>(dbNotes.Select(x => x.ToDomain()), search.PaginationToken);
+            return new PagedResult<Note>(dbNotes.Select(x => x.ToDomain()), new PaginationDetails(search.PaginationToken));
         }
     }
 }

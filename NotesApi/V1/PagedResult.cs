@@ -6,28 +6,17 @@ namespace NotesApi.V1
     {
         public List<T> Results { get; set; } = new List<T>();
 
-        private string _paginationToken;
-        public string PaginationToken
-        {
-            get { return _paginationToken; }
-            set { _paginationToken = ValidatePaginationToken(value); }
-        }
+        public PaginationDetails PaginationDetails { get; set; } = new PaginationDetails();
 
         public PagedResult() { }
-        public PagedResult(IEnumerable<T> results, string paginationToken)
+        public PagedResult(IEnumerable<T> results)
         {
             if (null != results) Results.AddRange(results);
-            PaginationToken = paginationToken;
         }
-
-        private static string ValidatePaginationToken(string paginationToken)
+        public PagedResult(IEnumerable<T> results, PaginationDetails paginationDetails)
         {
-            // The AWS SDK can either return an empty JSON object (i.e. '{}') when there are no more results.
-            if (string.IsNullOrWhiteSpace(paginationToken?.Trim(' ', '{', '}')))
-                return null;
-
-            // Or a JSON object with escaped double quotes (i.e. '\"')
-            return paginationToken.Replace("\"", "'");
+            if (null != results) Results.AddRange(results);
+            PaginationDetails = paginationDetails;
         }
     }
 }
