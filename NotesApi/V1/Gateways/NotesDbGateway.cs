@@ -45,8 +45,7 @@ namespace NotesApi.V1.Gateways
             if (resultsSet.Any())
                 dbNotes.AddRange(_dynamoDbContext.FromDocuments<NoteDb>(resultsSet));
 
-            return new PagedResult<Note>(dbNotes.Select(x => x.ToDomain()),
-                                         new PaginationDetails(search.PaginationToken, query.PaginationToken));
+            return new PagedResult<Note>(dbNotes.Select(x => x.ToDomain()), new PaginationDetails(search.PaginationToken));
         }
     }
 }

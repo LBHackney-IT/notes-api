@@ -9,15 +9,10 @@ namespace NotesApi.V1
         public bool HasNext => !string.IsNullOrEmpty(NextToken);
         public string NextToken { get; set; }
 
-        [JsonIgnore]
-        public bool HasPrevious => !string.IsNullOrEmpty(PreviousToken);
-        public string PreviousToken { get; set; }
-
         public PaginationDetails() { }
-        public PaginationDetails(string rawNextToken, string rawPreviousToken)
+        public PaginationDetails(string rawNextToken)
         {
             EncodeNextToken(rawNextToken);
-            EncodePreviousToken(rawPreviousToken);
         }
 
         public static string EncodeToken(string rawToken)
@@ -45,16 +40,6 @@ namespace NotesApi.V1
         public string DecodeNextToken()
         {
             return DecodeToken(NextToken);
-        }
-
-        public void EncodePreviousToken(string rawToken)
-        {
-            PreviousToken = EncodeToken(rawToken);
-        }
-
-        public string DecodePreviousToken()
-        {
-            return DecodeToken(PreviousToken);
         }
     }
 }

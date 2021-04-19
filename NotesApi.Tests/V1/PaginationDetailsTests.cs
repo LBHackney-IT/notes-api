@@ -22,11 +22,9 @@ namespace NotesApi.Tests.V1
         [InlineData("{}")]
         public void CustomConstructorTestEmptyToken(string token)
         {
-            var sut = new PaginationDetails(token, token);
+            var sut = new PaginationDetails(token);
             sut.NextToken.Should().BeNull();
             sut.HasNext.Should().BeFalse();
-            sut.PreviousToken.Should().BeNull();
-            sut.HasPrevious.Should().BeFalse();
         }
 
         [Theory]
@@ -34,11 +32,9 @@ namespace NotesApi.Tests.V1
         [InlineData("{ \"id\": \"123\", \"name\": \"some name\"  }")]
         public void CustomConstructorTestWithTokenValue(string token)
         {
-            var sut = new PaginationDetails(token, token);
+            var sut = new PaginationDetails(token);
             sut.NextToken.Should().Be(Base64UrlEncoder.Encode(token));
             sut.HasNext.Should().BeTrue();
-            sut.PreviousToken.Should().Be(Base64UrlEncoder.Encode(token));
-            sut.HasPrevious.Should().BeTrue();
         }
 
         [Theory]
@@ -57,30 +53,6 @@ namespace NotesApi.Tests.V1
         [Theory]
         [InlineData("some value")]
         [InlineData("{ \"id\": \"123\", \"name\": \"some name\"  }")]
-        public void EncodePreviousTokenTestWithTokenValue(string token)
-        {
-            var sut = new PaginationDetails();
-            sut.EncodePreviousToken(token);
-            sut.PreviousToken.Should().Be(Base64UrlEncoder.Encode(token));
-            sut.HasPrevious.Should().BeTrue();
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData("  ")]
-        [InlineData("{}")]
-        public void EncodePreviousTokenTestEmptyToken(string token)
-        {
-            var sut = new PaginationDetails();
-            sut.EncodePreviousToken(token);
-            sut.PreviousToken.Should().BeNull();
-            sut.HasPrevious.Should().BeFalse();
-        }
-
-        [Theory]
-        [InlineData("some value")]
-        [InlineData("{ \"id\": \"123\", \"name\": \"some name\"  }")]
         public void EncodeNextTokenTestWithTokenValue(string token)
         {
             var sut = new PaginationDetails();
@@ -94,7 +66,6 @@ namespace NotesApi.Tests.V1
         {
             var sut = new PaginationDetails();
             sut.DecodeNextToken().Should().BeNull();
-            sut.DecodePreviousToken().Should().BeNull();
         }
 
         [Theory]
@@ -102,9 +73,8 @@ namespace NotesApi.Tests.V1
         [InlineData("{ \"id\": \"123\", \"name\": \"some name\"  }")]
         public void DecodeTokensTestWithTokenValue(string token)
         {
-            var sut = new PaginationDetails(token, token);
+            var sut = new PaginationDetails(token);
             sut.DecodeNextToken().Should().Be(token);
-            sut.DecodePreviousToken().Should().Be(token);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace NotesApi.Tests.V1.UseCase
             // Arrange
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
-            var gatewayResult = new PagedResult<Note>(null, new PaginationDetails(paginationToken, null));
+            var gatewayResult = new PagedResult<Note>(null, new PaginationDetails(paginationToken));
             _mockGateway.Setup(x => x.GetByTargetIdAsync(query)).ReturnsAsync(gatewayResult);
 
             // Act
@@ -76,7 +76,7 @@ namespace NotesApi.Tests.V1.UseCase
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var notes = _fixture.CreateMany<Note>(5).ToList();
-            var gatewayResult = new PagedResult<Note>(notes, new PaginationDetails(paginationToken, null));
+            var gatewayResult = new PagedResult<Note>(notes, new PaginationDetails(paginationToken));
             _mockGateway.Setup(x => x.GetByTargetIdAsync(query)).ReturnsAsync(gatewayResult);
 
             // Act
