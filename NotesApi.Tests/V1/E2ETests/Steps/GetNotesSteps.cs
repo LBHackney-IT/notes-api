@@ -79,7 +79,7 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
                 var apiResult = await ExtractResultFromHttpResponse(response).ConfigureAwait(false);
                 _pagedNotes.AddRange(apiResult.Results);
 
-                pageToken = apiResult.PaginationDetails.MoreToken;
+                pageToken = apiResult.PaginationDetails.NextToken;
             }
             while (!string.IsNullOrEmpty(pageToken));
         }
@@ -94,7 +94,7 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
         public async Task ThenTheFirstPageOfTargetNotesAreReturned(List<NoteDb> expectedNotes)
         {
             var apiResult = await ExtractResultFromHttpResponse(_lastResponse).ConfigureAwait(false);
-            apiResult.PaginationDetails.MoreToken.Should().NotBeNullOrEmpty();
+            apiResult.PaginationDetails.NextToken.Should().NotBeNullOrEmpty();
             apiResult.Results.Count.Should().Be(10);
             apiResult.Results.Should().BeEquivalentTo(expectedNotes.OrderByDescending(x => x.DateTime).Take(10));
 

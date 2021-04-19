@@ -6,13 +6,18 @@ namespace NotesApi.V1
     public class PaginationDetails
     {
         [JsonIgnore]
-        public bool HasMore => !string.IsNullOrEmpty(MoreToken);
-        public string MoreToken { get; set; }
+        public bool HasNext => !string.IsNullOrEmpty(NextToken);
+        public string NextToken { get; set; }
+
+        [JsonIgnore]
+        public bool HasPrevious => !string.IsNullOrEmpty(PreviousToken);
+        public string PreviousToken { get; set; }
 
         public PaginationDetails() { }
-        public PaginationDetails(string rawMoreToken)
+        public PaginationDetails(string rawNextToken, string rawPreviousToken)
         {
-            EncodeMoreToken(rawMoreToken);
+            EncodeNextToken(rawNextToken);
+            EncodePreviousToken(rawPreviousToken);
         }
 
         public static string EncodeToken(string rawToken)
@@ -32,14 +37,24 @@ namespace NotesApi.V1
             return Base64UrlEncoder.Decode(token);
         }
 
-        public void EncodeMoreToken(string rawToken)
+        public void EncodeNextToken(string rawToken)
         {
-            MoreToken = EncodeToken(rawToken);
+            NextToken = EncodeToken(rawToken);
         }
 
-        public string DecodeMoreToken()
+        public string DecodeNextToken()
         {
-            return DecodeToken(MoreToken);
+            return DecodeToken(NextToken);
+        }
+
+        public void EncodePreviousToken(string rawToken)
+        {
+            PreviousToken = EncodeToken(rawToken);
+        }
+
+        public string DecodePreviousToken()
+        {
+            return DecodeToken(PreviousToken);
         }
     }
 }

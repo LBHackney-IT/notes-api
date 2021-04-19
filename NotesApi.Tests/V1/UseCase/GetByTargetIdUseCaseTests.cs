@@ -37,7 +37,7 @@ namespace NotesApi.Tests.V1.UseCase
             // Arrange
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
-            var gatewayResult = new PagedResult<Note>(null, new PaginationDetails(paginationToken));
+            var gatewayResult = new PagedResult<Note>(null, new PaginationDetails(paginationToken, null));
             _mockGateway.Setup(x => x.GetByTargetIdAsync(query)).ReturnsAsync(gatewayResult);
 
             // Act
@@ -76,7 +76,7 @@ namespace NotesApi.Tests.V1.UseCase
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var notes = _fixture.CreateMany<Note>(5).ToList();
-            var gatewayResult = new PagedResult<Note>(notes, new PaginationDetails(paginationToken));
+            var gatewayResult = new PagedResult<Note>(notes, new PaginationDetails(paginationToken, null));
             _mockGateway.Setup(x => x.GetByTargetIdAsync(query)).ReturnsAsync(gatewayResult);
 
             // Act
@@ -85,9 +85,9 @@ namespace NotesApi.Tests.V1.UseCase
             // Assert
             response.Results.Should().BeEquivalentTo(notes.ToResponse());
             if (string.IsNullOrEmpty(paginationToken))
-                response.PaginationDetails.MoreToken.Should().BeNull();
+                response.PaginationDetails.NextToken.Should().BeNull();
             else
-                response.PaginationDetails.DecodeMoreToken().Should().Be(paginationToken);
+                response.PaginationDetails.DecodeNextToken().Should().Be(paginationToken);
         }
 
         [Theory]
