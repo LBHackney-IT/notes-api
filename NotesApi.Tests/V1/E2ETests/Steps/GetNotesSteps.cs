@@ -18,7 +18,8 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
         private readonly HttpClient _httpClient;
 
         private HttpResponseMessage _lastResponse;
-        private List<NoteResponseObject> _pagedNotes = new List<NoteResponseObject>();
+        private readonly List<NoteResponseObject> _pagedNotes = new List<NoteResponseObject>();
+        private static readonly JsonSerializerOptions _jsonOptions = CreateJsonOptions();
 
         public GetNotesSteps(HttpClient httpClient)
         {
@@ -60,7 +61,7 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
         {
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var apiResult = JsonSerializer.Deserialize<PagedResult<NoteResponseObject>>(responseContent, CreateJsonOptions());
+            var apiResult = JsonSerializer.Deserialize<PagedResult<NoteResponseObject>>(responseContent, _jsonOptions);
             return apiResult;
         }
 
@@ -78,7 +79,7 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
                 var apiResult = await ExtractResultFromHttpResponse(response).ConfigureAwait(false);
                 _pagedNotes.AddRange(apiResult.Results);
 
-                pageToken = apiResult.PaginationToken;
+                pageToken = apiResult.PaginationDetails.NextToken;
             }
             while (!string.IsNullOrEmpty(pageToken));
         }
@@ -93,7 +94,7 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
         public async Task ThenTheFirstPageOfTargetNotesAreReturned(List<NoteDb> expectedNotes)
         {
             var apiResult = await ExtractResultFromHttpResponse(_lastResponse).ConfigureAwait(false);
-            apiResult.PaginationToken.Should().NotBeNullOrEmpty();
+            apiResult.PaginationDetails.NextToken.Should().NotBeNullOrEmpty();
             apiResult.Results.Count.Should().Be(10);
             apiResult.Results.Should().BeEquivalentTo(expectedNotes.OrderByDescending(x => x.DateTime).Take(10));
 

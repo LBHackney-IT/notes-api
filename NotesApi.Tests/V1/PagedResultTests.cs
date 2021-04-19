@@ -32,46 +32,12 @@ namespace NotesApi.Tests.V1
             sut.Results.Should().BeEquivalentTo(list);
         }
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData("  ")]
-        [InlineData("{}")]
-        public void PagedResultConstructorSetEmptyPaginationToken(string token)
+        [Fact]
+        public void PagedResultConstructorSetPaginationToken()
         {
-            var sut = new PagedResult<string>(null, token);
-            sut.PaginationToken.Should().BeNull();
-        }
-
-        [Theory]
-        [InlineData("some value")]
-        [InlineData("{ \"id\": \"123\", \"name\": \"some name\"  }")]
-        public void PagedResultConstructorSetPaginationTokenValue(string token)
-        {
-            var sut = new PagedResult<string>(null, token);
-            sut.PaginationToken.Should().Be(token.Replace("\"", "'"));
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData("  ")]
-        [InlineData("{}")]
-        public void PagedResultPaginationTokenSetsEmptyValue(string token)
-        {
-            var sut = new PagedResult<string>();
-            sut.PaginationToken = token;
-            sut.PaginationToken.Should().BeNull();
-        }
-
-        [Theory]
-        [InlineData("some value")]
-        [InlineData("{ \"id\": \"123\", \"name\": \"some name\"  }")]
-        public void PagedResultPaginationTokenSetsValue(string token)
-        {
-            var sut = new PagedResult<string>();
-            sut.PaginationToken = token;
-            sut.PaginationToken.Should().Be(token.Replace("\"", "'"));
+            var paginationDetails = new PaginationDetails();
+            var sut = new PagedResult<string>(null, paginationDetails);
+            sut.PaginationDetails.Should().Be(paginationDetails);
         }
     }
 }
