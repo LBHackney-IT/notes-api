@@ -53,6 +53,20 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
                 .BDDfy();
         }
 
+        [Theory]
+        [InlineData(null)]
+        [InlineData(5)]
+        [InlineData(15)]
+        [InlineData(100)]
+        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
+        public void ServiceReturnsTheRequestedNotesByPageSize(int? pageSize)
+        {
+            this.Given(g => _notesFixture.GivenTargetNotesAlreadyExist(30))
+                .When(w => _steps.WhenTheTargetNotesAreRequestedWithPageSize(_notesFixture.TargetId.ToString(), pageSize))
+                .Then(t => _steps.ThenTheTargetNotesAreReturnedByPageSize(_notesFixture.Notes, pageSize))
+                .BDDfy();
+        }
+
         [Fact]
         [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
         public void ServiceReturnsFirstPageOfRequestedNotesWithPaginationToken()

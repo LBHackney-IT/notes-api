@@ -48,11 +48,13 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
             return true;
         }
 
-        private async Task<HttpResponseMessage> CallApi(string id, string paginationToken = null)
+        private async Task<HttpResponseMessage> CallApi(string id, string paginationToken = null, int? pageSize = null)
         {
             var route = $"api/v1/notes?targetId={id}";
             if (!string.IsNullOrEmpty(paginationToken))
                 route += $"&paginationToken={paginationToken}";
+            if (pageSize.HasValue)
+                route += $"&pageSize={pageSize.Value}";
             var uri = new Uri(route, UriKind.Relative);
             return await _httpClient.GetAsync(uri).ConfigureAwait(false);
         }
@@ -68,6 +70,11 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
         public async Task WhenTheTargetNotesAreRequested(string id)
         {
             _lastResponse = await CallApi(id).ConfigureAwait(false);
+        }
+
+        public async Task WhenTheTargetNotesAreRequestedWithPageSize(string id, int? pageSize = null)
+        {
+            _lastResponse = await CallApi(id, null, pageSize).ConfigureAwait(false);
         }
 
         public async Task WhenAllTheTargetNotesAreRequested(string id)
@@ -88,6 +95,19 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
         {
             var apiResult = await ExtractResultFromHttpResponse(_lastResponse).ConfigureAwait(false);
             apiResult.Results.Should().BeEquivalentTo(expectedNotes);
+            IsDateTimeListInDescendingOrder(apiResult.Results.Select(x => x.DateTime)).Should().BeTrue();
+        }
+
+        public async Task ThenTheTargetNotesAreReturnedByPageSize(List<NoteDb> expectedNotes, int? pageSize)
+        {
+            var expectedPageSize = 10;
+            if (pageSize.HasValue)
+                expectedPageSize = (pageSize.Value > expectedNotes.Count) ? expectedNotes.Count : pageSize.Value;
+
+            var apiResult = await ExtractResultFromHttpResponse(_lastResponse).ConfigureAwait(false);
+            apiResult.Results.Count.Should().Be(expectedPageSize);
+            apiResult.Results.Should().BeEquivalentTo(expectedNotes.OrderByDescending(x => x.DateTime).Take(expectedPageSize));
+
             IsDateTimeListInDescendingOrder(apiResult.Results.Select(x => x.DateTime)).Should().BeTrue();
         }
 
