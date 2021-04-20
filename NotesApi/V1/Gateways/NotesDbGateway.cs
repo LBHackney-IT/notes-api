@@ -30,6 +30,7 @@ namespace NotesApi.V1.Gateways
         [ExcludeFromCodeCoverage]
         public async Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query)
         {
+            int pageSize = query.PageSize.HasValue ? query.PageSize.Value : MAX_RESULTS;
             var dbNotes = new List<NoteDb>();
             var table = _dynamoDbContext.GetTargetTable<NoteDb>();
             var search = table.Query(new QueryOperationConfig
@@ -37,7 +38,7 @@ namespace NotesApi.V1.Gateways
                 IndexName = GETNOTESBYTARGETIDINDEX,
                 BackwardSearch = true,
                 ConsistentRead = true,
-                Limit = MAX_RESULTS,
+                Limit = pageSize,
                 PaginationToken = PaginationDetails.DecodeToken(query.PaginationToken),
                 Filter = new QueryFilter(TARGETID, QueryOperator.Equal, query.TargetId)
             });

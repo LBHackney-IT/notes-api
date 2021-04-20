@@ -12,5 +12,8 @@ namespace NotesApi.V1.Domain.Queries
 
         [FromQuery]
         public string PaginationToken { get; set; }
+
+        [FromQuery]
+        public int? PageSize { get; set; }
     }
 }
