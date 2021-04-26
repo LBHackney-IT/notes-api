@@ -8,4 +8,12 @@ namespace NotesApi.V1.UseCase.Interfaces
     {
         Task<NoteResponseObject> ExecuteAsync(CreateNoteRequest createNoteRequest);
     }
+
+    public class PostNewNoteUseCase : IPostNewNoteUseCase
+    {
+        public Task<NoteResponseObject> ExecuteAsync(CreateNoteRequest createNoteRequest)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

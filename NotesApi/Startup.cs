@@ -153,6 +153,7 @@ namespace NotesApi
         private static void RegisterUseCases(IServiceCollection services)
         {
             services.AddScoped<IGetByTargetIdUseCase, GetByTargetIdUseCase>();
+            services.AddScoped<IPostNewNoteUseCase, PostNewNoteUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
