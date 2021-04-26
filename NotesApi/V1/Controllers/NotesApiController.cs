@@ -59,15 +59,7 @@ namespace NotesApi.V1.Controllers
         [HttpPost]
         public async Task<IActionResult> PostNewNote([FromBody] CreateNoteRequest noteRequest)
         {
-            try
-            {
-                return Ok(await _newNoteUseCase.ExecuteAsync(noteRequest).ConfigureAwait(false));
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException(ex.Message);
-            }
+            return Ok(await _newNoteUseCase.ExecuteAsync(noteRequest).ConfigureAwait(false));
         }
-
     }
 }
