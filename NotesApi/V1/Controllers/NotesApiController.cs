@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NotesApi.V1.Boundary.Response;
@@ -6,6 +7,7 @@ using NotesApi.V1.UseCase.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NotesApi.V1.Boundary;
 
 namespace NotesApi.V1.Controllers
 {
@@ -16,9 +18,12 @@ namespace NotesApi.V1.Controllers
     public class NotesApiController : BaseController
     {
         private readonly IGetByTargetIdUseCase _getByTargetIdUseCase;
-        public NotesApiController(IGetByTargetIdUseCase getByTargetIdUseCase)
+        private readonly IPostNewNoteUseCase _newNoteUseCase;
+
+        public NotesApiController(IGetByTargetIdUseCase getByTargetIdUseCase, IPostNewNoteUseCase newNoteUseCase)
         {
             _getByTargetIdUseCase = getByTargetIdUseCase;
+            _newNoteUseCase = newNoteUseCase;
         }
 
         /// <summary>
@@ -40,6 +45,28 @@ namespace NotesApi.V1.Controllers
             if ((null == response) || !response.Results.Any()) return NotFound(query.TargetId);
 
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Creates a new note entry
+        /// </summary>
+        /// <response code="200">Returns the note created with its ID</response>
+        /// <response code="400">Invalid fields in the post parameter.</response>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(typeof(List<NoteResponseObject>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPost]
+        public async Task<IActionResult> PostNewNote([FromBody] CreateNoteRequest noteRequest)
+        {
+            try
+            {
+                return Ok(await _newNoteUseCase.ExecuteAsync(noteRequest).ConfigureAwait(false));
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException(ex.Message);
+            }
         }
 
     }
