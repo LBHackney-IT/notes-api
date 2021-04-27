@@ -37,7 +37,9 @@ namespace NotesApi.V1.Boundary.Response
                 },
                 Author = new AuthorDetails
                 {
-                    Email = note.Author.Email, FullName = note.Author.FullName, Id = note.Author.Id
+                    Email = note.Author.Email,
+                    FullName = note.Author.FullName,
+                    Id = note.Author.Id
                 }
             };
         }

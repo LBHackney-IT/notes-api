@@ -61,7 +61,9 @@ namespace NotesApi.V1.Gateways
                 TargetId = Guid.Parse(request.TargetId),
                 Author = new AuthorDetails
                 {
-                    Id = request.Author.Id, Email = request.Author.Email, FullName = request.Author.FullName
+                    Id = request.Author.Id,
+                    Email = request.Author.Email,
+                    FullName = request.Author.FullName
                 },
                 Categorisation = new Categorisation
                 {
