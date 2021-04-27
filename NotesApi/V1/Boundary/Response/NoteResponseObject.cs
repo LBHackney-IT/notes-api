@@ -19,5 +19,27 @@ namespace NotesApi.V1.Boundary.Response
         public Categorisation Categorisation { get; set; }
 
         public AuthorDetails Author { get; set; }
+
+        public static NoteResponseObject Create(Note note)
+        {
+            return new NoteResponseObject
+            {
+                Id = note.Id,
+                Description = note.Description,
+                TargetType = note.TargetType,
+                TargetId = note.TargetId,
+                DateTime = note.DateTime,
+                Categorisation = new Categorisation
+                {
+                    Description = note.Categorisation.Description,
+                    Category = note.Categorisation.Category,
+                    SubCategory = note.Categorisation.SubCategory
+                },
+                Author = new AuthorDetails
+                {
+                    Email = note.Author.Email, FullName = note.Author.FullName, Id = note.Author.Id
+                }
+            };
+        }
     }
 }

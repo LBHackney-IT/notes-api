@@ -1,3 +1,4 @@
+using System;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using NotesApi.V1.Domain;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using NotesApi.V1.Boundary;
 
 namespace NotesApi.V1.Gateways
 {
@@ -47,6 +49,31 @@ namespace NotesApi.V1.Gateways
                 dbNotes.AddRange(_dynamoDbContext.FromDocuments<NoteDb>(resultsSet));
 
             return new PagedResult<Note>(dbNotes.Select(x => x.ToDomain()), new PaginationDetails(search.PaginationToken));
+        }
+
+        public async Task<Note> PostNewNoteAsync(CreateNoteRequest request)
+        {
+            var dbNote = new NoteDb
+            {
+                Id = Guid.NewGuid(),
+                Description = request.Description,
+                DateTime = Convert.ToDateTime(request.DateTime),
+                TargetId = Guid.Parse(request.TargetId),
+                Author = new AuthorDetails
+                {
+                    Id = request.Author.Id, Email = request.Author.Email, FullName = request.Author.FullName
+                },
+                Categorisation = new Categorisation
+                {
+                    Description = request.Categorisation.Description,
+                    Category = request.Categorisation.Category,
+                    SubCategory = request.Categorisation.SubCategory
+                }
+            };
+
+            await _dynamoDbContext.SaveAsync(dbNote).ConfigureAwait(false);
+
+            return dbNote.ToDomain();
         }
     }
 }
