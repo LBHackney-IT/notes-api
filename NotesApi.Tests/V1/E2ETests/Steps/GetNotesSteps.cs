@@ -7,9 +7,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
+using Newtonsoft.Json;
+using NotesApi.Tests.V1.E2ETests.Fixtures;
+using NotesApi.V1.Domain.Queries;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace NotesApi.Tests.V1.E2ETests.Steps
 {
@@ -48,6 +55,17 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
             return true;
         }
 
+        private async Task<HttpResponseMessage> PostToApi(CreateNoteRequest request)
+        {
+            var route = $"api/v1/notes";
+            var uri = new Uri(route, UriKind.Relative);
+
+            var json = JsonConvert.SerializeObject(request);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            return await _httpClient.PostAsync(uri, data).ConfigureAwait(false);
+        }
+
         private async Task<HttpResponseMessage> CallApi(string id, string paginationToken = null, int? pageSize = null)
         {
             var route = $"api/v1/notes?targetId={id}";
@@ -66,6 +84,8 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
             var apiResult = JsonSerializer.Deserialize<PagedResult<NoteResponseObject>>(responseContent, _jsonOptions);
             return apiResult;
         }
+
+        #region When
 
         public async Task WhenTheTargetNotesAreRequested(string id)
         {
@@ -89,6 +109,27 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
                 pageToken = apiResult.PaginationDetails.NextToken;
             }
             while (!string.IsNullOrEmpty(pageToken));
+        }
+
+        public async Task WhenPostingANote(CreateNoteRequest request, NotesFixture notesFixture)
+        {
+            var result = await PostToApi(request).ConfigureAwait(false);
+            notesFixture.NoteResponse =
+                JsonConvert.DeserializeObject<NoteResponseObject>(result.Content.ReadAsStringAsync().Result);
+        }
+
+        #endregion When
+
+        #region Then
+
+        public async Task ThenTheNoteHasBeenPersisted(NoteResponseObject responseObject, IDynamoDBContext dbContext)
+        {
+            var table = dbContext.GetTargetTable<NoteDb>();
+            var result = await table.GetItemAsync(responseObject.TargetId, responseObject.Id).ConfigureAwait(false);
+            var note = dbContext.FromDocument<NoteDb>(result);
+
+            note.Should().NotBeNull();
+            note.Id.Should().Be(responseObject.Id);
         }
 
         public async Task ThenTheTargetNotesAreReturned(List<NoteDb> expectedNotes)
@@ -136,5 +177,7 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
         {
             _lastResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
+
+        #endregion Then
     }
 }
