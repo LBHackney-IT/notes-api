@@ -57,7 +57,7 @@ namespace NotesApi.Tests.V1.E2ETests.Fixtures
             var note = new Fixture().Create<CreateNoteRequest>();
 
             note.TargetId = Guid.NewGuid().ToString();
-            note.CreatedAt = "2021-02-19 15:12:00";
+            note.CreatedAt = new DateTime(2021, 02, 19);
             note.Author.Email = "something@somewhere.com";
 
             NoteRequest = note;
