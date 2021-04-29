@@ -34,6 +34,7 @@ services:
     container_name: dynamodb
     image: amazon/dynamodb-local:latest
     entrypoint: java
-    command: "-jar DynamoDBLocal.jar -sharedDb"    
+    command: "-jar DynamoDBLocal.jar -inMemory -sharedDb"
+    restart: always    
     ports:
       - "8000:8000"
