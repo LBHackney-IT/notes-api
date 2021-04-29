@@ -12,7 +12,7 @@ namespace NotesApi.V1.Domain.Queries
 
         public string TargetId { get; set; }
 
-        public string DateTime { get; set; }
+        public string CreatedAt { get; set; }
 
         public Categorisation Categorisation { get; set; }
 

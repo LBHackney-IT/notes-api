@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
 using NotesApi.Tests.V1.E2ETests.Fixtures;
 using NotesApi.V1.Domain.Queries;
@@ -64,7 +65,8 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
             var json = JsonConvert.SerializeObject(request);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-            return await _httpClient.PostAsync(uri, data).ConfigureAwait(false);
+            var result = await _httpClient.PostAsync(uri, data).ConfigureAwait(false);
+            return result;
         }
 
         private async Task<HttpResponseMessage> CallApi(string id, string paginationToken = null, int? pageSize = null)
@@ -123,12 +125,12 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
 
         #region Then
 
-        public async Task ThenTheNoteHasBeenPersisted(NoteResponseObject responseObject, IDynamoDBContext dbContext)
+        public async Task ThenTheNoteHasBeenPersisted(NoteResponseObject responseObject)
         {
-            var table = dbContext.GetTargetTable<NoteDb>();
-            var result = await table.GetItemAsync(responseObject.TargetId, responseObject.Id).ConfigureAwait(false);
-            var note = dbContext.FromDocument<NoteDb>(result);
+            var response = await CallApi(responseObject.TargetId.ToString()).ConfigureAwait(false);
+            var apiResult = await ExtractResultFromHttpResponse(response).ConfigureAwait(false);
 
+            var note = apiResult.Results.FirstOrDefault(x => x.TargetId == responseObject.TargetId && x.Id == responseObject.Id);
             note.Should().NotBeNull();
             note.Id.Should().Be(responseObject.Id);
         }

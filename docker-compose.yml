@@ -31,10 +31,7 @@ services:
     links:
       - dynamodb-database
   dynamodb-database:
-    container_name: dynamodb
-    image: amazon/dynamodb-local:latest
-    entrypoint: java
-    command: "-jar DynamoDBLocal.jar -inMemory -sharedDb"
-    restart: always    
+    image: amazon/dynamodb-local
+    command: "-jar DynamoDBLocal.jar -sharedDb"
     ports:
-      - "8000:8000"
+      - 8000:8000

@@ -114,7 +114,7 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
         {
             this.Given(g => _notesFixture.GivenANewNoteIsCreated())
                 .When(w => _steps.WhenPostingANote(_notesFixture.NoteRequest, _notesFixture))
-                .Then(t => _steps.ThenTheNoteHasBeenPersisted(_notesFixture.NoteResponse, _dbFixture.DynamoDbContext))
+                .Then(t => _steps.ThenTheNoteHasBeenPersisted(_notesFixture.NoteResponse))
                 .BDDfy();
         }
     }

@@ -57,7 +57,7 @@ namespace NotesApi.V1.Gateways
             {
                 Id = Guid.NewGuid(),
                 Description = request.Description,
-                DateTime = Convert.ToDateTime(request.DateTime),
+                DateTime = Convert.ToDateTime(request.CreatedAt),
                 TargetId = Guid.Parse(request.TargetId),
                 Author = new AuthorDetails
                 {
@@ -73,7 +73,10 @@ namespace NotesApi.V1.Gateways
                 }
             };
 
-            await _dynamoDbContext.SaveAsync(dbNote).ConfigureAwait(false);
+            await _dynamoDbContext.SaveAsync(dbNote, new DynamoDBOperationConfig
+            {
+
+            }).ConfigureAwait(false);
 
             return dbNote.ToDomain();
         }
