@@ -36,7 +36,7 @@ namespace NotesApi.Tests.V1.UseCase
 
             // Assert
             _mockGateway.Verify(x => x.PostNewNoteAsync(It.IsAny<CreateNoteRequest>()));
-        } 
+        }
 
         [Fact]
         public void PostNewNoteUseCaseExceptionIsThrown()
