@@ -73,10 +73,7 @@ namespace NotesApi.V1.Gateways
                 }
             };
 
-            await _dynamoDbContext.SaveAsync(dbNote, new DynamoDBOperationConfig
-            {
-
-            }).ConfigureAwait(false);
+            await _dynamoDbContext.SaveAsync(dbNote).ConfigureAwait(false);
 
             return dbNote.ToDomain();
         }
