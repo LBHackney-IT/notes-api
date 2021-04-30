@@ -50,7 +50,7 @@ namespace NotesApi.V1.Controllers
         /// <summary>
         /// Creates a new note entry
         /// </summary>
-        /// <response code="200">Returns the note created with its ID</response>
+        /// <response code="201">Returns the note created with its ID</response>
         /// <response code="400">Invalid fields in the post parameter.</response>
         /// <response code="500">Internal server error</response>
         [ProducesResponseType(typeof(List<NoteResponseObject>), StatusCodes.Status200OK)]

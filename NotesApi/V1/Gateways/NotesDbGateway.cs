@@ -57,8 +57,9 @@ namespace NotesApi.V1.Gateways
             {
                 Id = Guid.NewGuid(),
                 Description = request.Description,
-                DateTime = request.CreatedAt,
-                TargetId = Guid.Parse(request.TargetId),
+                CreatedAt = request.CreatedAt,
+                TargetId = request.TargetId,
+                TargetType = request.TargetType,
                 Author = new AuthorDetails
                 {
                     Id = request.Author.Id,

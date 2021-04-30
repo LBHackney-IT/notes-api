@@ -139,7 +139,7 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
         {
             var apiResult = await ExtractResultFromHttpResponse(_lastResponse).ConfigureAwait(false);
             apiResult.Results.Should().BeEquivalentTo(expectedNotes);
-            IsDateTimeListInDescendingOrder(apiResult.Results.Select(x => x.DateTime)).Should().BeTrue();
+            IsDateTimeListInDescendingOrder(apiResult.Results.Select(x => x.CreatedAt)).Should().BeTrue();
         }
 
         public async Task ThenTheTargetNotesAreReturnedByPageSize(List<NoteDb> expectedNotes, int? pageSize)
@@ -150,9 +150,9 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
 
             var apiResult = await ExtractResultFromHttpResponse(_lastResponse).ConfigureAwait(false);
             apiResult.Results.Count.Should().Be(expectedPageSize);
-            apiResult.Results.Should().BeEquivalentTo(expectedNotes.OrderByDescending(x => x.DateTime).Take(expectedPageSize));
+            apiResult.Results.Should().BeEquivalentTo(expectedNotes.OrderByDescending(x => x.CreatedAt).Take(expectedPageSize));
 
-            IsDateTimeListInDescendingOrder(apiResult.Results.Select(x => x.DateTime)).Should().BeTrue();
+            IsDateTimeListInDescendingOrder(apiResult.Results.Select(x => x.CreatedAt)).Should().BeTrue();
         }
 
         public async Task ThenTheFirstPageOfTargetNotesAreReturned(List<NoteDb> expectedNotes)
@@ -160,15 +160,15 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
             var apiResult = await ExtractResultFromHttpResponse(_lastResponse).ConfigureAwait(false);
             apiResult.PaginationDetails.NextToken.Should().NotBeNullOrEmpty();
             apiResult.Results.Count.Should().Be(10);
-            apiResult.Results.Should().BeEquivalentTo(expectedNotes.OrderByDescending(x => x.DateTime).Take(10));
+            apiResult.Results.Should().BeEquivalentTo(expectedNotes.OrderByDescending(x => x.CreatedAt).Take(10));
 
-            IsDateTimeListInDescendingOrder(apiResult.Results.Select(x => x.DateTime)).Should().BeTrue();
+            IsDateTimeListInDescendingOrder(apiResult.Results.Select(x => x.CreatedAt)).Should().BeTrue();
         }
 
         public void ThenAllTheTargetNotesAreReturned(List<NoteDb> expectedNotes)
         {
-            _pagedNotes.Should().BeEquivalentTo(expectedNotes.OrderByDescending(x => x.DateTime));
-            IsDateTimeListInDescendingOrder(_pagedNotes.Select(x => x.DateTime)).Should().BeTrue();
+            _pagedNotes.Should().BeEquivalentTo(expectedNotes.OrderByDescending(x => x.CreatedAt));
+            IsDateTimeListInDescendingOrder(_pagedNotes.Select(x => x.CreatedAt)).Should().BeTrue();
         }
 
         public void ThenBadRequestIsReturned()

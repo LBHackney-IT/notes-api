@@ -19,7 +19,7 @@ namespace NotesApi.V1.Infrastructure
         public TargetType TargetType { get; set; }
 
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
-        public DateTime DateTime { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<Categorisation>))]
         public Categorisation Categorisation { get; set; }

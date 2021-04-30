@@ -14,7 +14,7 @@ namespace NotesApi.V1.Boundary.Response
 
         public Guid TargetId { get; set; }
 
-        public DateTime DateTime { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public Categorisation Categorisation { get; set; }
 
@@ -28,7 +28,7 @@ namespace NotesApi.V1.Boundary.Response
                 Description = note.Description,
                 TargetType = note.TargetType,
                 TargetId = note.TargetId,
-                DateTime = note.DateTime,
+                CreatedAt = note.CreatedAt,
                 Categorisation = new Categorisation
                 {
                     Description = note.Categorisation.Description,
