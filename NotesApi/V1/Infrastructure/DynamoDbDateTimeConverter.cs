@@ -7,7 +7,7 @@ namespace NotesApi.V1.Infrastructure
     // TODO: This should go in a common NuGet package...
 
     /// <summary>
-    /// Converter for CreatedAt objects because the default handling expects the data time string to alays be in a very specific
+    /// Converter for DateTime objects because the default handling expects the data time string to alays be in a very specific
     /// format and will throw an exception if not.
     /// </summary>
     public class DynamoDbDateTimeConverter : IPropertyConverter

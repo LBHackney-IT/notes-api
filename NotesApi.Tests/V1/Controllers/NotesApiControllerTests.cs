@@ -103,5 +103,20 @@ namespace NotesApi.Tests.V1.Controllers
             // Assert
             func.Should().Throw<ApplicationException>().WithMessage(exception.Message);
         }
+
+        [Fact]
+        public async Task PostNewNoteReturnsOk()
+        {
+            // Arrange
+            var exception = new ApplicationException("Test exception");
+            _mockPostNewNoteUseCase.Setup(x => x.ExecuteAsync(It.IsAny<CreateNoteRequest>())).
+                ReturnsAsync(new NoteResponseObject());
+
+            // Act
+            var result = await _sut.PostNewNote(new CreateNoteRequest()).ConfigureAwait(false);
+
+            // Assert
+            (result as OkObjectResult).Should().NotBe(null);
+        }
     }
 }
