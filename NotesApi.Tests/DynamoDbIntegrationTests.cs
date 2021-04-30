@@ -31,7 +31,7 @@ namespace NotesApi.Tests
                         KeySchema = new List<KeySchemaElement>(new[]
                         {
                             new KeySchemaElement("targetId", KeyType.HASH),
-                            new KeySchemaElement("dateTime", KeyType.RANGE)
+                            new KeySchemaElement("createdAt", KeyType.RANGE)
                         }),
                         Projection = new Projection { ProjectionType = ProjectionType.ALL }
                     }
