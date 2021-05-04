@@ -105,18 +105,19 @@ namespace NotesApi.Tests.V1.Controllers
         }
 
         [Fact]
-        public async Task PostNewNoteReturnsOk()
+        public async Task PostNewNoteReturnsCreated()
         {
             // Arrange
-            var exception = new ApplicationException("Test exception");
+            var newNote = _fixture.Create<NoteResponseObject>();
             _mockPostNewNoteUseCase.Setup(x => x.ExecuteAsync(It.IsAny<CreateNoteRequest>())).
-                ReturnsAsync(new NoteResponseObject());
+                ReturnsAsync(newNote);
 
             // Act
             var result = await _sut.PostNewNote(new CreateNoteRequest()).ConfigureAwait(false);
 
             // Assert
-            (result as OkObjectResult).Should().NotBe(null);
+            (result as CreatedResult).Should().NotBe(null);
+            (result as CreatedResult).Value.Should().Be(newNote);
         }
     }
 }

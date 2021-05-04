@@ -59,7 +59,8 @@ namespace NotesApi.V1.Controllers
         [HttpPost]
         public async Task<IActionResult> PostNewNote([FromBody] CreateNoteRequest noteRequest)
         {
-            return Ok(await _newNoteUseCase.ExecuteAsync(noteRequest).ConfigureAwait(false));
+            var newNote = await _newNoteUseCase.ExecuteAsync(noteRequest).ConfigureAwait(false);
+            return Created(new Uri($"api/v1/notes?targetId={newNote.TargetId}", UriKind.Relative), newNote);
         }
     }
 }
