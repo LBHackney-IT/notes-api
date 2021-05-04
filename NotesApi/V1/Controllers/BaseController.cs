@@ -14,10 +14,10 @@ namespace NotesApi.V1.Controllers
 
         public string GetCorrelationId()
         {
-            if (HttpContext.Request.Headers[CorrelationConstants.CorrelationId].Count == 0)
+            if (HttpContext.Request.Headers[Constants.CorrelationId].Count == 0)
                 throw new KeyNotFoundException("Request is missing a correlationId");
 
-            return HttpContext.Request.Headers[CorrelationConstants.CorrelationId];
+            return HttpContext.Request.Headers[Constants.CorrelationId];
         }
         public static void ConfigureJsonSerializer()
         {

@@ -1,9 +1,11 @@
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Microsoft.Extensions.Logging;
 using NotesApi.V1.Domain;
 using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Infrastructure;
+using NotesApi.V1.Logging;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -18,18 +20,22 @@ namespace NotesApi.V1.Gateways
         private const string TARGETID = "targetId";
 
         private readonly IDynamoDBContext _dynamoDbContext;
+        private readonly ILogger<NotesDbGateway> _logger;
 
-        public NotesDbGateway(IDynamoDBContext dynamoDbContext)
+        public NotesDbGateway(IDynamoDBContext dynamoDbContext, ILogger<NotesDbGateway> logger)
         {
             _dynamoDbContext = dynamoDbContext;
+            _logger = logger;
         }
 
         // This method cannot be unit tested because of having to use GetTargetTable()
         // which returns an unmockable concrete class.
         // See here: https://github.com/aws/aws-sdk-net/issues/1310
         [ExcludeFromCodeCoverage]
+        [LogCall]
         public async Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query)
         {
+            _logger.LogDebug($"Querying IDynamoDBContext.GetTargetTable for TargetId {query.TargetId}");
             int pageSize = query.PageSize.HasValue ? query.PageSize.Value : MAX_RESULTS;
             var dbNotes = new List<NoteDb>();
             var table = _dynamoDbContext.GetTargetTable<NoteDb>();

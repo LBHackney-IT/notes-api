@@ -14,12 +14,14 @@ using Microsoft.OpenApi.Models;
 using NotesApi.V1;
 using NotesApi.V1.Gateways;
 using NotesApi.V1.Infrastructure;
+using NotesApi.V1.Logging;
 using NotesApi.V1.UseCase;
 using NotesApi.V1.UseCase.Interfaces;
 using NotesApi.Versioning;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -27,6 +29,7 @@ using System.Text.Json.Serialization;
 
 namespace NotesApi
 {
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -120,6 +123,7 @@ namespace NotesApi
             AWSXRayRecorder.InitializeInstance(Configuration);
             AWSXRayRecorder.RegisterLogger(LoggingOptions.SystemDiagnostics);
 
+            services.AddLogCallAspect();
             services.ConfigureDynamoDB();
             RegisterGateways(services);
             RegisterUseCases(services);
@@ -137,6 +141,18 @@ namespace NotesApi
                 config.AddConfiguration(configuration.GetSection("Logging"));
                 config.AddDebug();
                 config.AddEventSourceLogger();
+
+                // Create and populate LambdaLoggerOptions object
+                var loggerOptions = new LambdaLoggerOptions
+                {
+                    IncludeCategory = false,
+                    IncludeLogLevel = true,
+                    IncludeNewline = true,
+                    IncludeEventId = true,
+                    IncludeException = true,
+                    IncludeScopes = true
+                };
+                config.AddLambdaLogger(loggerOptions);
 
                 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development)
                 {
@@ -156,7 +172,7 @@ namespace NotesApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             app.UseCorrelation();
             if (env.IsDevelopment())
@@ -168,8 +184,9 @@ namespace NotesApi
                 app.UseHsts();
             }
 
-            app.UseCustomExceptionHandler();
             app.UseCorrelation();
+            app.UseLoggingScope();
+            app.UseCustomExceptionHandler(logger);
             app.UseXRay("notes-api");
 
             //Get All ApiVersions,
@@ -193,6 +210,7 @@ namespace NotesApi
                 // SwaggerGen won't find controllers that are routed via this technique.
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
+            app.UseLogCall();
         }
     }
 }

@@ -16,6 +16,7 @@ using NotesApi.V1.Domain.Queries;
 
 namespace NotesApi.Tests.V1.UseCase
 {
+    [Collection("LogCall collection")]
     public class GetByTargetIdUseCaseTests
     {
         private readonly Fixture _fixture = new Fixture();
