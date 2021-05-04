@@ -16,6 +16,7 @@ using Xunit;
 
 namespace NotesApi.Tests.V1.Controllers
 {
+    [Collection("LogCall collection")]
     public class NotesApiControllerTests
     {
         private readonly Mock<IGetByTargetIdUseCase> _mockGetByTargetIdUseCase;

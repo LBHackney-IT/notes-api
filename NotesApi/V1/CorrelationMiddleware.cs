@@ -20,18 +20,18 @@ namespace NotesApi.V1
         public async Task InvokeAsync(HttpContext context)
         {
             var correlationIdProvided =
-                context.Request.Headers.TryGetValue(CorrelationConstants.CorrelationId, out var correlationId);
+                context.Request.Headers.TryGetValue(Constants.CorrelationId, out var correlationId);
             if (!correlationIdProvided)
             {
                 correlationId = new StringValues(Guid.NewGuid().ToString());
-                context.Request.Headers.Add(CorrelationConstants.CorrelationId, correlationId);
+                context.Request.Headers.Add(Constants.CorrelationId, correlationId);
             }
 
             context.Response.OnStarting(() =>
             {
-                if (!context.Response.Headers.ContainsKey(CorrelationConstants.CorrelationId))
+                if (!context.Response.Headers.ContainsKey(Constants.CorrelationId))
                 {
-                    context.Response.Headers.Add(CorrelationConstants.CorrelationId, correlationId);
+                    context.Response.Headers.Add(Constants.CorrelationId, correlationId);
                 }
 
                 return Task.CompletedTask;

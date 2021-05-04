@@ -1,8 +1,10 @@
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Domain.Queries;
+using NotesApi.V1.Logging;
 using NotesApi.V1.UseCase.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +41,7 @@ namespace NotesApi.V1.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet]
+        [LogCall(LogLevel.Information)]
         public async Task<IActionResult> GetByTargetIdAsync([FromQuery] GetNotesByTargetIdQuery query)
         {
             var response = await _getByTargetIdUseCase.ExecuteAsync(query).ConfigureAwait(false);

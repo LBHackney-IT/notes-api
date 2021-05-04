@@ -22,13 +22,13 @@ namespace NotesApi.Tests.V1
             var httpContext = new DefaultHttpContext();
             var headerValue = "123";
 
-            httpContext.HttpContext.Request.Headers.Add(CorrelationConstants.CorrelationId, headerValue);
+            httpContext.HttpContext.Request.Headers.Add(Constants.CorrelationId, headerValue);
 
             // Act
             await _sut.InvokeAsync(httpContext).ConfigureAwait(false);
 
             // Assert
-            httpContext.HttpContext.Request.Headers[CorrelationConstants.CorrelationId].Should().BeEquivalentTo(headerValue);
+            httpContext.HttpContext.Request.Headers[Constants.CorrelationId].Should().BeEquivalentTo(headerValue);
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace NotesApi.Tests.V1
             await _sut.InvokeAsync(httpContext).ConfigureAwait(false);
 
             // Assert
-            httpContext.HttpContext.Request.Headers[CorrelationConstants.CorrelationId].Should().HaveCountGreaterThan(0);
+            httpContext.HttpContext.Request.Headers[Constants.CorrelationId].Should().HaveCountGreaterThan(0);
         }
     }
 }
