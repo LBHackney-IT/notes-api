@@ -32,5 +32,6 @@ services:
       - dynamodb-database
   dynamodb-database:
     image: amazon/dynamodb-local
+    command: "-jar DynamoDBLocal.jar -sharedDb"
     ports:
       - 8000:8000

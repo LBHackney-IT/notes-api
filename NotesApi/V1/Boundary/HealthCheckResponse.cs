@@ -9,6 +9,7 @@ namespace NotesApi.V1.Boundary
         }
 
         public bool Success { get; }
+
         public string Message { get; }
     }
 }

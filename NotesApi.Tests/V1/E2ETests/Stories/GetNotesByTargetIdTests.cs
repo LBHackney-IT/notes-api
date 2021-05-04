@@ -32,6 +32,7 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
         }
 
         private bool _disposed;
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing && !_disposed)
@@ -104,6 +105,16 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
             this.Given(g => _notesFixture.GivenAnInvalidTargetId())
                 .When(w => _steps.WhenTheTargetNotesAreRequested(_notesFixture.InvalidTargetId))
                 .Then(t => _steps.ThenBadRequestIsReturned())
+                .BDDfy();
+        }
+
+        [Fact]
+        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
+        public void PostingANoteTest()
+        {
+            this.Given(g => _notesFixture.GivenANewNoteIsCreated())
+                .When(w => _steps.WhenPostingANote(_notesFixture.NoteRequest, _notesFixture))
+                .Then(t => _steps.ThenTheNoteHasBeenPersisted(_notesFixture.NoteResponse))
                 .BDDfy();
         }
     }

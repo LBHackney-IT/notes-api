@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NotesApi.V1.Boundary;
 using Xunit;
 
 namespace NotesApi.Tests.V1.Controllers
@@ -18,13 +19,16 @@ namespace NotesApi.Tests.V1.Controllers
     public class NotesApiControllerTests
     {
         private readonly Mock<IGetByTargetIdUseCase> _mockGetByTargetIdUseCase;
+        private readonly Mock<IPostNewNoteUseCase> _mockPostNewNoteUseCase;
         private readonly NotesApiController _sut;
         private readonly Fixture _fixture = new Fixture();
 
         public NotesApiControllerTests()
         {
             _mockGetByTargetIdUseCase = new Mock<IGetByTargetIdUseCase>();
-            _sut = new NotesApiController(_mockGetByTargetIdUseCase.Object);
+            _mockPostNewNoteUseCase = new Mock<IPostNewNoteUseCase>();
+
+            _sut = new NotesApiController(_mockGetByTargetIdUseCase.Object, _mockPostNewNoteUseCase.Object);
         }
 
         [Theory]
@@ -84,6 +88,36 @@ namespace NotesApi.Tests.V1.Controllers
 
             // Assert
             func.Should().Throw<ApplicationException>().WithMessage(exception.Message);
+        }
+
+        [Fact]
+        public void PostNewNoteAsyncExceptionIsThrown()
+        {
+            // Arrange
+            var exception = new ApplicationException("Test exception");
+            _mockPostNewNoteUseCase.Setup(x => x.ExecuteAsync(It.IsAny<CreateNoteRequest>())).ThrowsAsync(exception);
+
+            // Act
+            Func<Task<IActionResult>> func = async () => await _sut.PostNewNote(new CreateNoteRequest()).ConfigureAwait(false);
+
+            // Assert
+            func.Should().Throw<ApplicationException>().WithMessage(exception.Message);
+        }
+
+        [Fact]
+        public async Task PostNewNoteReturnsCreated()
+        {
+            // Arrange
+            var newNote = _fixture.Create<NoteResponseObject>();
+            _mockPostNewNoteUseCase.Setup(x => x.ExecuteAsync(It.IsAny<CreateNoteRequest>())).
+                ReturnsAsync(newNote);
+
+            // Act
+            var result = await _sut.PostNewNote(new CreateNoteRequest()).ConfigureAwait(false);
+
+            // Assert
+            (result as CreatedResult).Should().NotBe(null);
+            (result as CreatedResult).Value.Should().Be(newNote);
         }
     }
 }

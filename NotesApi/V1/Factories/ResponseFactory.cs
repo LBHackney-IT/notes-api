@@ -13,7 +13,7 @@ namespace NotesApi.V1.Factories
             {
                 Author = domain.Author,
                 Categorisation = domain.Categorisation,
-                DateTime = domain.DateTime,
+                CreatedAt = domain.CreatedAt,
                 Description = domain.Description,
                 Id = domain.Id,
                 TargetId = domain.TargetId,

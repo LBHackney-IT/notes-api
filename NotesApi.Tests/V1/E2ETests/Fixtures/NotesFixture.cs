@@ -5,18 +5,28 @@ using NotesApi.V1.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NotesApi.V1.Boundary.Response;
+using NotesApi.V1.Domain.Queries;
 
 namespace NotesApi.Tests.V1.E2ETests.Fixtures
 {
     public class NotesFixture : IDisposable
     {
         private readonly Fixture _fixture = new Fixture();
+
         private readonly IDynamoDBContext _dbContext;
+
         public List<NoteDb> Notes { get; private set; } = new List<NoteDb>();
+
         public Guid TargetId { get; private set; }
+
         public string InvalidTargetId { get; private set; }
 
         public const int MAXNOTES = 10;
+
+        public CreateNoteRequest NoteRequest { get; private set; }
+
+        public NoteResponseObject NoteResponse { get; set; }
 
         public NotesFixture(IDynamoDBContext dbContext)
         {
@@ -42,10 +52,22 @@ namespace NotesApi.Tests.V1.E2ETests.Fixtures
             }
         }
 
+        public void GivenANewNoteIsCreated()
+        {
+            var note = new Fixture().Create<CreateNoteRequest>();
+
+            note.TargetId = Guid.NewGuid();
+            note.CreatedAt = DateTime.Now;
+            note.Author.Email = "something@somewhere.com";
+
+            NoteRequest = note;
+        }
+
         public void GivenTargetNotesAlreadyExist()
         {
             GivenTargetNotesAlreadyExist(MAXNOTES);
         }
+
         public void GivenTargetNotesAlreadyExist(int count)
         {
             if (!Notes.Any())
@@ -54,7 +76,7 @@ namespace NotesApi.Tests.V1.E2ETests.Fixtures
                 TargetId = Guid.NewGuid();
                 Func<DateTime> funcDT = () => DateTime.UtcNow.AddDays(0 - random.Next(100));
                 Notes.AddRange(_fixture.Build<NoteDb>()
-                                       .With(x => x.DateTime, funcDT)
+                                       .With(x => x.CreatedAt, funcDT)
                                        .With(x => x.TargetType, TargetType.person)
                                        .With(x => x.TargetId, TargetId)
                                        .CreateMany(count));

@@ -11,7 +11,7 @@ namespace NotesApi.V1.Factories
             {
                 Author = databaseNote.Author,
                 Categorisation = databaseNote.Categorisation,
-                DateTime = databaseNote.DateTime,
+                CreatedAt = databaseNote.CreatedAt,
                 Description = databaseNote.Description,
                 Id = databaseNote.Id,
                 TargetId = databaseNote.TargetId,
@@ -25,7 +25,7 @@ namespace NotesApi.V1.Factories
             {
                 Author = note.Author,
                 Categorisation = note.Categorisation,
-                DateTime = note.DateTime,
+                CreatedAt = note.CreatedAt,
                 Description = note.Description,
                 Id = note.Id,
                 TargetId = note.TargetId,

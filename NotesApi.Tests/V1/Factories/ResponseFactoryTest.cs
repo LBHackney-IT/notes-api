@@ -20,7 +20,7 @@ namespace NotesApi.Tests.V1.Factories
             note.Id.Should().Be(responseNote.Id);
             note.Author.Should().BeEquivalentTo(responseNote.Author);
             note.Categorisation.Should().BeEquivalentTo(responseNote.Categorisation);
-            note.DateTime.Should().Be(responseNote.DateTime);
+            note.CreatedAt.Should().Be(responseNote.CreatedAt);
             note.Description.Should().Be(responseNote.Description);
             note.TargetId.Should().Be(responseNote.TargetId);
             note.TargetType.Should().Be(responseNote.TargetType);

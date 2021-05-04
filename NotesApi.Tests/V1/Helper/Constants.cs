@@ -28,7 +28,7 @@ namespace NotesApi.Tests.V1.Helper
             note.TargetId = Constants.TARGETID;
             note.TargetType = Constants.TARGETTYPE;
             note.Description = Constants.DESCRIPTION;
-            note.DateTime = Constants.DATETIME;
+            note.CreatedAt = Constants.DATETIME;
             note.Categorisation = new Categorisation
             {
                 Category = CATEGORISATIONCATEGORY,
