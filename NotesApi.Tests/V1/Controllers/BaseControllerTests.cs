@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Hackney.Core.Middleware;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -38,7 +39,7 @@ namespace NotesApi.Tests.V1.Controllers
         public void GetCorrelationShouldReturnCorrelationIdWhenExists()
         {
             // Arrange
-            _stubHttpContext.Request.Headers.Add(Constants.CorrelationId, "123");
+            _stubHttpContext.Request.Headers.Add(HeaderConstants.CorrelationId, "123");
 
             // Act
             var result = _sut.GetCorrelationId();

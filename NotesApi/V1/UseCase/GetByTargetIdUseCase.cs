@@ -1,8 +1,8 @@
+using Hackney.Core.Logging;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Gateways;
-using NotesApi.V1.Logging;
 using NotesApi.V1.UseCase.Interfaces;
 using System.Threading.Tasks;
 
@@ -16,6 +16,7 @@ namespace NotesApi.V1.UseCase
         {
             _gateway = gateway;
         }
+
         [LogCall]
         public async Task<PagedResult<NoteResponseObject>> ExecuteAsync(GetNotesByTargetIdQuery query)
         {

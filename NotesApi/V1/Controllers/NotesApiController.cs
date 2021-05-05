@@ -1,15 +1,14 @@
-using System;
+using Hackney.Core.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Domain.Queries;
-using NotesApi.V1.Logging;
 using NotesApi.V1.UseCase.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NotesApi.V1.Boundary;
 
 namespace NotesApi.V1.Controllers
 {
@@ -60,6 +59,7 @@ namespace NotesApi.V1.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost]
+        [LogCall(LogLevel.Information)]
         public async Task<IActionResult> PostNewNote([FromBody] CreateNoteRequest noteRequest)
         {
             var newNote = await _newNoteUseCase.ExecuteAsync(noteRequest).ConfigureAwait(false);

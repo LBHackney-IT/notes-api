@@ -1,17 +1,16 @@
-using System;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Hackney.Core.Logging;
 using Microsoft.Extensions.Logging;
 using NotesApi.V1.Domain;
 using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Infrastructure;
-using NotesApi.V1.Logging;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using NotesApi.V1.Boundary;
 
 namespace NotesApi.V1.Gateways
 {
@@ -57,6 +56,7 @@ namespace NotesApi.V1.Gateways
             return new PagedResult<Note>(dbNotes.Select(x => x.ToDomain()), new PaginationDetails(search.PaginationToken));
         }
 
+        [LogCall]
         public async Task<Note> PostNewNoteAsync(CreateNoteRequest request)
         {
             var dbNote = new NoteDb

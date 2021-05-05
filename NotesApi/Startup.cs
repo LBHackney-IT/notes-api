@@ -1,6 +1,11 @@
 using Amazon;
 using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
+using Hackney.Core.DynamoDb;
+using Hackney.Core.Logging;
+using Hackney.Core.Middleware.CorrelationId;
+using Hackney.Core.Middleware.Exception;
+using Hackney.Core.Middleware.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using NotesApi.V1;
 using NotesApi.V1.Gateways;
-using NotesApi.V1.Infrastructure;
-using NotesApi.V1.Logging;
 using NotesApi.V1.UseCase;
 using NotesApi.V1.UseCase.Interfaces;
 using NotesApi.Versioning;
@@ -184,7 +186,7 @@ namespace NotesApi
                 app.UseHsts();
             }
 
-            app.UseCorrelation();
+            app.UseCorrelationId();
             app.UseLoggingScope();
             app.UseCustomExceptionHandler(logger);
             app.UseXRay("notes-api");
