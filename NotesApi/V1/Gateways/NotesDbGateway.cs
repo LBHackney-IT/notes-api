@@ -63,20 +63,20 @@ namespace NotesApi.V1.Gateways
             {
                 Id = Guid.NewGuid(),
                 Description = request.Description,
-                CreatedAt = request.CreatedAt,
+                CreatedAt = request.CreatedAt.Value,
                 TargetId = request.TargetId,
                 TargetType = request.TargetType,
                 Author = new AuthorDetails
                 {
-                    Id = request.Author.Id,
-                    Email = request.Author.Email,
-                    FullName = request.Author.FullName
+                    Id = request.Author?.Id,
+                    Email = request.Author?.Email,
+                    FullName = request.Author?.FullName
                 },
                 Categorisation = new Categorisation
                 {
-                    Description = request.Categorisation.Description,
-                    Category = request.Categorisation.Category,
-                    SubCategory = request.Categorisation.SubCategory
+                    Description = request.Categorisation?.Description,
+                    Category = request.Categorisation?.Category,
+                    SubCategory = request.Categorisation?.SubCategory
                 }
             };
 

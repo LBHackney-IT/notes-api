@@ -9,11 +9,14 @@ namespace NotesApi.V1.Domain.Queries
         [MaxLength(500)]
         public string Description { get; set; }
 
+        [Required]
         public TargetType TargetType { get; set; }
 
+        [Required]
         public Guid TargetId { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        [Required]
+        public DateTime? CreatedAt { get; set; }
 
         public Categorisation Categorisation { get; set; }
 
