@@ -31,15 +31,15 @@ namespace NotesApi.V1.Boundary.Response
                 CreatedAt = note.CreatedAt,
                 Categorisation = new Categorisation
                 {
-                    Description = note.Categorisation.Description,
-                    Category = note.Categorisation.Category,
-                    SubCategory = note.Categorisation.SubCategory
+                    Description = note.Categorisation?.Description,
+                    Category = note.Categorisation?.Category,
+                    SubCategory = note.Categorisation?.SubCategory
                 },
                 Author = new AuthorDetails
                 {
-                    Email = note.Author.Email,
-                    FullName = note.Author.FullName,
-                    Id = note.Author.Id
+                    Email = note.Author?.Email,
+                    FullName = note.Author?.FullName,
+                    Id = note.Author?.Id
                 }
             };
         }
