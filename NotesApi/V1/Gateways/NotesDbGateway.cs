@@ -18,7 +18,7 @@ namespace NotesApi.V1.Gateways
     public class NotesDbGateway : INotesGateway
     {
         private const int MAX_RESULTS = 10;
-        private const string GETNOTESBYTARGETIDINDEX = "NotesByDate";
+        private const string GETNOTESBYTARGETIDINDEX = "NotesByCreated";
         private const string TARGETID = "targetId";
 
         private readonly IDynamoDBContext _dynamoDbContext;

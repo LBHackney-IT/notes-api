@@ -22,7 +22,7 @@ resource "aws_dynamodb_table" "notesapi_dynamodb_table" {
     }
 
     local_secondary_index {
-        name              = "NotesByDate"
+        name              = "NotesByCreated"
         range_key         = "createdAt"
         projection_type   = "ALL"
     }
