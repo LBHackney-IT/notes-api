@@ -125,14 +125,28 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
 
         #region Then
 
-        public async Task ThenTheNoteHasBeenPersisted(NoteResponseObject responseObject)
+        public async Task ThenTheNoteHasBeenPersisted(NotesFixture notesFixture)
         {
+            var responseObject = notesFixture.NoteResponse;
             var response = await CallApi(responseObject.TargetId.ToString()).ConfigureAwait(false);
             var apiResult = await ExtractResultFromHttpResponse(response).ConfigureAwait(false);
 
             var note = apiResult.Results.FirstOrDefault(x => x.TargetId == responseObject.TargetId && x.Id == responseObject.Id);
             note.Should().NotBeNull();
             note.Id.Should().Be(responseObject.Id);
+
+            // Remove after use...
+            var dbNote = new NoteDb()
+            {
+                Author = note.Author,
+                Categorisation = note.Categorisation,
+                CreatedAt = note.CreatedAt,
+                Description = note.Description,
+                Id = note.Id,
+                TargetId = note.TargetId,
+                TargetType = note.TargetType
+            };
+            notesFixture.Notes.Add(dbNote);
         }
 
         public async Task ThenTheTargetNotesAreReturned(List<NoteDb> expectedNotes)

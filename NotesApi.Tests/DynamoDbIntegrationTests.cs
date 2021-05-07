@@ -27,7 +27,7 @@ namespace NotesApi.Tests
                 {
                     new LocalSecondaryIndex
                     {
-                        IndexName = "NotesByDate",
+                        IndexName = "NotesByCreated",
                         KeySchema = new List<KeySchemaElement>(new[]
                         {
                             new KeySchemaElement("targetId", KeyType.HASH),
