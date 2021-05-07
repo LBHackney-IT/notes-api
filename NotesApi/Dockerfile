@@ -2,8 +2,10 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 
 WORKDIR /app
 
-# Copy csproj and restore as distinct layers
+# Copy csproj and nuget config and restore as distinct layers
 COPY *.csproj ./
+COPY /nuget.config /root/.nuget/NuGet/NuGet.Config
+
 RUN dotnet restore
 
 # Copy everything else and build
