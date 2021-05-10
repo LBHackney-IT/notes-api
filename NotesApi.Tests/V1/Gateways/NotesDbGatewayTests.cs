@@ -64,7 +64,7 @@ namespace NotesApi.Tests.V1.Gateways
             foreach (var note in notes)
             {
                 _dynamoDb.SaveAsync(note).GetAwaiter().GetResult();
-                _cleanup.Add(async () => await _dynamoDb.DeleteAsync(note, default).ConfigureAwait(false) );
+                _cleanup.Add(async () => await _dynamoDb.DeleteAsync(note, default).ConfigureAwait(false));
             }
 
             return notes;
