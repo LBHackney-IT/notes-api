@@ -1,8 +1,9 @@
-using System.Threading.Tasks;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Gateways;
+using NotesApi.V1.Logging;
 using NotesApi.V1.UseCase.Interfaces;
+using System.Threading.Tasks;
 
 namespace NotesApi.V1.UseCase
 {
@@ -15,6 +16,7 @@ namespace NotesApi.V1.UseCase
             _gateway = gateway;
         }
 
+        [LogCall]
         public async Task<NoteResponseObject> ExecuteAsync(CreateNoteRequest createNoteRequest)
         {
             var result = await _gateway.PostNewNoteAsync(createNoteRequest).ConfigureAwait(false);

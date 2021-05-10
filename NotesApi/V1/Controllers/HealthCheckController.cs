@@ -1,6 +1,5 @@
-using System.Collections.Generic;
-using NotesApi.V1.UseCase;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace NotesApi.V1.Controllers
 {
@@ -18,13 +17,5 @@ namespace NotesApi.V1.Controllers
 
             return Ok(result);
         }
-
-        [HttpGet]
-        [Route("error")]
-        public void ThrowError()
-        {
-            ThrowOpsErrorUsecase.Execute();
-        }
-
     }
 }

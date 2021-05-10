@@ -7,43 +7,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading;
 using System.Threading.Tasks;
-using Amazon.DynamoDBv2.DataModel;
-using Amazon.DynamoDBv2.DocumentModel;
-using Microsoft.EntityFrameworkCore.Internal;
-using Newtonsoft.Json;
-using NotesApi.Tests.V1.E2ETests.Fixtures;
-using NotesApi.V1.Domain.Queries;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace NotesApi.Tests.V1.E2ETests.Steps
 {
-    public class GetNotesSteps
+    public class GetNotesSteps : BaseSteps
     {
-        private readonly HttpClient _httpClient;
-
-        private HttpResponseMessage _lastResponse;
         private readonly List<NoteResponseObject> _pagedNotes = new List<NoteResponseObject>();
-        private static readonly JsonSerializerOptions _jsonOptions = CreateJsonOptions();
 
-        public GetNotesSteps(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-        private static JsonSerializerOptions CreateJsonOptions()
-        {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
-            };
-            options.Converters.Add(new JsonStringEnumConverter());
-            return options;
-        }
+        public GetNotesSteps(HttpClient httpClient) : base(httpClient)
+        { }
 
         private static bool IsDateTimeListInDescendingOrder(IEnumerable<DateTime> dateTimeList)
         {
@@ -57,18 +31,6 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
             return true;
         }
 
-        private async Task<HttpResponseMessage> PostToApi(CreateNoteRequest request)
-        {
-            var route = $"api/v1/notes";
-            var uri = new Uri(route, UriKind.Relative);
-
-            var json = JsonConvert.SerializeObject(request);
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var result = await _httpClient.PostAsync(uri, data).ConfigureAwait(false);
-            return result;
-        }
-
         private async Task<HttpResponseMessage> CallApi(string id, string paginationToken = null, int? pageSize = null)
         {
             var route = $"api/v1/notes?targetId={id}";
@@ -80,7 +42,7 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
             return await _httpClient.GetAsync(uri).ConfigureAwait(false);
         }
 
-        private static async Task<PagedResult<NoteResponseObject>> ExtractResultFromHttpResponse(HttpResponseMessage response)
+        private async Task<PagedResult<NoteResponseObject>> ExtractResultFromHttpResponse(HttpResponseMessage response)
         {
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -114,40 +76,9 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
             while (!string.IsNullOrEmpty(pageToken));
         }
 
-        public async Task WhenPostingANote(CreateNoteRequest request, NotesFixture notesFixture)
-        {
-            var result = await PostToApi(request).ConfigureAwait(false);
-            notesFixture.NoteResponse =
-                JsonConvert.DeserializeObject<NoteResponseObject>(result.Content.ReadAsStringAsync().Result);
-        }
-
         #endregion When
 
         #region Then
-
-        public async Task ThenTheNoteHasBeenPersisted(NotesFixture notesFixture)
-        {
-            var responseObject = notesFixture.NoteResponse;
-            var response = await CallApi(responseObject.TargetId.ToString()).ConfigureAwait(false);
-            var apiResult = await ExtractResultFromHttpResponse(response).ConfigureAwait(false);
-
-            var note = apiResult.Results.FirstOrDefault(x => x.TargetId == responseObject.TargetId && x.Id == responseObject.Id);
-            note.Should().NotBeNull();
-            note.Id.Should().Be(responseObject.Id);
-
-            // Remove after use...
-            var dbNote = new NoteDb()
-            {
-                Author = note.Author,
-                Categorisation = note.Categorisation,
-                CreatedAt = note.CreatedAt,
-                Description = note.Description,
-                Id = note.Id,
-                TargetId = note.TargetId,
-                TargetType = note.TargetType
-            };
-            notesFixture.Notes.Add(dbNote);
-        }
 
         public async Task ThenTheTargetNotesAreReturned(List<NoteDb> expectedNotes)
         {

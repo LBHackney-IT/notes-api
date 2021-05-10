@@ -17,7 +17,7 @@ namespace NotesApi.V1
 
         public static string EncodeToken(string rawToken)
         {
-            // The AWS SDK can either return an empty JSON object (i.e. '{}') when there are no more results.
+            // The AWS SDK can return an empty JSON object (i.e. '{}') when there are no more results.
             if (string.IsNullOrWhiteSpace(rawToken?.Trim(' ', '{', '}')))
                 return null;
 

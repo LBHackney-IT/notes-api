@@ -12,6 +12,7 @@ using Xunit;
 
 namespace NotesApi.Tests.V1.UseCase
 {
+    [Collection("LogCall collection")]
     public class PostNewNoteUseCaseTests
     {
         private readonly Fixture _fixture = new Fixture();

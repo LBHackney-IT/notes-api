@@ -8,10 +8,8 @@ using NotesApi.V1.Controllers;
 using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.UseCase.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NotesApi.V1.Boundary;
 using Xunit;
 
 namespace NotesApi.Tests.V1.Controllers

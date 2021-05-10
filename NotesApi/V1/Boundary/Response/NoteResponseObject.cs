@@ -22,6 +22,8 @@ namespace NotesApi.V1.Boundary.Response
 
         public static NoteResponseObject Create(Note note)
         {
+            if (note is null) throw new ArgumentNullException(nameof(note));
+
             return new NoteResponseObject
             {
                 Id = note.Id,

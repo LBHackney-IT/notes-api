@@ -10,10 +10,10 @@ namespace NotesApi.V1.Domain.Queries
         public string Description { get; set; }
 
         [Required]
-        public TargetType TargetType { get; set; }
+        public TargetType? TargetType { get; set; }
 
         [Required]
-        public Guid TargetId { get; set; }
+        public Guid? TargetId { get; set; }
 
         [Required]
         public DateTime? CreatedAt { get; set; }

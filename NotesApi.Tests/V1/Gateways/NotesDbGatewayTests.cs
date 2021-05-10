@@ -1,47 +1,185 @@
 using Amazon.DynamoDBv2.DataModel;
-using Amazon.DynamoDBv2.DocumentModel;
 using AutoFixture;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
-using NotesApi.Tests.V1.Helper;
 using NotesApi.V1.Domain;
+using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Gateways;
 using NotesApi.V1.Infrastructure;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-// The DynamoDbGateway.GetByTargetIdAsync() method is untestable, because due to the need to implement pagination
-// we are forced to use GetTargetTable and then perform the necessary operation on the Table object.
-// However the Table class is a concrete one and does not have a public default constructor, meaning that
-// it cannot be mocked or used in isloation, without connecting to a real database instance.
-// See here: https://github.com/aws/aws-sdk-net/issues/1310
+namespace NotesApi.Tests.V1.Gateways
+{
+    [Collection("DynamoDb collection")]
+    public class NotesDbGatewayTests : IDisposable
+    {
+        private readonly Fixture _fixture = new Fixture();
+        private readonly Mock<ILogger<NotesDbGateway>> _logger;
+        private readonly IDynamoDBContext _dynamoDb;
+        private readonly NotesDbGateway _classUnderTest;
+        private readonly List<Action> _cleanup = new List<Action>();
 
-// This class can be kept here commented out until the time other gateway methods are implemented that can be unit tested.
+        public NotesDbGatewayTests(DynamoDbIntegrationTests<Startup> dbTestFixture)
+        {
+            _logger = new Mock<ILogger<NotesDbGateway>>();
+            _dynamoDb = dbTestFixture.DynamoDbContext;
+            _classUnderTest = new NotesDbGateway(_dynamoDb, _logger.Object);
+        }
 
-//namespace NotesApi.Tests.V1.Gateways
-//{
-//    public class NotesDbGatewayTests
-//    {
-//        //private readonly Fixture _fixture = new Fixture();
-//        private readonly Mock<IDynamoDBContext> _dynamoDb;
-//        private readonly Mock<Table> _mockTable;
-//        private readonly DynamoDbGateway _classUnderTest;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-//        public DynamoDbGatewayTests()
-//        {
-//            _dynamoDb = new Mock<IDynamoDBContext>();
-//            _mockTable = new Mock<Table>();
-//            _dynamoDb.Setup(x => x.GetTargetTable<NoteDb>(null)).Returns(_mockTable.Object);
-//            _classUnderTest = new DynamoDbGateway(_dynamoDb.Object);
-//        }
+        private bool _disposed;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && !_disposed)
+            {
+                foreach (var action in _cleanup)
+                    action();
 
-//        [Fact]
-//        public async Task GetByTargetIdReturnsEmptyIfNoRecords()
-//        {
-//            var response = await _classUnderTest.GetByTargetIdAsync(Guid.NewGuid()).ConfigureAwait(false);
-//            response.Should().BeEmpty();
-//        }
+                _disposed = true;
+            }
+        }
 
-//    }
-//}
+        private List<NoteDb> UpsertNotes(Guid targetId, int count)
+        {
+            var notes = new List<NoteDb>();
+
+            var random = new Random();
+            Func<DateTime> funcDT = () => DateTime.UtcNow.AddDays(0 - random.Next(100));
+            notes.AddRange(_fixture.Build<NoteDb>()
+                                   .With(x => x.CreatedAt, funcDT)
+                                   .With(x => x.TargetType, TargetType.person)
+                                   .With(x => x.TargetId, targetId)
+                                   .CreateMany(count));
+
+            foreach (var note in notes)
+            {
+                _dynamoDb.SaveAsync(note).GetAwaiter().GetResult();
+                _cleanup.Add(async () => await _dynamoDb.DeleteAsync(note, default).ConfigureAwait(false) );
+            }
+
+            return notes;
+        }
+
+        private static CreateNoteRequest CreateNoteRequest()
+        {
+            var note = new Fixture().Create<CreateNoteRequest>();
+
+            note.TargetId = Guid.NewGuid();
+            note.CreatedAt = DateTime.Now;
+            note.Author.Email = "something@somewhere.com";
+            return note;
+        }
+
+        #region GetByTargetId Tests
+
+        [Fact]
+        public async Task GetByTargetIdReturnsEmptyIfNoRecords()
+        {
+            var query = new GetNotesByTargetIdQuery() { TargetId = Guid.NewGuid() };
+            var response = await _classUnderTest.GetByTargetIdAsync(query).ConfigureAwait(false);
+            response.Should().NotBeNull();
+            response.Results.Should().BeEmpty();
+            response.PaginationDetails.HasNext.Should().BeFalse();
+            response.PaginationDetails.NextToken.Should().BeNull();
+
+            _logger.VerifyExact(LogLevel.Debug, $"Querying NotesByCreated index for targetId {query.TargetId}", Times.Once());
+        }
+
+        [Fact]
+        public async Task GetByTargetIdReturnsRecords()
+        {
+            var targetId = Guid.NewGuid();
+            var expected = UpsertNotes(targetId, 5);
+
+            var query = new GetNotesByTargetIdQuery() { TargetId = targetId };
+            var response = await _classUnderTest.GetByTargetIdAsync(query).ConfigureAwait(false);
+            response.Should().NotBeNull();
+            response.Results.Should().BeEquivalentTo(expected);
+            response.PaginationDetails.HasNext.Should().BeFalse();
+            response.PaginationDetails.NextToken.Should().BeNull();
+
+            _logger.VerifyExact(LogLevel.Debug, $"Querying NotesByCreated index for targetId {query.TargetId}", Times.Once());
+        }
+
+        [Fact]
+        public async Task GetByTargetIdReturnsRecordsAllPages()
+        {
+            var targetId = Guid.NewGuid();
+            var expected = UpsertNotes(targetId, 9);
+            var expectedFirstPage = expected.OrderByDescending(x => x.CreatedAt).Take(5);
+            var expectedSecondPage = expected.Except(expectedFirstPage).OrderByDescending(x => x.CreatedAt);
+
+            var query = new GetNotesByTargetIdQuery() { TargetId = targetId, PageSize = 5 };
+            var response = await _classUnderTest.GetByTargetIdAsync(query).ConfigureAwait(false);
+            response.Should().NotBeNull();
+            response.Results.Should().BeEquivalentTo(expectedFirstPage);
+            response.PaginationDetails.HasNext.Should().BeTrue();
+            response.PaginationDetails.NextToken.Should().NotBeNull();
+
+            query.PaginationToken = response.PaginationDetails.NextToken;
+            response = await _classUnderTest.GetByTargetIdAsync(query).ConfigureAwait(false);
+            response.Should().NotBeNull();
+            response.Results.Should().BeEquivalentTo(expectedSecondPage);
+            response.PaginationDetails.HasNext.Should().BeFalse();
+            response.PaginationDetails.NextToken.Should().BeNull();
+
+            _logger.VerifyExact(LogLevel.Debug, $"Querying NotesByCreated index for targetId {query.TargetId}", Times.Exactly(2));
+        }
+
+        #endregion GetByTargetId Tests
+
+        #region PostNewNote Tests
+
+        [Fact]
+        public async Task PostNewNoteReturnsNote()
+        {
+            var request = CreateNoteRequest();
+            var response = await _classUnderTest.PostNewNoteAsync(request).ConfigureAwait(false);
+            request.Should().NotBeNull();
+            _cleanup.Add(async () =>
+                await _dynamoDb.DeleteAsync<NoteDb>(response.TargetId, response.Id, default).ConfigureAwait(false));
+
+            request.Should().BeEquivalentTo(response, (opt) => opt.Excluding(x => x.Id));
+            response.Id.Should().NotBeEmpty();
+
+            _logger.VerifyExact(LogLevel.Debug,
+                $"Saving a new note for targetId: {request.TargetId}, targetType: {Enum.GetName(typeof(TargetType), request.TargetType)}",
+                Times.Once());
+        }
+
+        [Fact]
+        public async Task PostNewNoteNoCategoryOrAuthorReturnsNote()
+        {
+            var request = CreateNoteRequest();
+            request.Author = null;
+            request.Categorisation = null;
+            var response = await _classUnderTest.PostNewNoteAsync(request).ConfigureAwait(false);
+            request.Should().NotBeNull();
+            _cleanup.Add(async () =>
+                await _dynamoDb.DeleteAsync<NoteDb>(response.TargetId, response.Id, default).ConfigureAwait(false));
+
+            request.Should().BeEquivalentTo(response, (opt) => opt.Excluding(x => x.Id)
+                                                      .Excluding(y => y.Author)
+                                                      .Excluding(z => z.Categorisation));
+            response.Id.Should().NotBeEmpty();
+            response.Author.Should().BeEquivalentTo(new AuthorDetails());
+            response.Categorisation.Should().BeEquivalentTo(new Categorisation());
+
+            _logger.VerifyExact(LogLevel.Debug,
+                $"Saving a new note for targetId: {request.TargetId}, targetType: {Enum.GetName(typeof(TargetType), request.TargetType)}",
+                Times.Once());
+        }
+
+        #endregion PostNewNote Tests
+    }
+}
