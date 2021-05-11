@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Moq;
 using NotesApi.V1;
-using NotesApi.V1.Controllers;
 using NotesApi.V1.Logging;
 using System;
 using System.Threading.Tasks;

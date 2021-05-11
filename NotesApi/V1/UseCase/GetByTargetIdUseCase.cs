@@ -16,6 +16,7 @@ namespace NotesApi.V1.UseCase
         {
             _gateway = gateway;
         }
+
         [LogCall]
         public async Task<PagedResult<NoteResponseObject>> ExecuteAsync(GetNotesByTargetIdQuery query)
         {

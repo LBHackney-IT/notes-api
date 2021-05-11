@@ -1,7 +1,6 @@
 using NotesApi.Tests.V1.E2ETests.Fixtures;
 using NotesApi.Tests.V1.E2ETests.Steps;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using TestStack.BDDfy;
 using Xunit;
 
@@ -45,7 +44,6 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
         }
 
         [Fact]
-        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
         public void ServiceReturnsTheRequestedNotes()
         {
             this.Given(g => _notesFixture.GivenTargetNotesAlreadyExist())
@@ -59,7 +57,6 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
         [InlineData(5)]
         [InlineData(15)]
         [InlineData(100)]
-        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
         public void ServiceReturnsTheRequestedNotesByPageSize(int? pageSize)
         {
             this.Given(g => _notesFixture.GivenTargetNotesAlreadyExist(30))
@@ -69,7 +66,6 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
         }
 
         [Fact]
-        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
         public void ServiceReturnsFirstPageOfRequestedNotesWithPaginationToken()
         {
             this.Given(g => _notesFixture.GivenTargetNotesWithMultiplePagesAlreadyExist())
@@ -79,7 +75,6 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
         }
 
         [Fact]
-        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
         public void ServiceReturnsAllPagesNotesUsingPaginationToken()
         {
             this.Given(g => _notesFixture.GivenTargetNotesWithMultiplePagesAlreadyExist())
@@ -89,7 +84,6 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
         }
 
         [Fact]
-        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
         public void ServiceReturnsNotFoundIfNoNotesExist()
         {
             this.Given(g => _notesFixture.GivenATargetIdHasNoNotes())
@@ -99,22 +93,11 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
         }
 
         [Fact]
-        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
         public void ServiceReturnsBadRequestIfIdInvalid()
         {
             this.Given(g => _notesFixture.GivenAnInvalidTargetId())
                 .When(w => _steps.WhenTheTargetNotesAreRequested(_notesFixture.InvalidTargetId))
                 .Then(t => _steps.ThenBadRequestIsReturned())
-                .BDDfy();
-        }
-
-        [Fact]
-        [SuppressMessage("Blocker Code Smell", "S2699:Tests should include assertions", Justification = "BDDfy")]
-        public void PostingANoteTest()
-        {
-            this.Given(g => _notesFixture.GivenANewNoteIsCreated())
-                .When(w => _steps.WhenPostingANote(_notesFixture.NoteRequest, _notesFixture))
-                .Then(t => _steps.ThenTheNoteHasBeenPersisted(_notesFixture))
                 .BDDfy();
         }
     }

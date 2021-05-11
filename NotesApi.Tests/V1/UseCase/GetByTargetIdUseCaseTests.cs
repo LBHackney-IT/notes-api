@@ -1,18 +1,18 @@
+using AutoFixture;
+using FluentAssertions;
+using Moq;
+using NotesApi.V1;
+using NotesApi.V1.Boundary.Response;
+using NotesApi.V1.Domain;
+using NotesApi.V1.Domain.Queries;
+using NotesApi.V1.Factories;
 using NotesApi.V1.Gateways;
 using NotesApi.V1.UseCase;
-using Moq;
-using Xunit;
-using AutoFixture;
-using System.Threading.Tasks;
 using System;
-using NotesApi.V1.Domain;
 using System.Collections.Generic;
-using FluentAssertions;
 using System.Linq;
-using NotesApi.V1.Factories;
-using NotesApi.V1.Boundary.Response;
-using NotesApi.V1;
-using NotesApi.V1.Domain.Queries;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace NotesApi.Tests.V1.UseCase
 {

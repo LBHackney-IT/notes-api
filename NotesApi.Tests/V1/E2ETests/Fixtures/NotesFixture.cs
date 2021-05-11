@@ -1,12 +1,12 @@
 using Amazon.DynamoDBv2.DataModel;
 using AutoFixture;
+using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Domain;
+using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NotesApi.V1.Boundary.Response;
-using NotesApi.V1.Domain.Queries;
 
 namespace NotesApi.Tests.V1.E2ETests.Fixtures
 {
@@ -27,6 +27,8 @@ namespace NotesApi.Tests.V1.E2ETests.Fixtures
         public CreateNoteRequest NoteRequest { get; private set; }
 
         public NoteResponseObject NoteResponse { get; set; }
+
+        public string InvalidPayload { get; private set; }
 
         public NotesFixture(IDynamoDBContext dbContext)
         {
@@ -52,15 +54,19 @@ namespace NotesApi.Tests.V1.E2ETests.Fixtures
             }
         }
 
-        public void GivenANewNoteIsCreated()
+        private static CreateNoteRequest CreateNote()
         {
             var note = new Fixture().Create<CreateNoteRequest>();
 
             note.TargetId = Guid.NewGuid();
             note.CreatedAt = DateTime.Now;
             note.Author.Email = "something@somewhere.com";
+            return note;
+        }
 
-            NoteRequest = note;
+        public void GivenANewNoteIsCreated()
+        {
+            NoteRequest = CreateNote();
         }
 
         public void GivenTargetNotesAlreadyExist()
@@ -98,6 +104,39 @@ namespace NotesApi.Tests.V1.E2ETests.Fixtures
         public void GivenAnInvalidTargetId()
         {
             InvalidTargetId = "12345667890";
+        }
+
+        public void GivenAnInvalidNewNotePayload()
+        {
+            InvalidPayload = "This is invalid json";
+        }
+
+        public void GivenANewNotePayloadWithTooLongDescription()
+        {
+            NoteRequest = CreateNote();
+            var msgToRepeat = "This description is to long. ";
+            string description = "";
+            while (description.Length <= 500)
+                description += msgToRepeat;
+            NoteRequest.Description = description;
+        }
+
+        public void GivenANewNotePayloadWithNoTargetId()
+        {
+            NoteRequest = CreateNote();
+            NoteRequest.TargetId = null;
+        }
+
+        public void GivenANewNotePayloadWithNoTargetType()
+        {
+            NoteRequest = CreateNote();
+            NoteRequest.TargetType = null;
+        }
+
+        public void GivenANewNotePayloadWithNoCreatedAt()
+        {
+            NoteRequest = CreateNote();
+            NoteRequest.CreatedAt = null;
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Microsoft.Extensions.Logging;
@@ -7,11 +6,11 @@ using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Infrastructure;
 using NotesApi.V1.Logging;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using NotesApi.V1.Boundary;
 
 namespace NotesApi.V1.Gateways
 {
@@ -30,14 +29,9 @@ namespace NotesApi.V1.Gateways
             _logger = logger;
         }
 
-        // This method cannot be unit tested because of having to use GetTargetTable()
-        // which returns an unmockable concrete class.
-        // See here: https://github.com/aws/aws-sdk-net/issues/1310
-        [ExcludeFromCodeCoverage]
         [LogCall]
         public async Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query)
         {
-            _logger.LogDebug($"Querying IDynamoDBContext.GetTargetTable for TargetId {query.TargetId}");
             int pageSize = query.PageSize.HasValue ? query.PageSize.Value : MAX_RESULTS;
             var dbNotes = new List<NoteDb>();
             var table = _dynamoDbContext.GetTargetTable<NoteDb>();
@@ -50,6 +44,8 @@ namespace NotesApi.V1.Gateways
                 PaginationToken = PaginationDetails.DecodeToken(query.PaginationToken),
                 Filter = new QueryFilter(TARGETID, QueryOperator.Equal, query.TargetId)
             });
+
+            _logger.LogDebug($"Querying {GETNOTESBYTARGETIDINDEX} index for targetId {query.TargetId}");
             var resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
             if (resultsSet.Any())
                 dbNotes.AddRange(_dynamoDbContext.FromDocuments<NoteDb>(resultsSet));
@@ -57,6 +53,7 @@ namespace NotesApi.V1.Gateways
             return new PagedResult<Note>(dbNotes.Select(x => x.ToDomain()), new PaginationDetails(search.PaginationToken));
         }
 
+        [LogCall]
         public async Task<Note> PostNewNoteAsync(CreateNoteRequest request)
         {
             var dbNote = new NoteDb
@@ -64,8 +61,8 @@ namespace NotesApi.V1.Gateways
                 Id = Guid.NewGuid(),
                 Description = request.Description,
                 CreatedAt = request.CreatedAt.Value,
-                TargetId = request.TargetId,
-                TargetType = request.TargetType,
+                TargetId = request.TargetId.Value,
+                TargetType = request.TargetType.Value,
                 Author = new AuthorDetails
                 {
                     Id = request.Author?.Id,
@@ -80,8 +77,8 @@ namespace NotesApi.V1.Gateways
                 }
             };
 
+            _logger.LogDebug($"Saving a new note for targetId: {dbNote.TargetId}, targetType: {Enum.GetName(typeof(TargetType), dbNote.TargetType)}");
             await _dynamoDbContext.SaveAsync(dbNote).ConfigureAwait(false);
-
             return dbNote.ToDomain();
         }
     }

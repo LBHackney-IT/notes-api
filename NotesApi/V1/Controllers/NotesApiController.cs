@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -6,10 +5,10 @@ using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Logging;
 using NotesApi.V1.UseCase.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NotesApi.V1.Boundary;
 
 namespace NotesApi.V1.Controllers
 {
@@ -56,7 +55,7 @@ namespace NotesApi.V1.Controllers
         /// <response code="201">Returns the note created with its ID</response>
         /// <response code="400">Invalid fields in the post parameter.</response>
         /// <response code="500">Internal server error</response>
-        [ProducesResponseType(typeof(List<NoteResponseObject>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<NoteResponseObject>), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost]

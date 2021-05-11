@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NotesApi.V1.Controllers;
-using NotesApi.V1.UseCase;
 using System.Collections.Generic;
 using Xunit;
 
@@ -25,12 +24,6 @@ namespace NotesApi.Tests.V1.Controllers
             response.Should().NotBeNull();
             response.StatusCode.Should().Be(200);
             response.Value.Should().BeEquivalentTo(expected);
-        }
-
-        [Fact]
-        public void ThrowErrorThrows()
-        {
-            Assert.Throws<TestOpsErrorException>(_classUnderTest.ThrowError);
         }
     }
 }
