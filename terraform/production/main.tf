@@ -35,3 +35,4 @@ terraform {
     region  = "eu-west-2"
     key     = "services/notes-api/state"
   }
+}
