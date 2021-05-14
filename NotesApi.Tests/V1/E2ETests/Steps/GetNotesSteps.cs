@@ -87,6 +87,15 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
             IsDateTimeListInDescendingOrder(apiResult.Results.Select(x => x.CreatedAt)).Should().BeTrue();
         }
 
+        public async Task ThenAllTheTargetNotesAreReturnedWithNoPaginationToken(List<NoteDb> expectedNotes)
+        {
+            var apiResult = await ExtractResultFromHttpResponse(_lastResponse).ConfigureAwait(false);
+            apiResult.Results.Should().BeEquivalentTo(expectedNotes);
+            IsDateTimeListInDescendingOrder(apiResult.Results.Select(x => x.CreatedAt)).Should().BeTrue();
+            apiResult.PaginationDetails.HasNext.Should().BeFalse();
+            apiResult.PaginationDetails.NextToken.Should().BeNull();
+        }
+
         public async Task ThenTheTargetNotesAreReturnedByPageSize(List<NoteDb> expectedNotes, int? pageSize)
         {
             var expectedPageSize = 10;
