@@ -75,6 +75,15 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
         }
 
         [Fact]
+        public void ServiceReturnsNoPaginationTokenIfNoMoreResults()
+        {
+            this.Given(g => _notesFixture.GivenTargetNotesAlreadyExist(10))
+                .When(w => _steps.WhenTheTargetNotesAreRequested(_notesFixture.TargetId.ToString()))
+                .Then(t => _steps.ThenAllTheTargetNotesAreReturnedWithNoPaginationToken(_notesFixture.Notes))
+                .BDDfy();
+        }
+
+        [Fact]
         public void ServiceReturnsAllPagesNotesUsingPaginationToken()
         {
             this.Given(g => _notesFixture.GivenTargetNotesWithMultiplePagesAlreadyExist())

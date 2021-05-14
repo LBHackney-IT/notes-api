@@ -136,6 +136,22 @@ namespace NotesApi.Tests.V1.Gateways
             _logger.VerifyExact(LogLevel.Debug, $"Querying NotesByCreated index for targetId {query.TargetId}", Times.Exactly(2));
         }
 
+        [Fact]
+        public async Task GetByTargetIdReturnsNoPaginationTokenIfPageSizeEqualsRecordCount()
+        {
+            var targetId = Guid.NewGuid();
+            var expected = UpsertNotes(targetId, 10);
+
+            var query = new GetNotesByTargetIdQuery() { TargetId = targetId, PageSize = 10 };
+            var response = await _classUnderTest.GetByTargetIdAsync(query).ConfigureAwait(false);
+            response.Should().NotBeNull();
+            response.Results.Should().BeEquivalentTo(expected);
+            response.PaginationDetails.HasNext.Should().BeFalse();
+            response.PaginationDetails.NextToken.Should().BeNull();
+
+            _logger.VerifyExact(LogLevel.Debug, $"Querying NotesByCreated index for targetId {query.TargetId}", Times.Once());
+        }
+
         #endregion GetByTargetId Tests
 
         #region PostNewNote Tests
