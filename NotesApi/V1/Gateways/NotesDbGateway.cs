@@ -29,19 +29,6 @@ namespace NotesApi.V1.Gateways
             _logger = logger;
         }
 
-        private static QueryOperationConfig ConstructQueryConfig(string indexName, Guid targetId, string paginationToken, int pageSize)
-        {
-            return new QueryOperationConfig
-            {
-                IndexName = indexName,
-                BackwardSearch = true,
-                ConsistentRead = true,
-                Limit = pageSize,
-                PaginationToken = paginationToken,
-                Filter = new QueryFilter(TARGETID, QueryOperator.Equal, targetId)
-            };
-        }
-
         [LogCall]
         public async Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query)
         {
@@ -49,23 +36,35 @@ namespace NotesApi.V1.Gateways
             var dbNotes = new List<NoteDb>();
             var table = _dynamoDbContext.GetTargetTable<NoteDb>();
 
-            var queryConfig = ConstructQueryConfig(GETNOTESBYTARGETIDINDEX, query.TargetId,
-                PaginationDetails.DecodeToken(query.PaginationToken), pageSize);
+            var queryConfig = new QueryOperationConfig
+            {
+                IndexName = GETNOTESBYTARGETIDINDEX,
+                BackwardSearch = true,
+                ConsistentRead = true,
+                Limit = pageSize,
+                PaginationToken = PaginationDetails.DecodeToken(query.PaginationToken),
+                Filter = new QueryFilter(TARGETID, QueryOperator.Equal, query.TargetId)
+            };
             var search = table.Query(queryConfig);
 
-            _logger.LogDebug($"Querying {GETNOTESBYTARGETIDINDEX} index for targetId {query.TargetId}");
+            _logger.LogDebug($"Querying {queryConfig.IndexName} index for targetId {query.TargetId}");
             var resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
+
             var paginationToken = search.PaginationToken;
             if (resultsSet.Any())
             {
                 dbNotes.AddRange(_dynamoDbContext.FromDocuments<NoteDb>(resultsSet));
 
-                // Look ahead for any more
-                queryConfig = ConstructQueryConfig(GETNOTESBYTARGETIDINDEX, query.TargetId, paginationToken, 1);
-                search = table.Query(queryConfig);
-                resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
-                if (!resultsSet.Any())
-                    paginationToken = null;
+                // Look ahead for any more, but only if we have a token
+                if (!string.IsNullOrEmpty(PaginationDetails.EncodeToken(paginationToken)))
+                {
+                    queryConfig.PaginationToken = paginationToken;
+                    queryConfig.Limit = 1;
+                    search = table.Query(queryConfig);
+                    resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
+                    if (!resultsSet.Any())
+                        paginationToken = null;
+                }
             }
 
             return new PagedResult<Note>(dbNotes.Select(x => x.ToDomain()), new PaginationDetails(paginationToken));
