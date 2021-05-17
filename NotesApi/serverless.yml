@@ -9,14 +9,6 @@ provider:
   vpc: ${self:custom.vpc.${opt:stage}}
   stage: ${opt:stage}
   region: eu-west-2
-  apiKeys:
-    - secureAccess:
-      - api-key-${self:service}-${self:provider.stage}
-  usagePlan:
-    - secureAccess:
-        throttle:
-          burstLimit: 200
-          rateLimit: 100
 
 package:
   artifact: ./bin/release/netcoreapp3.1/notes-api.zip
@@ -33,6 +25,12 @@ functions:
           path: /{proxy+}
           method: ANY
           private: true
+          authorizer:
+            arn: ${ssm:/api-authenticator/${self:provider.stage}/arn}
+            type: request
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            managedExternally: true          
           cors: true
 resources:
   Resources:
