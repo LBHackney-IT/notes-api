@@ -24,7 +24,6 @@ functions:
       - http:
           path: /{proxy+}
           method: ANY
-          private: true
           authorizer:
             arn: ${ssm:/api-authenticator/${self:provider.stage}/arn}
             type: request
