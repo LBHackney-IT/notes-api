@@ -121,7 +121,7 @@ namespace NotesApi
                     c.IncludeXmlComments(xmlPath);
             });
 
-            ConfigureLogging(services, Configuration);
+            services.ConfigureLambdaLogging(Configuration);
             AWSXRayRecorder.InitializeInstance(Configuration);
             AWSXRayRecorder.RegisterLogger(LoggingOptions.SystemDiagnostics);
 
@@ -129,38 +129,6 @@ namespace NotesApi
             services.ConfigureDynamoDB();
             RegisterGateways(services);
             RegisterUseCases(services);
-        }
-
-        private static void ConfigureLogging(IServiceCollection services, IConfiguration configuration)
-        {
-            // We rebuild the logging stack so as to ensure the console logger is not used in production.
-            // See here: https://weblog.west-wind.com/posts/2018/Dec/31/Dont-let-ASPNET-Core-Default-Console-Logging-Slow-your-App-down
-            services.AddLogging(config =>
-            {
-                // clear out default configuration
-                config.ClearProviders();
-
-                config.AddConfiguration(configuration.GetSection("Logging"));
-                config.AddDebug();
-                config.AddEventSourceLogger();
-
-                // Create and populate LambdaLoggerOptions object
-                var loggerOptions = new LambdaLoggerOptions
-                {
-                    IncludeCategory = false,
-                    IncludeLogLevel = true,
-                    IncludeNewline = true,
-                    IncludeEventId = true,
-                    IncludeException = true,
-                    IncludeScopes = true
-                };
-                config.AddLambdaLogger(loggerOptions);
-
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development)
-                {
-                    config.AddConsole();
-                }
-            });
         }
 
         private static void RegisterGateways(IServiceCollection services)
