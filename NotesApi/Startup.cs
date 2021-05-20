@@ -1,5 +1,4 @@
 using Amazon;
-using Amazon.DynamoDBv2.DataModel;
 using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using Hackney.Core.DynamoDb;
