@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Copy csproj and nuget config and restore as distinct layers
 COPY *.csproj ./
-COPY /nuget.config /root/.nuget/NuGet/NuGet.Config
+COPY /NuGet.Config /root/.nuget/NuGet/NuGet.Config
 
 RUN dotnet restore
 

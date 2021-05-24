@@ -11,7 +11,7 @@ WORKDIR /app
 COPY ./NotesApi.sln ./
 COPY ./NotesApi/NotesApi.csproj ./NotesApi/
 COPY ./NotesApi.Tests/NotesApi.Tests.csproj ./NotesApi.Tests/
-COPY /nuget.config /root/.nuget/NuGet/NuGet.Config
+COPY /NuGet.Config /root/.nuget/NuGet/NuGet.Config
 
 RUN dotnet restore ./NotesApi/NotesApi.csproj
 RUN dotnet restore ./NotesApi.Tests/NotesApi.Tests.csproj
