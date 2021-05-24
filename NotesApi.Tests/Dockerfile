@@ -5,6 +5,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT='true'
 
 ENV DynamoDb_LocalMode='true'
 
+
 WORKDIR /app
 
 # Copy csproj and nuget config and restore as distinct layers
