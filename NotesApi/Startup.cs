@@ -2,8 +2,8 @@ using Amazon;
 using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using Hackney.Core.DynamoDb;
-using Hackney.Core.DynamoDb.HealthCheck;
-using Hackney.Core.HealthCheck;
+//using Hackney.Core.DynamoDb.HealthCheck;
+//using Hackney.Core.HealthCheck;
 using Hackney.Core.Logging;
 using Hackney.Core.Middleware.CorrelationId;
 using Hackney.Core.Middleware.Exception;
@@ -68,7 +68,7 @@ namespace NotesApi
 
             services.AddSingleton<IApiVersionDescriptionProvider, DefaultApiVersionDescriptionProvider>();
 
-            services.AddDynamoDbHealthCheck<NoteDb>();
+            //services.AddDynamoDbHealthCheck<NoteDb>();
            
             services.AddSwaggerGen(c =>
             {
@@ -186,11 +186,11 @@ namespace NotesApi
                 // SwaggerGen won't find controllers that are routed via this technique.
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 
-                endpoints.MapHealthChecks("/health", new HealthCheckOptions()
-                {
-                    // This custom writer formats the detailed status as JSON.
-                    ResponseWriter = HealthCheckResponseWriter.WriteResponse
-                });
+                //endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+                //{
+                //    // This custom writer formats the detailed status as JSON.
+                //    ResponseWriter = HealthCheckResponseWriter.WriteResponse
+                //});
             });
             app.UseLogCall();
         }
