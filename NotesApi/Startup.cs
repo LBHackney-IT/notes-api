@@ -69,7 +69,7 @@ namespace NotesApi
             services.AddSingleton<IApiVersionDescriptionProvider, DefaultApiVersionDescriptionProvider>();
 
             //services.AddDynamoDbHealthCheck<NoteDb>();
-           
+
             services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Token",
