@@ -9,7 +9,7 @@ services:
     ports:
       - 3000:3000
     environment:
-    #  - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
+      - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
       - DynamoDb_LocalMode=true
       - DynamoDb_LocalServiceUrl=http://dynamodb-database:8000
       - AWS_REGION=eu-west-2
@@ -24,7 +24,7 @@ services:
       context: .
       dockerfile: NotesApi.Tests/Dockerfile
     environment:
-     # - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
+      - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
       - DynamoDb_LocalMode=true
       - DynamoDb_LocalServiceUrl=http://dynamodb-database:8000
       - AWS_REGION=eu-west-2
