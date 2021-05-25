@@ -4,11 +4,12 @@ services:
   notes-api:
     image: notes-api
     build:
-      context: NotesApi/
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: NotesApi/Dockerfile
     ports:
       - 3000:3000
     environment:
+    #  - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
       - DynamoDb_LocalMode=true
       - DynamoDb_LocalServiceUrl=http://dynamodb-database:8000
       - AWS_REGION=eu-west-2
@@ -22,9 +23,8 @@ services:
     build:
       context: .
       dockerfile: NotesApi.Tests/Dockerfile
-      args:
-      - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
     environment:
+     # - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
       - DynamoDb_LocalMode=true
       - DynamoDb_LocalServiceUrl=http://dynamodb-database:8000
       - AWS_REGION=eu-west-2
@@ -32,6 +32,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=local
     links:
       - dynamodb-database
+
   dynamodb-database:
     image: amazon/dynamodb-local
     command: "-jar DynamoDBLocal.jar -sharedDb"
