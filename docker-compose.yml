@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: NotesApi/Dockerfile
+      args:
+      - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
     ports:
       - 3000:3000
     environment:
@@ -23,6 +25,8 @@ services:
     build:
       context: .
       dockerfile: NotesApi.Tests/Dockerfile
+      args:
+      - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
     environment:
       - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
       - DynamoDb_LocalMode=true
