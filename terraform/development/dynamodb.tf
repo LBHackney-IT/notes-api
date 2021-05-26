@@ -33,4 +33,9 @@ resource "aws_dynamodb_table" "notesapi_dynamodb_table" {
         terraform-managed = true
         project_name      = var.project_name
     }
+    
+    point_in_time_recovery {
+        enabled           = true
+    }
 }
+
