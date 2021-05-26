@@ -38,4 +38,4 @@ resource "aws_dynamodb_table" "notesapi_dynamodb_table" {
         enabled           = true
     }
 }
-}
+
