@@ -3,7 +3,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 using Hackney.Core.DynamoDb;
 using Hackney.Core.Logging;
 using Microsoft.Extensions.Logging;
-using NotesApi.V1.Boundary.Queries;
+using NotesApi.V1.Boundary.Request;
 using NotesApi.V1.Domain;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Infrastructure;

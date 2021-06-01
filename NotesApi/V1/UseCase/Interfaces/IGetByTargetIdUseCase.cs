@@ -1,5 +1,5 @@
 using Hackney.Core.DynamoDb;
-using NotesApi.V1.Boundary.Queries;
+using NotesApi.V1.Boundary.Request;
 using NotesApi.V1.Boundary.Response;
 using System.Threading.Tasks;
 

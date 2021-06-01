@@ -2,7 +2,7 @@ using FluentAssertions;
 using Hackney.Core.DynamoDb;
 using Newtonsoft.Json;
 using NotesApi.Tests.V1.E2ETests.Fixtures;
-using NotesApi.V1.Boundary.Queries;
+using NotesApi.V1.Boundary.Request;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Infrastructure;
 using System;

@@ -1,7 +1,7 @@
 using AutoFixture;
 using FluentAssertions;
 using Moq;
-using NotesApi.V1.Boundary.Queries;
+using NotesApi.V1.Boundary.Request;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Domain;
 using NotesApi.V1.Gateways;

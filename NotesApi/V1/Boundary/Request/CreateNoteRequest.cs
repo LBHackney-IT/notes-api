@@ -2,7 +2,7 @@ using NotesApi.V1.Domain;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace NotesApi.V1.Boundary.Queries
+namespace NotesApi.V1.Boundary.Request
 {
     public class CreateNoteRequest
     {

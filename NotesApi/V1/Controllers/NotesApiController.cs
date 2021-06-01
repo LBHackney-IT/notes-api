@@ -2,7 +2,7 @@ using Hackney.Core.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using NotesApi.V1.Boundary.Queries;
+using NotesApi.V1.Boundary.Request;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.UseCase.Interfaces;
 using System;

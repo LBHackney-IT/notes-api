@@ -3,7 +3,7 @@ using FluentAssertions;
 using Hackney.Core.DynamoDb;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NotesApi.V1.Boundary.Queries;
+using NotesApi.V1.Boundary.Request;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Controllers;
 using NotesApi.V1.UseCase.Interfaces;

@@ -3,7 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NotesApi.V1.Boundary.Queries;
+using NotesApi.V1.Boundary.Request;
 using NotesApi.V1.Domain;
 using NotesApi.V1.Gateways;
 using NotesApi.V1.Infrastructure;
