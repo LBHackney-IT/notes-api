@@ -1,14 +1,14 @@
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Hackney.Core.DynamoDb;
+using Hackney.Core.Logging;
 using Microsoft.Extensions.Logging;
 using NotesApi.V1.Domain;
 using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Infrastructure;
-using NotesApi.V1.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 

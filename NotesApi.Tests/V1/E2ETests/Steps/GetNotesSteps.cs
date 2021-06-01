@@ -1,5 +1,5 @@
 using FluentAssertions;
-using NotesApi.V1;
+using Hackney.Core.DynamoDb;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Infrastructure;
 using System;
