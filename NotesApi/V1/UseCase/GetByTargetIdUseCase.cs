@@ -1,8 +1,9 @@
+using Hackney.Core.DynamoDb;
+using Hackney.Core.Logging;
+using NotesApi.V1.Boundary.Request;
 using NotesApi.V1.Boundary.Response;
-using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Gateways;
-using NotesApi.V1.Logging;
 using NotesApi.V1.UseCase.Interfaces;
 using System.Threading.Tasks;
 
