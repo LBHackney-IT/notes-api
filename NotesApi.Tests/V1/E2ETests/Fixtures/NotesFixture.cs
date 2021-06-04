@@ -1,8 +1,8 @@
 using Amazon.DynamoDBv2.DataModel;
 using AutoFixture;
+using NotesApi.V1.Boundary.Request;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Domain;
-using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Infrastructure;
 using System;
 using System.Collections.Generic;

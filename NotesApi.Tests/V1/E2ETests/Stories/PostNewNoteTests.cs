@@ -76,7 +76,7 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
             this.Given(g => _notesFixture.GivenANewNotePayloadWithTooLongDescription())
                 .When(w => _steps.WhenPostingANote(_notesFixture))
                 .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Description",
-                                    "The field Description must be a string or array type with a maximum length of '500'"))
+                                    "'Description' must be between 1 and 500 characters."))
                 .BDDfy();
         }
 

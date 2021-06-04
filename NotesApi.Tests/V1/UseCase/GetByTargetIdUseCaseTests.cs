@@ -1,10 +1,10 @@
 using AutoFixture;
 using FluentAssertions;
+using Hackney.Core.DynamoDb;
 using Moq;
-using NotesApi.V1;
+using NotesApi.V1.Boundary.Request;
 using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Domain;
-using NotesApi.V1.Domain.Queries;
 using NotesApi.V1.Factories;
 using NotesApi.V1.Gateways;
 using NotesApi.V1.UseCase;
