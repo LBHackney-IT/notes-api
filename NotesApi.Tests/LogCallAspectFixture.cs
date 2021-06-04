@@ -1,7 +1,7 @@
+using Hackney.Core.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NotesApi.V1.Logging;
 using System;
 using Xunit;
 

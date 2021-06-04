@@ -1,9 +1,9 @@
 using FluentAssertions;
+using Hackney.Core.Middleware;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
-using NotesApi.V1;
 using NotesApi.V1.Controllers;
 using System.Collections.Generic;
 using Xunit;
@@ -38,7 +38,7 @@ namespace NotesApi.Tests.V1.Controllers
         public void GetCorrelationShouldReturnCorrelationIdWhenExists()
         {
             // Arrange
-            _stubHttpContext.Request.Headers.Add(Constants.CorrelationId, "123");
+            _stubHttpContext.Request.Headers.Add(HeaderConstants.CorrelationId, "123");
 
             // Act
             var result = _sut.GetCorrelationId();
