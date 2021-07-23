@@ -31,6 +31,10 @@ functions:
             identitySource: method.request.header.Authorization
             managedExternally: true          
           cors: true
+      - http:
+          path: /swagger/{proxy+}
+          method: GET
+          private: false
 resources:
   Resources:
     LambdaSecurityGroup:
