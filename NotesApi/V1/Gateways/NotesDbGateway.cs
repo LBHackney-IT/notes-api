@@ -82,7 +82,6 @@ namespace NotesApi.V1.Gateways
                 TargetType = request.TargetType.Value,
                 Author = new AuthorDetails
                 {
-                    Id = request.Author?.Id,
                     Email = request.Author?.Email,
                     FullName = request.Author?.FullName
                 },
