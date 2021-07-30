@@ -16,6 +16,7 @@ namespace NotesApi.Tests.V1.Boundary.Request.Validation
 
         [Theory]
         [InlineData("sdfsdf")]
+        [InlineData("sdfsdf<sometag>")]
         public void AuthorDetailsShouldErrorWithInvalidEmail(string invalidEmail)
         {
             var model = new AuthorDetails() { Email = invalidEmail };
@@ -24,22 +25,10 @@ namespace NotesApi.Tests.V1.Boundary.Request.Validation
         }
 
         [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData("sdfsdf")]
-        public void AuthorDetailsShouldErrorWithInvalidEmailWithValidId(string invalidEmail)
+        [InlineData("sdfsdf<sometag>")]
+        public void AuthorDetailsShouldErrorWithInvalidName(string invalidName)
         {
-            var model = new AuthorDetails() { Id = "some-id", Email = invalidEmail };
-            var result = _sut.TestValidate(model);
-            result.ShouldHaveValidationErrorFor(x => x.Email);
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        public void AuthorDetailsShouldErrorWithInvalidNameWithValidId(string invalidName)
-        {
-            var model = new AuthorDetails() { Id = "some-id", FullName = invalidName };
+            var model = new AuthorDetails() { FullName = invalidName };
             var result = _sut.TestValidate(model);
             result.ShouldHaveValidationErrorFor(x => x.FullName);
         }

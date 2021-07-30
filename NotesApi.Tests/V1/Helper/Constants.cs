@@ -17,7 +17,6 @@ namespace NotesApi.Tests.V1.Helper
         public const string CATEGORISATIONSUBCATEGORY = "Some sub categroy";
         public const string CATEGORISATIONDESCRIPTION = "Some category description";
 
-        public const string AUTHORID = "6f482163-3f51-487f-8f7d-37a1d4daea8b";
         public const string AUTHORFULLNAME = "Bob Roberts";
         public const string AUTHOREMAIL = "bob.roberts@ccc.com";
 
@@ -37,7 +36,6 @@ namespace NotesApi.Tests.V1.Helper
             };
             note.Author = new AuthorDetails
             {
-                Id = AUTHORID,
                 FullName = AUTHORFULLNAME,
                 Email = AUTHOREMAIL
             };
