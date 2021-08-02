@@ -2,6 +2,7 @@ using Amazon;
 using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using FluentValidation.AspNetCore;
+using Hackney.Core.DI;
 using Hackney.Core.DynamoDb;
 using Hackney.Core.DynamoDb.HealthCheck;
 using Hackney.Core.HealthCheck;
@@ -135,6 +136,7 @@ namespace NotesApi
             AWSXRayRecorder.InitializeInstance(Configuration);
             AWSXRayRecorder.RegisterLogger(LoggingOptions.SystemDiagnostics);
 
+            services.AddTokenFactory();
             services.AddLogCallAspect();
             services.ConfigureDynamoDB();
             RegisterGateways(services);
