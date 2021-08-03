@@ -22,7 +22,6 @@ namespace NotesApi.Tests.V1.Domain
             note.Categorisation.Description.Should().Be(Constants.CATEGORISATIONDESCRIPTION);
             note.Author.Email.Should().Be(Constants.AUTHOREMAIL);
             note.Author.FullName.Should().Be(Constants.AUTHORFULLNAME);
-            note.Author.Id.Should().Be(Constants.AUTHORID);
         }
     }
 }
