@@ -61,12 +61,23 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
                 .BDDfy();
         }
 
-        [Fact]
-        public void PostingANoteTestNoDescriptionReturns400()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void PostingANoteTestNoDescriptionReturns400(string desc)
         {
-            this.Given(g => _notesFixture.GivenANewNotePayloadWithTooLongDescription())
+            this.Given(g => _notesFixture.GivenANewNotePayloadWithDescription(desc))
                 .When(w => _steps.WhenPostingANote(_notesFixture))
-                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Description"))
+                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Description", "W2"))
+                .BDDfy();
+        }
+
+        [Fact(Skip = "List of special characters still under discussion...")]
+        public void PostingANoteTestDescriptionWithSpecialCharactersReturns400()
+        {
+            this.Given(g => _notesFixture.GivenANewNotePayloadWithDescription("Some description with ~`^ characters"))
+                .When(w => _steps.WhenPostingANote(_notesFixture))
+                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Description", "W8"))
                 .BDDfy();
         }
 
@@ -75,7 +86,7 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
         {
             this.Given(g => _notesFixture.GivenANewNotePayloadWithTooLongDescription())
                 .When(w => _steps.WhenPostingANote(_notesFixture))
-                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Description",
+                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Description", "W3",
                                     "'Description' must be between 1 and 500 characters."))
                 .BDDfy();
         }

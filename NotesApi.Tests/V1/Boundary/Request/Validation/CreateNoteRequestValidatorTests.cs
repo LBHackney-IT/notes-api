@@ -24,7 +24,8 @@ namespace NotesApi.Tests.V1.Boundary.Request.Validation
         {
             var model = new CreateNoteRequest() { Description = description };
             var result = _sut.TestValidate(model);
-            result.ShouldHaveValidationErrorFor(x => x.Description);
+            result.ShouldHaveValidationErrorFor(x => x.Description)
+                  .WithErrorCode("W2");
         }
 
         [Fact]
@@ -36,7 +37,18 @@ namespace NotesApi.Tests.V1.Boundary.Request.Validation
                 description += msgToRepeat;
             var model = new CreateNoteRequest() { Description = description };
             var result = _sut.TestValidate(model);
-            result.ShouldHaveValidationErrorFor(x => x.Description);
+            result.ShouldHaveValidationErrorFor(x => x.Description)
+                  .WithErrorCode("W3");
+        }
+
+        [Fact(Skip = "List of special characters still under discussion...")]
+        public void RequestShouldErrorWithSpecialCharacters()
+        {
+            string description = "This description is not ^ fine as it # has special ~ characters.";
+            var model = new CreateNoteRequest() { Description = description };
+            var result = _sut.TestValidate(model);
+            result.ShouldHaveValidationErrorFor(x => x.Description)
+                  .WithErrorCode("W8");
         }
 
         [Fact]
