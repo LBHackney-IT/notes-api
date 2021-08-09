@@ -8,11 +8,18 @@ namespace NotesApi.V1.Boundary.Request.Validation
     {
         public AuthorDetailsValidator()
         {
-            RuleFor(x => x.Email).NotXssString()
-                                 .EmailAddress()
-                                 .When(x => !string.IsNullOrEmpty(x.Email));
+            RuleFor(x => x.Email)
+                .EmailAddress()
+                .WithErrorCode(ErrorCodes.InvalidEmail)
+                .When(x => !string.IsNullOrEmpty(x.Email));
+            RuleFor(x => x.Email)
+                .NotXssString()
+                .WithErrorCode(ErrorCodes.XssCheckFailure)
+                .When(x => !string.IsNullOrEmpty(x.Email));
+
             RuleFor(x => x.FullName).NotXssString()
-                                    .When(x => !string.IsNullOrEmpty(x.FullName));
+                .WithErrorCode(ErrorCodes.XssCheckFailure)
+                .When(x => !string.IsNullOrEmpty(x.FullName));
         }
     }
 }
