@@ -4,7 +4,7 @@ namespace NotesApi.V1.Boundary.Request.Validation
     {
         public const string DescriptionMandatory = "W2";
         public const string DescriptionTooLong = "W3";
-        public const string InvalidEmail = "W100";
-        public const string XssCheckFailure = "W666";
+        public const string InvalidEmail = "W40";
+        public const string XssCheckFailure = "W42";
     }
 }
