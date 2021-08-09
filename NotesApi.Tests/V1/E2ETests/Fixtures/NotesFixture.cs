@@ -54,12 +54,14 @@ namespace NotesApi.Tests.V1.E2ETests.Fixtures
             }
         }
 
-        private static CreateNoteRequest CreateNote()
+        private CreateNoteRequest CreateNote()
         {
-            var note = new Fixture().Create<CreateNoteRequest>();
+            var note = _fixture.Build<CreateNoteRequest>()
+                               .With(x => x.TargetId, Guid.NewGuid())
+                               .With(x => x.CreatedAt, DateTime.UtcNow)
+                               .With(x => x.Description, "Some valid note description.")
+                               .Create();
 
-            note.TargetId = Guid.NewGuid();
-            note.CreatedAt = DateTime.Now;
             note.Author.Email = "something@somewhere.com";
             return note;
         }
@@ -109,6 +111,12 @@ namespace NotesApi.Tests.V1.E2ETests.Fixtures
         public void GivenAnInvalidNewNotePayload()
         {
             InvalidPayload = "This is invalid json";
+        }
+
+        public void GivenANewNotePayloadWithDescription(string desc)
+        {
+            NoteRequest = CreateNote();
+            NoteRequest.Description = desc;
         }
 
         public void GivenANewNotePayloadWithTooLongDescription()

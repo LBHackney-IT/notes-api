@@ -107,14 +107,21 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
 
         public async Task ThenBadRequestValidationErrorResultIsReturned(string propertyName)
         {
-            await ThenBadRequestValidationErrorResultIsReturned(propertyName, null).ConfigureAwait(false);
+            await ThenBadRequestValidationErrorResultIsReturned(propertyName, null, null).ConfigureAwait(false);
         }
-        public async Task ThenBadRequestValidationErrorResultIsReturned(string propertyName, string errorMsg)
+
+        public async Task ThenBadRequestValidationErrorResultIsReturned(string propertyName, string errorCode)
+        {
+            await ThenBadRequestValidationErrorResultIsReturned(propertyName, errorCode, null).ConfigureAwait(false);
+        }
+        public async Task ThenBadRequestValidationErrorResultIsReturned(string propertyName, string errorCode, string errorMsg)
         {
             _lastResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             var resultBody = await _lastResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             resultBody.Should().Contain("One or more validation errors occurred");
             resultBody.Should().Contain(propertyName);
+            if (null != errorCode)
+                resultBody.Should().Contain(errorCode);
             if (null != errorMsg)
                 resultBody.Should().Contain(errorMsg);
         }

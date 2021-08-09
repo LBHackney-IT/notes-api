@@ -7,7 +7,6 @@ using Xunit;
 
 namespace NotesApi.Tests.V1.Boundary.Request.Validation
 {
-
     public class CreateNoteRequestValidatorTests
     {
         private readonly CreateNoteRequestValidator _sut;
@@ -17,6 +16,8 @@ namespace NotesApi.Tests.V1.Boundary.Request.Validation
             _sut = new CreateNoteRequestValidator();
         }
 
+        private const string StringWithTags = "Some string with <tag> in it.";
+
         [Theory]
         [InlineData(null)]
         [InlineData("")]
@@ -24,7 +25,17 @@ namespace NotesApi.Tests.V1.Boundary.Request.Validation
         {
             var model = new CreateNoteRequest() { Description = description };
             var result = _sut.TestValidate(model);
-            result.ShouldHaveValidationErrorFor(x => x.Description);
+            result.ShouldHaveValidationErrorFor(x => x.Description)
+                  .WithErrorCode(ErrorCodes.DescriptionMandatory);
+        }
+
+        [Fact]
+        public void RequestShouldErrorWithTagsInDescription()
+        {
+            var model = new CreateNoteRequest() { Description = StringWithTags };
+            var result = _sut.TestValidate(model);
+            result.ShouldHaveValidationErrorFor(x => x.Description)
+                  .WithErrorCode(ErrorCodes.XssCheckFailure);
         }
 
         [Fact]
@@ -36,7 +47,8 @@ namespace NotesApi.Tests.V1.Boundary.Request.Validation
                 description += msgToRepeat;
             var model = new CreateNoteRequest() { Description = description };
             var result = _sut.TestValidate(model);
-            result.ShouldHaveValidationErrorFor(x => x.Description);
+            result.ShouldHaveValidationErrorFor(x => x.Description)
+                  .WithErrorCode(ErrorCodes.DescriptionTooLong);
         }
 
         [Fact]
@@ -103,11 +115,11 @@ namespace NotesApi.Tests.V1.Boundary.Request.Validation
         }
 
         [Fact]
-        public void RequestShouldErrorWithAuthorError()
+        public void RequestShouldErrorWithNoAuthor()
         {
-            var model = new CreateNoteRequest() { Author = new AuthorDetails() { Email = "dflgkj" } };
+            var model = new CreateNoteRequest() { Author = null };
             var result = _sut.TestValidate(model);
-            result.ShouldHaveValidationErrorFor(x => x.Author.Email);
+            result.ShouldHaveValidationErrorFor(x => x.Author);
         }
     }
 }
