@@ -41,8 +41,4 @@
     <ProjectReference Include="..\NotesApi\NotesApi.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="V1\Infrastructure\" />
-  </ItemGroup>
-
 </Project>

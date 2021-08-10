@@ -1,7 +1,6 @@
 using Amazon;
 using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
-using FluentValidation.AspNetCore;
 using Hackney.Core.DI;
 using Hackney.Core.DynamoDb;
 using Hackney.Core.DynamoDb.HealthCheck;
@@ -58,12 +57,14 @@ namespace NotesApi
 
             services
                 .AddMvc()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly()))
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            services.AddFluentValidation();
+
             services.AddApiVersioning(o =>
             {
                 o.DefaultApiVersion = new ApiVersion(1, 0);

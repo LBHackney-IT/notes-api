@@ -1,5 +1,6 @@
 using NotesApi.Tests.V1.E2ETests.Fixtures;
 using NotesApi.Tests.V1.E2ETests.Steps;
+using NotesApi.V1.Boundary.Request.Validation;
 using System;
 using TestStack.BDDfy;
 using Xunit;
@@ -61,12 +62,14 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
                 .BDDfy();
         }
 
-        [Fact]
-        public void PostingANoteTestNoDescriptionReturns400()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void PostingANoteTestNoDescriptionReturns400(string desc)
         {
-            this.Given(g => _notesFixture.GivenANewNotePayloadWithTooLongDescription())
+            this.Given(g => _notesFixture.GivenANewNotePayloadWithDescription(desc))
                 .When(w => _steps.WhenPostingANote(_notesFixture))
-                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Description"))
+                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Description", ErrorCodes.DescriptionMandatory))
                 .BDDfy();
         }
 
@@ -75,7 +78,7 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
         {
             this.Given(g => _notesFixture.GivenANewNotePayloadWithTooLongDescription())
                 .When(w => _steps.WhenPostingANote(_notesFixture))
-                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Description",
+                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Description", ErrorCodes.DescriptionTooLong,
                                     "'Description' must be between 1 and 500 characters."))
                 .BDDfy();
         }

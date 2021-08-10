@@ -8,9 +8,20 @@ namespace NotesApi.V1.Boundary.Request.Validation
     {
         public CategorisationValidator()
         {
-            RuleFor(x => x.Category).NotXssString();
-            RuleFor(x => x.SubCategory).NotXssString();
-            RuleFor(x => x.Description).NotXssString();
+            RuleFor(x => x.Category)
+                .NotXssString()
+                .WithErrorCode(ErrorCodes.XssCheckFailure)
+                .When(x => !string.IsNullOrEmpty(x.Category));
+
+            RuleFor(x => x.SubCategory)
+                .NotXssString()
+                .WithErrorCode(ErrorCodes.XssCheckFailure)
+                .When(x => !string.IsNullOrEmpty(x.SubCategory));
+
+            RuleFor(x => x.Description)
+                .NotXssString()
+                .WithErrorCode(ErrorCodes.XssCheckFailure)
+                .When(x => !string.IsNullOrEmpty(x.Description));
         }
     }
 }
