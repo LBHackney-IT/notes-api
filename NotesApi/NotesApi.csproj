@@ -13,20 +13,21 @@
 
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="5.1.1" />
-    <PackageReference Include="AspectInjector" Version="2.5.0" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.0.27" />
-    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.0.1" />
     <PackageReference Include="AWSXRayRecorder.Core" Version="2.10.0" />
     <PackageReference Include="AWSXRayRecorder.Handlers.AspNetCore" Version="2.7.2" />
     <PackageReference Include="AWSXRayRecorder.Handlers.AwsSdk" Version="2.8.2" />
-    <PackageReference Include="AWSXRayRecorder.Handlers.EntityFramework" Version="1.1.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="10.2.0" />
-    <PackageReference Include="Hackney.Core" Version="1.0.22" />
+    <PackageReference Include="Hackney.Core.DynamoDb" Version="1.30.0" />
+    <PackageReference Include="Hackney.Core.HealthCheck" Version="1.30.0" />
+    <PackageReference Include="Hackney.Core.Http" Version="1.30.0" />
+    <PackageReference Include="Hackney.Core.JWT" Version="1.30.0" />
+    <PackageReference Include="Hackney.Core.Logging" Version="1.30.0" />
+    <PackageReference Include="Hackney.Core.Middleware" Version="1.30.0" />
+    <PackageReference Include="Hackney.Core.Validation" Version="1.30.0" />
     <PackageReference Include="Microsoft.AspNetCore.HealthChecks" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="4.1.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.11.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.4.1" />
