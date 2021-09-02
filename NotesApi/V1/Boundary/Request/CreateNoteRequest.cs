@@ -1,6 +1,5 @@
 using NotesApi.V1.Domain;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace NotesApi.V1.Boundary.Request
 {
