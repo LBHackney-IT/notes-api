@@ -13,7 +13,7 @@ using NotesApi.V2.UseCase.Interfaces;
 namespace NotesApi.V2.Controllers
 {
     [ApiController]
-    [Route("api/v1/notes")]
+    [Route("api/v2/notes")]
     [Produces("application/json")]
     [ApiVersion("1.0")]
     public class NotesApiController : BaseController
@@ -47,22 +47,6 @@ namespace NotesApi.V2.Controllers
             if ((null == response) || !response.Results.Any()) return NotFound(query.TargetId);
 
             return Ok(response);
-        }
-
-        /// <summary>
-        /// Creates a new note entry
-        /// </summary>
-        /// <response code="201">Returns the note created with its ID</response>
-        /// <response code="400">Invalid fields in the post parameter.</response>
-        /// <response code="500">Internal server error</response>
-        [ProducesResponseType(typeof(List<NoteResponseObject>), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpPost]
-        public async Task<IActionResult> PostNewNote([FromBody] CreateNoteRequest noteRequest)
-        {
-            var newNote = await _newNoteUseCase.ExecuteAsync(noteRequest).ConfigureAwait(false);
-            return Created(new Uri($"api/v1/notes?targetId={newNote.TargetId}", UriKind.Relative), newNote);
         }
     }
 }
