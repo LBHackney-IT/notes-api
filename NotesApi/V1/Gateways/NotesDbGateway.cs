@@ -22,11 +22,13 @@ namespace NotesApi.V1.Gateways
 
         private readonly IDynamoDBContext _dynamoDbContext;
         private readonly ILogger<NotesDbGateway> _logger;
+        private readonly INotesDBFilter _notesDbFilter;
 
-        public NotesDbGateway(IDynamoDBContext dynamoDbContext, ILogger<NotesDbGateway> logger)
+        public NotesDbGateway(IDynamoDBContext dynamoDbContext, ILogger<NotesDbGateway> logger, INotesDBFilter notesDbFilter)
         {
             _dynamoDbContext = dynamoDbContext;
             _logger = logger;
+            _notesDbFilter = notesDbFilter;
         }
 
         [LogCall]
@@ -67,7 +69,9 @@ namespace NotesApi.V1.Gateways
                 }
             }
 
-            return new PagedResult<Note>(dbNotes.Select(x => x.ToDomain()), new PaginationDetails(paginationToken));
+            var notes = _notesDbFilter.Filter(dbNotes.Select(x => x.ToDomain()).ToList());
+
+            return new PagedResult<Note>(notes, new PaginationDetails(paginationToken));
         }
 
         [LogCall]
