@@ -29,7 +29,7 @@ namespace NotesApi.V1.Gateways
         }
 
         [LogCall]
-        public async Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query)
+        public async Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query, string categoryToExclude = null)
         {
             int pageSize = query.PageSize.HasValue ? query.PageSize.Value : MAX_RESULTS;
             var dbNotes = new List<NoteDb>();
@@ -37,10 +37,14 @@ namespace NotesApi.V1.Gateways
 
             var filterExpression = new Expression();
             filterExpression.ExpressionAttributeNames.Add("#t", "targetId");
-            filterExpression.ExpressionAttributeNames.Add("#c", "categorisation.category");
-            filterExpression.ExpressionAttributeValues.Add(":cat", "ASB");
             filterExpression.ExpressionAttributeValues.Add(":targetId", query.TargetId);
-            filterExpression.ExpressionStatement = "#c <> :cat";
+
+            if (string.IsNullOrEmpty(categoryToExclude))
+            {
+                filterExpression.ExpressionAttributeNames.Add("#c", "categorisation.category");
+                filterExpression.ExpressionAttributeValues.Add(":cat", categoryToExclude);
+                filterExpression.ExpressionStatement = "#c <> :cat";
+            }
 
             var keyExpression = new Expression();
             keyExpression.ExpressionStatement = "#t = :targetId";

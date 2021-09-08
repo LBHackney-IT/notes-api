@@ -7,7 +7,7 @@ namespace NotesApi.V1.Gateways
 {
     public interface INotesGateway
     {
-        Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query);
+        Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query, string categoryToExclude = null);
 
         Task<Note> PostNewNoteAsync(CreateNoteRequest request);
     }
