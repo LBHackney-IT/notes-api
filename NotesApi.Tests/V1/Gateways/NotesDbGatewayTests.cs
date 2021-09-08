@@ -23,12 +23,11 @@ namespace NotesApi.Tests.V1.Gateways
         private readonly IDynamoDBContext _dynamoDb;
         private readonly NotesDbGateway _classUnderTest;
         private readonly List<Action> _cleanup = new List<Action>();
-        private readonly INotesDBFilter _notesDbFilter = new NotesDbFilter();
         public NotesDbGatewayTests(DynamoDbIntegrationTests<Startup> dbTestFixture)
         {
             _logger = new Mock<ILogger<NotesDbGateway>>();
             _dynamoDb = dbTestFixture.DynamoDbContext;
-            _classUnderTest = new NotesDbGateway(_dynamoDb, _logger.Object, _notesDbFilter);
+            _classUnderTest = new NotesDbGateway(_dynamoDb, _logger.Object);
         }
 
         public void Dispose()

@@ -18,17 +18,14 @@ namespace NotesApi.V1.Gateways
     {
         private const int MAX_RESULTS = 10;
         private const string GETNOTESBYTARGETIDINDEX = "NotesByCreated";
-        private const string TARGETID = "targetId";
 
         private readonly IDynamoDBContext _dynamoDbContext;
         private readonly ILogger<NotesDbGateway> _logger;
-        private readonly INotesDBFilter _notesDbFilter;
 
-        public NotesDbGateway(IDynamoDBContext dynamoDbContext, ILogger<NotesDbGateway> logger, INotesDBFilter notesDbFilter)
+        public NotesDbGateway(IDynamoDBContext dynamoDbContext, ILogger<NotesDbGateway> logger)
         {
             _dynamoDbContext = dynamoDbContext;
             _logger = logger;
-            _notesDbFilter = notesDbFilter;
         }
 
         [LogCall]
@@ -38,6 +35,13 @@ namespace NotesApi.V1.Gateways
             var dbNotes = new List<NoteDb>();
             var table = _dynamoDbContext.GetTargetTable<NoteDb>();
 
+            var filterExpression = new Expression();
+            filterExpression.ExpressionAttributeNames.Add("#t", "targetId");
+            filterExpression.ExpressionAttributeNames.Add("#c", "categorisation.category");
+            filterExpression.ExpressionAttributeValues.Add(":cat", "ASB");
+            filterExpression.ExpressionAttributeValues.Add(":targetId", query.TargetId);
+            filterExpression.ExpressionStatement = "#c <> :cat AND #t = :targetId";
+
             var queryConfig = new QueryOperationConfig
             {
                 IndexName = GETNOTESBYTARGETIDINDEX,
@@ -45,8 +49,9 @@ namespace NotesApi.V1.Gateways
                 ConsistentRead = true,
                 Limit = pageSize,
                 PaginationToken = PaginationDetails.DecodeToken(query.PaginationToken),
-                Filter = new QueryFilter(TARGETID, QueryOperator.Equal, query.TargetId)
+                FilterExpression = filterExpression
             };
+            
             var search = table.Query(queryConfig);
 
             _logger.LogDebug($"Querying {queryConfig.IndexName} index for targetId {query.TargetId}");
@@ -69,8 +74,7 @@ namespace NotesApi.V1.Gateways
                 }
             }
 
-            var notes = _notesDbFilter.Filter(dbNotes.Select(x => x.ToDomain()).ToList());
-
+            var notes = dbNotes.Select(x => x.ToDomain());
             return new PagedResult<Note>(notes, new PaginationDetails(paginationToken));
         }
 
