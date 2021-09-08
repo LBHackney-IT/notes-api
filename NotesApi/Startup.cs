@@ -142,8 +142,6 @@ namespace NotesApi
             services.ConfigureDynamoDB();
             RegisterGateways(services);
             RegisterUseCases(services);
-
-            services.AddScoped<INotesDBFilter, NotesDbFilter>();
         }
 
         private static void RegisterGateways(IServiceCollection services)

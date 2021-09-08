@@ -109,5 +109,14 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
                 .Then(t => _steps.ThenBadRequestIsReturned())
                 .BDDfy();
         }
+
+        [Fact]
+        public void ServiceReturnsAllPagesNotesUsingPaginationTokenAndNoASBCategory()
+        {
+            this.Given(g => _notesFixture.GivenTargetNotesWithMultiplePagesAlreadyExist())
+                .When(w => _steps.WhenAllTheTargetNotesAreRequested(_notesFixture.TargetId.ToString()))
+                .Then(t => _steps.ThenAllTheTargetNotesAreReturnedAndNoneHasAnASBCategory(_notesFixture.Notes))
+                .BDDfy();
+        }
     }
 }
