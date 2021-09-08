@@ -40,9 +40,10 @@ namespace NotesApi.V1.Gateways
             filterExpression.ExpressionAttributeNames.Add("#c", "categorisation.category");
             filterExpression.ExpressionAttributeValues.Add(":cat", "ASB");
             filterExpression.ExpressionAttributeValues.Add(":targetId", query.TargetId);
+            filterExpression.ExpressionStatement = "#c <> :cat";
 
             var keyExpression = new Expression();
-            keyExpression.ExpressionStatement = "#c <> :cat AND #t = :targetId";
+            keyExpression.ExpressionStatement = "#t = :targetId";
 
             var queryConfig = new QueryOperationConfig
             {
