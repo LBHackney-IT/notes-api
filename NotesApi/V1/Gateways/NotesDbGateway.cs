@@ -40,7 +40,9 @@ namespace NotesApi.V1.Gateways
             filterExpression.ExpressionAttributeNames.Add("#c", "categorisation.category");
             filterExpression.ExpressionAttributeValues.Add(":cat", "ASB");
             filterExpression.ExpressionAttributeValues.Add(":targetId", query.TargetId);
-            filterExpression.ExpressionStatement = "#c <> :cat AND #t = :targetId";
+
+            var keyExpression = new Expression();
+            keyExpression.ExpressionStatement = "#c <> :cat AND #t = :targetId";
 
             var queryConfig = new QueryOperationConfig
             {
@@ -49,9 +51,10 @@ namespace NotesApi.V1.Gateways
                 ConsistentRead = true,
                 Limit = pageSize,
                 PaginationToken = PaginationDetails.DecodeToken(query.PaginationToken),
-                FilterExpression = filterExpression
+                FilterExpression = filterExpression,
+                KeyExpression = keyExpression
             };
-            
+
             var search = table.Query(queryConfig);
 
             _logger.LogDebug($"Querying {queryConfig.IndexName} index for targetId {query.TargetId}");
