@@ -125,11 +125,16 @@ namespace NotesApi.V1.Gateways
             filterExpression.ExpressionAttributeNames.Add("#t", "targetId");
             filterExpression.ExpressionAttributeValues.Add(":targetId", query.TargetId);
 
-            foreach (var excludedCategory in excludedCategories)
+            if (excludedCategories != null)
             {
-                filterExpression.ExpressionAttributeNames.Add(excludedCategory.CategoryKey, "categorisation.category");
-                filterExpression.ExpressionAttributeValues.Add(excludedCategory.CategoryValueKey, excludedCategory.CategoryValue);
-                filterExpression.ExpressionStatement = "#c <> :cat";
+                foreach (var excludedCategory in excludedCategories)
+                {
+                    filterExpression.ExpressionAttributeNames.Add(excludedCategory.CategoryKey,
+                        "categorisation.category");
+                    filterExpression.ExpressionAttributeValues.Add(excludedCategory.CategoryValueKey,
+                        excludedCategory.CategoryValue);
+                    filterExpression.ExpressionStatement = "#c <> :cat";
+                }
             }
 
             var keyExpression = new Expression();
