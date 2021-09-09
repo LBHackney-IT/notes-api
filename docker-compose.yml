@@ -12,7 +12,7 @@ services:
       - 3000:3000
     environment:
       - DynamoDb_LocalMode=true
-      - DynamoDb_LocalServiceUrl=http://dynamodb-database:8001
+      - DynamoDb_LocalServiceUrl=http://dynamodb-database:8000
       - AWS_REGION=eu-west-2
       - AWS_ACCESS_KEY_ID=local
       - AWS_SECRET_ACCESS_KEY=local
@@ -28,7 +28,7 @@ services:
       - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
     environment:
       - DynamoDb_LocalMode=true
-      - DynamoDb_LocalServiceUrl=http://dynamodb-database:8001
+      - DynamoDb_LocalServiceUrl=http://dynamodb-database:8000
       - AWS_REGION=eu-west-2
       - AWS_ACCESS_KEY_ID=local
       - AWS_SECRET_ACCESS_KEY=local
@@ -39,4 +39,4 @@ services:
     image: amazon/dynamodb-local
     command: "-jar DynamoDBLocal.jar -sharedDb"
     ports:
-      - 8001:8000
+      - 8000:8000
