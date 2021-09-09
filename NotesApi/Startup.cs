@@ -142,6 +142,9 @@ namespace NotesApi
             services.ConfigureDynamoDB();
             RegisterGateways(services);
             RegisterUseCases(services);
+
+            services.AddScoped<IDbFilterExpressionFactory, DbFilterExpressionFactory>();
+            services.AddScoped<IExcludedCategoriesFactory, ExcludedCategoriesFactory>();
         }
 
         private static void RegisterGateways(IServiceCollection services)
