@@ -13,10 +13,12 @@ namespace NotesApi.Tests.V2.Domain
             Note note = Constants.ConstructNoteFromConstants();
 
             note.Id.Should().Be(Constants.ID);
+            note.Title.Should().Be(Constants.TITLE);
             note.TargetId.Should().Be(Constants.TARGETID);
             note.TargetType.Should().Be(Constants.TARGETTYPE);
             note.Description.Should().Be(Constants.DESCRIPTION);
             note.CreatedAt.Should().Be(Constants.DATETIME);
+            note.Highlight.Should().Be(Constants.HIGHLIGHT);
             note.Categorisation.Category.Should().Be(Constants.CATEGORISATIONCATEGORY);
             note.Categorisation.SubCategory.Should().Be(Constants.CATEGORISATIONSUBCATEGORY);
             note.Categorisation.Description.Should().Be(Constants.CATEGORISATIONDESCRIPTION);

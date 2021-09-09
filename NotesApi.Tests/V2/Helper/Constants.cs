@@ -20,10 +20,14 @@ namespace NotesApi.Tests.V2.Helper
         public const string AUTHORFULLNAME = "Bob Roberts";
         public const string AUTHOREMAIL = "bob.roberts@ccc.com";
 
+        public const string TITLE = "A title";
+        public const bool HIGHLIGHT = true;
+
         public static Note ConstructNoteFromConstants()
         {
             var note = new Note();
             note.Id = Constants.ID;
+            note.Title = Constants.TITLE;
             note.TargetId = Constants.TARGETID;
             note.TargetType = Constants.TARGETTYPE;
             note.Description = Constants.DESCRIPTION;
@@ -39,6 +43,8 @@ namespace NotesApi.Tests.V2.Helper
                 FullName = AUTHORFULLNAME,
                 Email = AUTHOREMAIL
             };
+            note.Highlight = Constants.HIGHLIGHT;
+
             return note;
         }
     }

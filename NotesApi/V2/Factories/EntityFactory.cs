@@ -13,9 +13,11 @@ namespace NotesApi.V2.Factories
                 Categorisation = databaseNote.Categorisation,
                 CreatedAt = databaseNote.CreatedAt,
                 Description = databaseNote.Description,
+                Title = databaseNote.Title,
                 Id = databaseNote.Id,
                 TargetId = databaseNote.TargetId,
-                TargetType = databaseNote.TargetType
+                TargetType = databaseNote.TargetType,
+                Highlight = databaseNote.Highlight
             };
         }
 
@@ -29,7 +31,9 @@ namespace NotesApi.V2.Factories
                 Description = note.Description,
                 Id = note.Id,
                 TargetId = note.TargetId,
-                TargetType = note.TargetType
+                TargetType = note.TargetType,
+                Highlight = note.Highlight,
+                Title = note.Title
             };
         }
     }

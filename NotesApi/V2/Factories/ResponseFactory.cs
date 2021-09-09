@@ -17,7 +17,9 @@ namespace NotesApi.V2.Factories
                 Description = domain.Description,
                 Id = domain.Id,
                 TargetId = domain.TargetId,
-                TargetType = domain.TargetType
+                TargetType = domain.TargetType,
+                Title = domain.Title,
+                Highlight = domain.Highlight
             };
         }
 

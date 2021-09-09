@@ -6,6 +6,8 @@ namespace NotesApi.V2.Domain
     {
         public Guid Id { get; set; }
 
+        public string Title { get; set; }
+
         public string Description { get; set; }
 
         public TargetType TargetType { get; set; }
@@ -17,5 +19,7 @@ namespace NotesApi.V2.Domain
         public Categorisation Categorisation { get; set; }
 
         public AuthorDetails Author { get; set; }
+
+        public bool Highlight { get; set; }
     }
 }

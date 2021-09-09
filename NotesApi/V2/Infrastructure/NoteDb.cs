@@ -14,6 +14,8 @@ namespace NotesApi.V2.Infrastructure
         [DynamoDBHashKey]
         public Guid TargetId { get; set; }
 
+        public string Title { get; set; }
+
         public string Description { get; set; }
 
         [DynamoDBProperty(Converter = typeof(DynamoDbEnumConverter<TargetType>))]
@@ -27,5 +29,7 @@ namespace NotesApi.V2.Infrastructure
 
         [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<AuthorDetails>))]
         public AuthorDetails Author { get; set; }
+
+        public bool Highlight { get; set; }
     }
 }

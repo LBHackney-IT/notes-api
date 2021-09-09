@@ -7,6 +7,8 @@ namespace NotesApi.V2.Boundary.Response
     {
         public Guid Id { get; set; }
 
+        public string Title { get; set; }
+
         public string Description { get; set; }
 
         public TargetType TargetType { get; set; }
@@ -19,6 +21,8 @@ namespace NotesApi.V2.Boundary.Response
 
         public AuthorDetails Author { get; set; }
 
+        public bool Highlight { get; set; }
+
         public static NoteResponseObject Create(Note note)
         {
             if (note is null) throw new ArgumentNullException(nameof(note));
@@ -26,6 +30,7 @@ namespace NotesApi.V2.Boundary.Response
             return new NoteResponseObject
             {
                 Id = note.Id,
+                Title = note.Title,
                 Description = note.Description,
                 TargetType = note.TargetType,
                 TargetId = note.TargetId,
@@ -40,7 +45,8 @@ namespace NotesApi.V2.Boundary.Response
                 {
                     Email = note.Author?.Email,
                     FullName = note.Author?.FullName
-                }
+                },
+                Highlight = note.Highlight
             };
         }
     }

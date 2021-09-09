@@ -24,6 +24,8 @@ namespace NotesApi.Tests.V2.Factories
             databaseNote.Description.Should().Be(note.Description);
             databaseNote.TargetId.Should().Be(note.TargetId);
             databaseNote.TargetType.Should().Be(note.TargetType);
+            databaseNote.Title.Should().Be(note.Title);
+            databaseNote.Highlight.Should().Be(note.Highlight);
         }
 
         [Fact]

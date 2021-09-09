@@ -153,49 +153,5 @@ namespace NotesApi.Tests.V2.Gateways
         }
 
         #endregion GetByTargetId Tests
-
-        #region PostNewNote Tests
-
-        [Fact]
-        public async Task PostNewNoteReturnsNote()
-        {
-            var request = CreateNoteRequest();
-            var response = await _classUnderTest.PostNewNoteAsync(request).ConfigureAwait(false);
-            request.Should().NotBeNull();
-            _cleanup.Add(async () =>
-                await _dynamoDb.DeleteAsync<NoteDb>(response.TargetId, response.Id, default).ConfigureAwait(false));
-
-            request.Should().BeEquivalentTo(response, (opt) => opt.Excluding(x => x.Id));
-            response.Id.Should().NotBeEmpty();
-
-            _logger.VerifyExact(LogLevel.Debug,
-                $"Saving a new note for targetId: {request.TargetId}, targetType: {Enum.GetName(typeof(TargetType), request.TargetType)}",
-                Times.Once());
-        }
-
-        [Fact]
-        public async Task PostNewNoteNoCategoryOrAuthorReturnsNote()
-        {
-            var request = CreateNoteRequest();
-            request.Author = null;
-            request.Categorisation = null;
-            var response = await _classUnderTest.PostNewNoteAsync(request).ConfigureAwait(false);
-            request.Should().NotBeNull();
-            _cleanup.Add(async () =>
-                await _dynamoDb.DeleteAsync<NoteDb>(response.TargetId, response.Id, default).ConfigureAwait(false));
-
-            request.Should().BeEquivalentTo(response, (opt) => opt.Excluding(x => x.Id)
-                                                      .Excluding(y => y.Author)
-                                                      .Excluding(z => z.Categorisation));
-            response.Id.Should().NotBeEmpty();
-            response.Author.Should().BeEquivalentTo(new AuthorDetails());
-            response.Categorisation.Should().BeEquivalentTo(new Categorisation());
-
-            _logger.VerifyExact(LogLevel.Debug,
-                $"Saving a new note for targetId: {request.TargetId}, targetType: {Enum.GetName(typeof(TargetType), request.TargetType)}",
-                Times.Once());
-        }
-
-        #endregion PostNewNote Tests
     }
 }
