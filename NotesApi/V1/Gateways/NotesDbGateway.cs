@@ -14,6 +14,92 @@ using System.Threading.Tasks;
 
 namespace NotesApi.V1.Gateways
 {
+    public interface IExcludedCategoriesFactory
+    {
+        List<ExcludedCategory> Create(List<string> categoryValues);
+    }
+
+    public interface IDbFilterExpressionFactory
+    {
+        string Create(List<ExcludedCategory> categories);
+    }
+
+    public class DbFilterExpressionFactory : IDbFilterExpressionFactory
+    {
+        public string Create(List<ExcludedCategory> categories)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ExcludedCategoriesFactory : IExcludedCategoriesFactory
+    {
+        public List<ExcludedCategory> Create(List<string> categoryValues)
+        {
+            var excludedCategoriesList = new List<ExcludedCategory>();
+
+            foreach (string categoryValue in categoryValues)
+            {
+                var excludedCategory = new ExcludedCategory { CategoryValue = categoryValue };
+
+                var categoryKey = GenerateCategoryKey(excludedCategoriesList);
+                var categoryValueKey = GenerateValueKey(excludedCategoriesList, categoryKey);
+
+                excludedCategory.CategoryKey = categoryKey;
+                excludedCategory.CategoryValueKey = categoryValueKey;
+
+                excludedCategoriesList.Add(excludedCategory);
+            }
+
+            return excludedCategoriesList;
+        }
+
+        private static string GenerateCategoryKey(List<ExcludedCategory> excludedCategoriesList)
+        {
+            var categoryKey = GenerateRandomParameterName("#");
+
+            while (excludedCategoriesList.Any(x => x.CategoryKey == categoryKey))
+            {
+                categoryKey = GenerateRandomParameterName("#");
+            }
+
+            return categoryKey;
+        }
+
+        private static string GenerateValueKey(List<ExcludedCategory> excludedCategoriesList, string categoryKey)
+        {
+            var categoryValueKey = GenerateRandomParameterName(":");
+
+            while (excludedCategoriesList.Any(x => x.CategoryValueKey == categoryKey))
+            {
+                categoryValueKey = GenerateRandomParameterName(":");
+            }
+
+            return categoryValueKey;
+        }
+
+        private static string GenerateRandomParameterName(string prefix)
+        {
+            var chars = "abcdefghijklmnopqrstuvwxyz";
+            var stringChars = new char[8];
+            var random = new Random();
+
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            return prefix + new string(stringChars);
+        }
+    }
+
+    public class ExcludedCategory
+    {
+        public string CategoryKey { get; set; }
+        public string CategoryValueKey { get; set; }
+        public string CategoryValue { get; set; }
+    }
+
     public class NotesDbGateway : INotesGateway
     {
         private const int MAX_RESULTS = 10;
@@ -29,7 +115,7 @@ namespace NotesApi.V1.Gateways
         }
 
         [LogCall]
-        public async Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query, string categoryToExclude = null)
+        public async Task<PagedResult<Note>> GetByTargetIdAsync(GetNotesByTargetIdQuery query, List<ExcludedCategory> excludedCategories = null)
         {
             int pageSize = query.PageSize.HasValue ? query.PageSize.Value : MAX_RESULTS;
             var dbNotes = new List<NoteDb>();
@@ -39,10 +125,10 @@ namespace NotesApi.V1.Gateways
             filterExpression.ExpressionAttributeNames.Add("#t", "targetId");
             filterExpression.ExpressionAttributeValues.Add(":targetId", query.TargetId);
 
-            if (string.IsNullOrEmpty(categoryToExclude))
+            foreach (var excludedCategory in excludedCategories)
             {
-                filterExpression.ExpressionAttributeNames.Add("#c", "categorisation.category");
-                filterExpression.ExpressionAttributeValues.Add(":cat", categoryToExclude);
+                filterExpression.ExpressionAttributeNames.Add(excludedCategory.CategoryKey, "categorisation.category");
+                filterExpression.ExpressionAttributeValues.Add(excludedCategory.CategoryValueKey, excludedCategory.CategoryValue);
                 filterExpression.ExpressionStatement = "#c <> :cat";
             }
 

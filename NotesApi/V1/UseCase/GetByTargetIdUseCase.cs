@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Hackney.Core.DynamoDb;
 using Hackney.Core.Logging;
 using NotesApi.V1.Boundary.Request;
@@ -12,18 +13,16 @@ namespace NotesApi.V1.UseCase
     public class GetByTargetIdUseCase : IGetByTargetIdUseCase
     {
         private readonly INotesGateway _gateway;
-        private readonly string _category;
 
         public GetByTargetIdUseCase(INotesGateway gateway)
         {
-            _category = "ASB";
             _gateway = gateway;
         }
 
         [LogCall]
         public async Task<PagedResult<NoteResponseObject>> ExecuteAsync(GetNotesByTargetIdQuery query)
         {
-            var gatewayResult = await _gateway.GetByTargetIdAsync(query, _category).ConfigureAwait(false);
+            var gatewayResult = await _gateway.GetByTargetIdAsync(query, new List<ExcludedCategory>()).ConfigureAwait(false);
             return new PagedResult<NoteResponseObject>(gatewayResult.Results.ToResponse(), gatewayResult.PaginationDetails);
         }
     }
