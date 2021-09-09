@@ -61,7 +61,7 @@ namespace NotesApi.Tests.V1.Controllers
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var notes = _fixture.CreateMany<NoteResponseObject>(5).ToList();
             var pagedResult = new PagedResult<NoteResponseObject>(notes, new PaginationDetails(paginationToken));
-            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query, new List<string>())).ReturnsAsync(pagedResult);
+            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query, It.IsAny<List<string>>())).ReturnsAsync(pagedResult);
 
             // Act
             var response = await _sut.GetByTargetIdAsync(query).ConfigureAwait(false);
@@ -81,7 +81,7 @@ namespace NotesApi.Tests.V1.Controllers
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var exception = new ApplicationException("Test exception");
-            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query, new List<string>())).ThrowsAsync(exception);
+            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query, It.IsAny<List<string>>())).ThrowsAsync(exception);
 
             // Act
             Func<Task<IActionResult>> func = async () => await _sut.GetByTargetIdAsync(query).ConfigureAwait(false);

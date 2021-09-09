@@ -21,8 +21,8 @@ namespace NotesApi.Tests.V1.Infrastructure
             // Arrange
             var categoriesList = new List<ExcludedCategory>
             {
-                new ExcludedCategory {CategoryValueKey = "A", CategoryValue = "1"},
-                new ExcludedCategory {CategoryValueKey = "B", CategoryValue = "2"}
+                new ExcludedCategory {CategoryKey = "A", CategoryValueKey = "1"},
+                new ExcludedCategory {CategoryKey = "B", CategoryValueKey = "2"}
             };
 
             // Act
