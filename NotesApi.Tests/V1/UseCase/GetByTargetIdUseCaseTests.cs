@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NotesApi.Tests.V1.Helper;
+using NotesApi.V1.Infrastructure;
 using Xunit;
 
 namespace NotesApi.Tests.V1.UseCase
@@ -22,12 +23,15 @@ namespace NotesApi.Tests.V1.UseCase
     {
         private readonly Fixture _fixture = new Fixture();
         private readonly Mock<INotesGateway> _mockGateway;
+        private readonly Mock<IExcludedCategoriesFactory> _mockExcludedCategoriesFactory;
         private readonly GetByTargetIdUseCase _classUnderTest;
 
         public GetByTargetIdUseCaseTests()
         {
             _mockGateway = new Mock<INotesGateway>();
-            _classUnderTest = new GetByTargetIdUseCase(_mockGateway.Object);
+            _mockExcludedCategoriesFactory = new Mock<IExcludedCategoriesFactory>();
+
+            _classUnderTest = new GetByTargetIdUseCase(_mockGateway.Object, _mockExcludedCategoriesFactory.Object);
         }
 
         [Theory]
@@ -43,7 +47,7 @@ namespace NotesApi.Tests.V1.UseCase
             _mockGateway.Setup(x => x.GetByTargetIdAsync(query, new List<ExcludedCategory>())).ReturnsAsync(gatewayResult);
 
             // Act
-            var response = await _classUnderTest.ExecuteAsync(query).ConfigureAwait(false);
+            var response = await _classUnderTest.ExecuteAsync(query, new List<string>()).ConfigureAwait(false);
 
             // Assert
             response.Results.Should().BeEmpty();
@@ -62,7 +66,7 @@ namespace NotesApi.Tests.V1.UseCase
             _mockGateway.Setup(x => x.GetByTargetIdAsync(query, new List<ExcludedCategory>())).ReturnsAsync(gatewayResult);
 
             // Act
-            var response = await _classUnderTest.ExecuteAsync(query).ConfigureAwait(false);
+            var response = await _classUnderTest.ExecuteAsync(query, new List<string>()).ConfigureAwait(false);
 
             // Assert
             response.Results.Should().BeEmpty();
@@ -82,7 +86,7 @@ namespace NotesApi.Tests.V1.UseCase
             _mockGateway.Setup(x => x.GetByTargetIdAsync(query, new List<ExcludedCategory>())).ReturnsAsync(gatewayResult);
 
             // Act
-            var response = await _classUnderTest.ExecuteAsync(query).ConfigureAwait(false);
+            var response = await _classUnderTest.ExecuteAsync(query, new List<string>()).ConfigureAwait(false);
 
             // Assert
             response.Results.Should().BeEquivalentTo(notes.ToResponse());
@@ -106,7 +110,7 @@ namespace NotesApi.Tests.V1.UseCase
 
             // Act
             Func<Task<PagedResult<NoteResponseObject>>> func = async () =>
-                await _classUnderTest.ExecuteAsync(query).ConfigureAwait(false);
+                await _classUnderTest.ExecuteAsync(query, new List<string>()).ConfigureAwait(false);
 
             // Assert
             func.Should().Throw<ApplicationException>().WithMessage(exception.Message);
