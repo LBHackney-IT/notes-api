@@ -44,7 +44,7 @@ namespace NotesApi.Tests.V1.UseCase
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var gatewayResult = new PagedResult<Note>(null, new PaginationDetails(paginationToken));
-            _mockGateway.Setup(x => x.GetByTargetIdAsync(query, new List<ExcludedCategory>())).ReturnsAsync(gatewayResult);
+            _mockGateway.Setup(x => x.GetByTargetIdAsync(query, It.IsAny<List<ExcludedCategory>>())).ReturnsAsync(gatewayResult);
 
             // Act
             var response = await _classUnderTest.ExecuteAsync(query, new List<string>()).ConfigureAwait(false);
@@ -63,7 +63,7 @@ namespace NotesApi.Tests.V1.UseCase
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var gatewayResult = new PagedResult<Note>(new List<Note>());
-            _mockGateway.Setup(x => x.GetByTargetIdAsync(query, new List<ExcludedCategory>())).ReturnsAsync(gatewayResult);
+            _mockGateway.Setup(x => x.GetByTargetIdAsync(query, It.IsAny<List<ExcludedCategory>>())).ReturnsAsync(gatewayResult);
 
             // Act
             var response = await _classUnderTest.ExecuteAsync(query, new List<string>()).ConfigureAwait(false);
@@ -83,7 +83,7 @@ namespace NotesApi.Tests.V1.UseCase
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var notes = _fixture.CreateMany<Note>(5).ToList();
             var gatewayResult = new PagedResult<Note>(notes, new PaginationDetails(paginationToken));
-            _mockGateway.Setup(x => x.GetByTargetIdAsync(query, new List<ExcludedCategory>())).ReturnsAsync(gatewayResult);
+            _mockGateway.Setup(x => x.GetByTargetIdAsync(query, It.IsAny<List<ExcludedCategory>>())).ReturnsAsync(gatewayResult);
 
             // Act
             var response = await _classUnderTest.ExecuteAsync(query, new List<string>()).ConfigureAwait(false);
@@ -106,7 +106,7 @@ namespace NotesApi.Tests.V1.UseCase
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var exception = new ApplicationException("Test exception");
-            _mockGateway.Setup(x => x.GetByTargetIdAsync(query, new List<ExcludedCategory>())).ThrowsAsync(exception);
+            _mockGateway.Setup(x => x.GetByTargetIdAsync(query, It.IsAny<List<ExcludedCategory>>())).ThrowsAsync(exception);
 
             // Act
             Func<Task<PagedResult<NoteResponseObject>>> func = async () =>
