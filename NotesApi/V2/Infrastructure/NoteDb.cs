@@ -30,6 +30,7 @@ namespace NotesApi.V2.Infrastructure
         [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<AuthorDetails>))]
         public AuthorDetails Author { get; set; }
 
+        [DynamoDBProperty(Converter = typeof(DynamoDbBoolConverter))]
         public bool Highlight { get; set; }
     }
 }
