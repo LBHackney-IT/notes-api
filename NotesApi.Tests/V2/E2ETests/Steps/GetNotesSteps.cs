@@ -33,7 +33,7 @@ namespace NotesApi.Tests.V2.E2ETests.Steps
 
         private async Task<HttpResponseMessage> CallApi(string id, string paginationToken = null, int? pageSize = null)
         {
-            var route = $"api/v1/notes?targetId={id}";
+            var route = $"api/v2/notes?targetId={id}";
             if (!string.IsNullOrEmpty(paginationToken))
                 route += $"&paginationToken={paginationToken}";
             if (pageSize.HasValue)
