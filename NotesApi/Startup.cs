@@ -147,11 +147,13 @@ namespace NotesApi
         private static void RegisterGateways(IServiceCollection services)
         {
             services.AddScoped<INotesGateway, NotesDbGateway>();
+            services.AddScoped<V2.Gateways.INotesGateway, V2.Gateways.NotesDbGateway>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)
         {
             services.AddScoped<IGetByTargetIdUseCase, GetByTargetIdUseCase>();
+            services.AddScoped<V2.UseCase.Interfaces.IGetByTargetIdUseCase, V2.UseCase.GetByTargetIdUseCase>();
             services.AddScoped<IPostNewNoteUseCase, PostNewNoteUseCase>();
         }
 
