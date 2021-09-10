@@ -15,7 +15,7 @@ namespace NotesApi.V2.Controllers
     [ApiController]
     [Route("api/v2/notes")]
     [Produces("application/json")]
-    [ApiVersion("2.0")]
+    [ApiVersion("1.0")]
     public class NotesApiController : BaseController
     {
         private readonly IGetByTargetIdUseCase _getByTargetIdUseCase;
