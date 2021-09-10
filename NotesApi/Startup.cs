@@ -154,6 +154,7 @@ namespace NotesApi
         {
             services.AddScoped<IGetByTargetIdUseCase, GetByTargetIdUseCase>();
             services.AddScoped<V2.UseCase.Interfaces.IGetByTargetIdUseCase, V2.UseCase.GetByTargetIdUseCase>();
+            services.AddScoped<V2.UseCase.Interfaces.IPostNewNoteUseCase, V2.UseCase.PostNewNoteUseCase>();
             services.AddScoped<IPostNewNoteUseCase, PostNewNoteUseCase>();
         }
 
