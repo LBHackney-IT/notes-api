@@ -8,11 +8,9 @@ namespace NotesApi.V1.Infrastructure
     [DynamoDBTable("Notes", LowerCamelCaseProperties = true)]
     public class NoteDb
     {
-        [DynamoDBRangeKey]
-        public Guid Id { get; set; }
+        [DynamoDBRangeKey] public Guid Id { get; set; }
 
-        [DynamoDBHashKey]
-        public Guid TargetId { get; set; }
+        [DynamoDBHashKey] public Guid TargetId { get; set; }
 
         public string Description { get; set; }
 
@@ -27,4 +25,5 @@ namespace NotesApi.V1.Infrastructure
 
         [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<AuthorDetails>))]
         public AuthorDetails Author { get; set; }
+    }
 }
