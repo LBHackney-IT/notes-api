@@ -20,8 +20,6 @@ namespace NotesApi.Tests.V1.Helper
         public const string AUTHORFULLNAME = "Bob Roberts";
         public const string AUTHOREMAIL = "bob.roberts@ccc.com";
 
-        public const string ASB = "ASB";
-
         public static Note ConstructNoteFromConstants()
         {
             var note = new Note();

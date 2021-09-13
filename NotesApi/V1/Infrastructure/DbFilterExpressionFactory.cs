@@ -12,7 +12,7 @@ namespace NotesApi.V1.Infrastructure
 
             foreach (var category in categories)
             {
-                filterExpression.Append($"{category.CategoryKey} <> {category.CategoryValueKey} and ");
+                filterExpression.Append($"#categorisation.#category <> {category.CategoryValueKey} and ");
             }
 
             filterExpression = filterExpression.Remove((filterExpression.Length - 5), 5);

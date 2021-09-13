@@ -128,7 +128,7 @@ namespace NotesApi.Tests.V1.E2ETests.Steps
         public void ThenAllTheTargetNotesAreReturnedAndNoneHasAnASBCategory(List<NoteDb> expectedNotes)
         {
             _pagedNotes.Should().BeEquivalentTo(expectedNotes.OrderByDescending(x => x.CreatedAt));
-            _pagedNotes.All(x => x.Categorisation.Category != "ASB").Should().BeTrue();
+            _pagedNotes.All(x => x.Categorisation.Category != "Anti-social behaviour").Should().BeTrue();
         }
 
         public void ThenBadRequestIsReturned()

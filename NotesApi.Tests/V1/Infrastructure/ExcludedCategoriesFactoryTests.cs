@@ -31,7 +31,6 @@ namespace NotesApi.Tests.V1.Infrastructure
 
             //Assert
             result.Select(x => x.CategoryValueKey).Distinct().Count().Should().Be(result.Count);
-            result.Select(x => x.CategoryKey).Distinct().Count().Should().Be(result.Count);
         }
     }
 }
