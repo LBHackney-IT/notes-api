@@ -43,7 +43,7 @@ namespace NotesApi.V1.Controllers
         [LogCall(LogLevel.Information)]
         public async Task<IActionResult> GetByTargetIdAsync([FromQuery] GetNotesByTargetIdQuery query)
         {
-            var response = await _getByTargetIdUseCase.ExecuteAsync(query).ConfigureAwait(false);
+            var response = await _getByTargetIdUseCase.ExecuteAsync(query, new List<string>() { "Anti-social behaviour" }).ConfigureAwait(false);
             if ((null == response) || !response.Results.Any()) return NotFound(query.TargetId);
 
             return Ok(response);

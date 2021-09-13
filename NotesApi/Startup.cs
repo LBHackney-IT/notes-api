@@ -142,16 +142,22 @@ namespace NotesApi
             services.ConfigureDynamoDB();
             RegisterGateways(services);
             RegisterUseCases(services);
+
+            services.AddScoped<IDbFilterExpressionFactory, DbFilterExpressionFactory>();
+            services.AddScoped<IExcludedCategoriesFactory, ExcludedCategoriesFactory>();
         }
 
         private static void RegisterGateways(IServiceCollection services)
         {
             services.AddScoped<INotesGateway, NotesDbGateway>();
+            services.AddScoped<V2.Gateways.INotesGateway, V2.Gateways.NotesDbGateway>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)
         {
             services.AddScoped<IGetByTargetIdUseCase, GetByTargetIdUseCase>();
+            services.AddScoped<V2.UseCase.Interfaces.IGetByTargetIdUseCase, V2.UseCase.GetByTargetIdUseCase>();
+            services.AddScoped<V2.UseCase.Interfaces.IPostNewNoteUseCase, V2.UseCase.PostNewNoteUseCase>();
             services.AddScoped<IPostNewNoteUseCase, PostNewNoteUseCase>();
         }
 

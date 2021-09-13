@@ -8,6 +8,7 @@ using NotesApi.V1.Boundary.Response;
 using NotesApi.V1.Controllers;
 using NotesApi.V1.UseCase.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -39,7 +40,7 @@ namespace NotesApi.Tests.V1.Controllers
             // Arrange
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
-            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query)).ReturnsAsync((PagedResult<NoteResponseObject>) null);
+            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query, new List<string>())).ReturnsAsync((PagedResult<NoteResponseObject>) null);
 
             // Act
             var response = await _sut.GetByTargetIdAsync(query).ConfigureAwait(false);
@@ -60,7 +61,7 @@ namespace NotesApi.Tests.V1.Controllers
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var notes = _fixture.CreateMany<NoteResponseObject>(5).ToList();
             var pagedResult = new PagedResult<NoteResponseObject>(notes, new PaginationDetails(paginationToken));
-            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query)).ReturnsAsync(pagedResult);
+            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query, It.IsAny<List<string>>())).ReturnsAsync(pagedResult);
 
             // Act
             var response = await _sut.GetByTargetIdAsync(query).ConfigureAwait(false);
@@ -80,7 +81,7 @@ namespace NotesApi.Tests.V1.Controllers
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var exception = new ApplicationException("Test exception");
-            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query)).ThrowsAsync(exception);
+            _mockGetByTargetIdUseCase.Setup(x => x.ExecuteAsync(query, It.IsAny<List<string>>())).ThrowsAsync(exception);
 
             // Act
             Func<Task<IActionResult>> func = async () => await _sut.GetByTargetIdAsync(query).ConfigureAwait(false);

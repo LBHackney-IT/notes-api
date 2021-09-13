@@ -20,15 +20,17 @@ namespace NotesApi.Tests.V1.Gateways
     {
         private readonly Fixture _fixture = new Fixture();
         private readonly Mock<ILogger<NotesDbGateway>> _logger;
+        private readonly Mock<IDbFilterExpressionFactory> _expressionFactory;
         private readonly IDynamoDBContext _dynamoDb;
         private readonly NotesDbGateway _classUnderTest;
         private readonly List<Action> _cleanup = new List<Action>();
-
         public NotesDbGatewayTests(DynamoDbIntegrationTests<Startup> dbTestFixture)
         {
             _logger = new Mock<ILogger<NotesDbGateway>>();
+            _expressionFactory = new Mock<IDbFilterExpressionFactory>();
             _dynamoDb = dbTestFixture.DynamoDbContext;
-            _classUnderTest = new NotesDbGateway(_dynamoDb, _logger.Object);
+
+            _classUnderTest = new NotesDbGateway(_dynamoDb, _logger.Object, _expressionFactory.Object);
         }
 
         public void Dispose()

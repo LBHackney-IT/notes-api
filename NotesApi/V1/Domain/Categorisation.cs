@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace NotesApi.V1.Domain
 {
     public class Categorisation
