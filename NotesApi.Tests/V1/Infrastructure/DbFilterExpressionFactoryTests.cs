@@ -21,15 +21,15 @@ namespace NotesApi.Tests.V1.Infrastructure
             // Arrange
             var categoriesList = new List<ExcludedCategory>
             {
-                new ExcludedCategory {CategoryKey = "A", CategoryValueKey = "1"},
-                new ExcludedCategory {CategoryKey = "B", CategoryValueKey = "2"}
+                new ExcludedCategory {CategoryValueKey = "1"},
+                new ExcludedCategory {CategoryValueKey = "2"}
             };
 
             // Act
             var result = _sut.Create(categoriesList);
 
             // Assert
-            result.Should().Be("A <> 1 and B <> 2");
+            result.Should().Be("#categorisation.#category <> 1 and #categorisation.#category <> 2");
         }
     }
 }

@@ -11,16 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.DynamoDBv2.Model;
 
 namespace NotesApi.V1.Gateways
 {
-    public class ExcludedCategory
-    {
-        public string CategoryKey { get; set; }
-        public string CategoryValueKey { get; set; }
-        public string CategoryValue { get; set; }
-    }
-
     public class NotesDbGateway : INotesGateway
     {
         private const int MAX_RESULTS = 10;
@@ -42,7 +36,6 @@ namespace NotesApi.V1.Gateways
         {
             int pageSize = query.PageSize.HasValue ? query.PageSize.Value : MAX_RESULTS;
             var dbNotes = new List<NoteDb>();
-            var table = _dynamoDbContext.GetTargetTable<NoteDb>();
 
             var filterExpression = new Expression();
             var keyExpression = new Expression();
@@ -51,12 +44,15 @@ namespace NotesApi.V1.Gateways
             filterExpression.ExpressionAttributeValues.Add(":targetId", query.TargetId);
             keyExpression.ExpressionStatement = "#t = :targetId";
 
-            if (excludedCategories != null)
+            if (excludedCategories != null && excludedCategories.Any())
             {
+                filterExpression.ExpressionAttributeNames.Add("#categorisation",
+                    "categorisation");
+                filterExpression.ExpressionAttributeNames.Add("#category",
+                    "category");
+
                 foreach (var excludedCategory in excludedCategories)
                 {
-                    filterExpression.ExpressionAttributeNames.Add(excludedCategory.CategoryKey,
-                        "categorisation.category");
                     filterExpression.ExpressionAttributeValues.Add(excludedCategory.CategoryValueKey,
                         excludedCategory.CategoryValue);
                 }
@@ -64,6 +60,7 @@ namespace NotesApi.V1.Gateways
                 filterExpression.ExpressionStatement = _dbFilterExpressionFactory.Create(excludedCategories);
             }
 
+            var table = _dynamoDbContext.GetTargetTable<NoteDb>();
             var queryConfig = new QueryOperationConfig
             {
                 IndexName = GETNOTESBYTARGETIDINDEX,
@@ -72,7 +69,7 @@ namespace NotesApi.V1.Gateways
                 Limit = pageSize,
                 PaginationToken = PaginationDetails.DecodeToken(query.PaginationToken),
                 FilterExpression = filterExpression,
-                KeyExpression = keyExpression
+                KeyExpression = keyExpression,
             };
 
             var search = table.Query(queryConfig);

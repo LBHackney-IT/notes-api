@@ -15,35 +15,20 @@ namespace NotesApi.V1.Infrastructure
             {
                 var excludedCategory = new ExcludedCategory { CategoryValue = categoryValue };
 
-                var categoryKey = GenerateCategoryKey(excludedCategoriesList);
-                var categoryValueKey = GenerateValueKey(excludedCategoriesList, categoryKey);
+                var categoryValueKey = GenerateValueKey(excludedCategoriesList);
 
-                excludedCategory.CategoryKey = categoryKey;
                 excludedCategory.CategoryValueKey = categoryValueKey;
-
                 excludedCategoriesList.Add(excludedCategory);
             }
 
             return excludedCategoriesList;
         }
 
-        private static string GenerateCategoryKey(List<ExcludedCategory> excludedCategoriesList)
-        {
-            var categoryKey = GenerateRandomParameterName("#");
-
-            while (excludedCategoriesList.Any(x => x.CategoryKey == categoryKey))
-            {
-                categoryKey = GenerateRandomParameterName("#");
-            }
-
-            return categoryKey;
-        }
-
-        private static string GenerateValueKey(List<ExcludedCategory> excludedCategoriesList, string categoryKey)
+        private static string GenerateValueKey(List<ExcludedCategory> excludedCategoriesList)
         {
             var categoryValueKey = GenerateRandomParameterName(":");
 
-            while (excludedCategoriesList.Any(x => x.CategoryValueKey == categoryKey))
+            while (excludedCategoriesList.Any(x => x.CategoryValueKey == categoryValueKey))
             {
                 categoryValueKey = GenerateRandomParameterName(":");
             }
@@ -53,7 +38,7 @@ namespace NotesApi.V1.Infrastructure
 
         private static string GenerateRandomParameterName(string prefix)
         {
-            var chars = "abcdefghijklmnopqrstuvwxyz";
+            var chars = "abdefghijklmnopqrstuvwxyz";
             var stringChars = new char[8];
             var random = new Random();
 
