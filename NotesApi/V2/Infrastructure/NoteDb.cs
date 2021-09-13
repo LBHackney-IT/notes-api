@@ -1,16 +1,20 @@
+using System;
 using Amazon.DynamoDBv2.DataModel;
 using Hackney.Core.DynamoDb.Converters;
-using NotesApi.V1.Domain;
-using System;
+using NotesApi.V2.Domain;
 
-namespace NotesApi.V1.Infrastructure
+namespace NotesApi.V2.Infrastructure
 {
     [DynamoDBTable("Notes", LowerCamelCaseProperties = true)]
     public class NoteDb
     {
-        [DynamoDBRangeKey] public Guid Id { get; set; }
+        [DynamoDBRangeKey]
+        public Guid Id { get; set; }
 
-        [DynamoDBHashKey] public Guid TargetId { get; set; }
+        [DynamoDBHashKey]
+        public Guid TargetId { get; set; }
+
+        public string Title { get; set; }
 
         public string Description { get; set; }
 
@@ -25,5 +29,8 @@ namespace NotesApi.V1.Infrastructure
 
         [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<AuthorDetails>))]
         public AuthorDetails Author { get; set; }
+
+        [DynamoDBProperty(Converter = typeof(DynamoDbBoolConverter))]
+        public bool Highlight { get; set; }
     }
 }

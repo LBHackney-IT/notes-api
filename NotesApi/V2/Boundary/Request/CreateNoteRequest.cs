@@ -1,7 +1,7 @@
-using NotesApi.V1.Domain;
 using System;
+using NotesApi.V2.Domain;
 
-namespace NotesApi.V1.Boundary.Request
+namespace NotesApi.V2.Boundary.Request
 {
     public class CreateNoteRequest
     {

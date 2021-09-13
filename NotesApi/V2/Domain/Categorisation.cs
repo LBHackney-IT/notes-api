@@ -1,4 +1,4 @@
-namespace NotesApi.V1.Domain
+namespace NotesApi.V2.Domain
 {
     public class Categorisation
     {
