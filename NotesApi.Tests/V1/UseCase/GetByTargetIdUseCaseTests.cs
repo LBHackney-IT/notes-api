@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NotesApi.Tests.V1.Helper;
+using NotesApi.V1.Infrastructure;
 using Xunit;
 
 namespace NotesApi.Tests.V1.UseCase
@@ -21,12 +23,15 @@ namespace NotesApi.Tests.V1.UseCase
     {
         private readonly Fixture _fixture = new Fixture();
         private readonly Mock<INotesGateway> _mockGateway;
+        private readonly Mock<IExcludedCategoriesFactory> _mockExcludedCategoriesFactory;
         private readonly GetByTargetIdUseCase _classUnderTest;
 
         public GetByTargetIdUseCaseTests()
         {
             _mockGateway = new Mock<INotesGateway>();
-            _classUnderTest = new GetByTargetIdUseCase(_mockGateway.Object);
+            _mockExcludedCategoriesFactory = new Mock<IExcludedCategoriesFactory>();
+
+            _classUnderTest = new GetByTargetIdUseCase(_mockGateway.Object, _mockExcludedCategoriesFactory.Object);
         }
 
         [Theory]
@@ -39,10 +44,10 @@ namespace NotesApi.Tests.V1.UseCase
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var gatewayResult = new PagedResult<Note>(null, new PaginationDetails(paginationToken));
-            _mockGateway.Setup(x => x.GetByTargetIdAsync(query)).ReturnsAsync(gatewayResult);
+            _mockGateway.Setup(x => x.GetByTargetIdAsync(query, It.IsAny<List<ExcludedCategory>>())).ReturnsAsync(gatewayResult);
 
             // Act
-            var response = await _classUnderTest.ExecuteAsync(query).ConfigureAwait(false);
+            var response = await _classUnderTest.ExecuteAsync(query, new List<string>()).ConfigureAwait(false);
 
             // Assert
             response.Results.Should().BeEmpty();
@@ -58,10 +63,10 @@ namespace NotesApi.Tests.V1.UseCase
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var gatewayResult = new PagedResult<Note>(new List<Note>());
-            _mockGateway.Setup(x => x.GetByTargetIdAsync(query)).ReturnsAsync(gatewayResult);
+            _mockGateway.Setup(x => x.GetByTargetIdAsync(query, It.IsAny<List<ExcludedCategory>>())).ReturnsAsync(gatewayResult);
 
             // Act
-            var response = await _classUnderTest.ExecuteAsync(query).ConfigureAwait(false);
+            var response = await _classUnderTest.ExecuteAsync(query, new List<string>()).ConfigureAwait(false);
 
             // Assert
             response.Results.Should().BeEmpty();
@@ -78,10 +83,10 @@ namespace NotesApi.Tests.V1.UseCase
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var notes = _fixture.CreateMany<Note>(5).ToList();
             var gatewayResult = new PagedResult<Note>(notes, new PaginationDetails(paginationToken));
-            _mockGateway.Setup(x => x.GetByTargetIdAsync(query)).ReturnsAsync(gatewayResult);
+            _mockGateway.Setup(x => x.GetByTargetIdAsync(query, It.IsAny<List<ExcludedCategory>>())).ReturnsAsync(gatewayResult);
 
             // Act
-            var response = await _classUnderTest.ExecuteAsync(query).ConfigureAwait(false);
+            var response = await _classUnderTest.ExecuteAsync(query, new List<string>()).ConfigureAwait(false);
 
             // Assert
             response.Results.Should().BeEquivalentTo(notes.ToResponse());
@@ -101,11 +106,11 @@ namespace NotesApi.Tests.V1.UseCase
             var id = Guid.NewGuid();
             var query = new GetNotesByTargetIdQuery { TargetId = id, PaginationToken = paginationToken };
             var exception = new ApplicationException("Test exception");
-            _mockGateway.Setup(x => x.GetByTargetIdAsync(query)).ThrowsAsync(exception);
+            _mockGateway.Setup(x => x.GetByTargetIdAsync(query, It.IsAny<List<ExcludedCategory>>())).ThrowsAsync(exception);
 
             // Act
             Func<Task<PagedResult<NoteResponseObject>>> func = async () =>
-                await _classUnderTest.ExecuteAsync(query).ConfigureAwait(false);
+                await _classUnderTest.ExecuteAsync(query, new List<string>()).ConfigureAwait(false);
 
             // Assert
             func.Should().Throw<ApplicationException>().WithMessage(exception.Message);
