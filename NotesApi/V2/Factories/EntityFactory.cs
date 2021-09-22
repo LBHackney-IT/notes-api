@@ -20,21 +20,5 @@ namespace NotesApi.V2.Factories
                 Highlight = databaseNote.Highlight
             };
         }
-
-        public static NoteDb ToDatabase(this Note note)
-        {
-            return new NoteDb
-            {
-                Author = note.Author,
-                Categorisation = note.Categorisation,
-                CreatedAt = note.CreatedAt,
-                Description = note.Description,
-                Id = note.Id,
-                TargetId = note.TargetId,
-                TargetType = note.TargetType,
-                Highlight = note.Highlight,
-                Title = note.Title
-            };
-        }
     }
 }
