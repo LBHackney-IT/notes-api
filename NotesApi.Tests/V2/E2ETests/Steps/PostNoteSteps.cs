@@ -28,7 +28,7 @@ namespace NotesApi.Tests.V2.E2ETests.Steps
 
         private async Task<HttpResponseMessage> PostJsonToApi(string json)
         {
-            var route = $"api/v1/notes";
+            var route = $"api/v2/notes";
             var uri = new Uri(route, UriKind.Relative);
 
             var data = new StringContent(json, Encoding.UTF8, "application/json");
@@ -39,7 +39,7 @@ namespace NotesApi.Tests.V2.E2ETests.Steps
 
         private async Task<HttpResponseMessage> CallApi(string id, string paginationToken = null, int? pageSize = null)
         {
-            var route = $"api/v1/notes?targetId={id}";
+            var route = $"api/v2/notes?targetId={id}";
             if (!string.IsNullOrEmpty(paginationToken))
                 route += $"&paginationToken={paginationToken}";
             if (pageSize.HasValue)
@@ -90,12 +90,14 @@ namespace NotesApi.Tests.V2.E2ETests.Steps
             var dbNote = new NoteDb()
             {
                 Author = note.Author,
+                Title = note.Title,
                 Categorisation = note.Categorisation,
                 CreatedAt = note.CreatedAt,
                 Description = note.Description,
                 Id = note.Id,
                 TargetId = note.TargetId,
-                TargetType = note.TargetType
+                TargetType = note.TargetType,
+                Highlight = note.Highlight
             };
             notesFixture.Notes.Add(dbNote);
         }
