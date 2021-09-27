@@ -76,6 +76,7 @@ namespace NotesApi.V2.Gateways
             var dbNote = new NoteDb
             {
                 Id = Guid.NewGuid(),
+                Title = request.Title,
                 Description = request.Description,
                 CreatedAt = request.CreatedAt.Value,
                 TargetId = request.TargetId.Value,
@@ -90,7 +91,8 @@ namespace NotesApi.V2.Gateways
                     Description = request.Categorisation?.Description,
                     Category = request.Categorisation?.Category,
                     SubCategory = request.Categorisation?.SubCategory
-                }
+                },
+                Highlight = request.Highlight
             };
 
             _logger.LogDebug($"Saving a new note for targetId: {dbNote.TargetId}, targetType: {Enum.GetName(typeof(TargetType), dbNote.TargetType)}");

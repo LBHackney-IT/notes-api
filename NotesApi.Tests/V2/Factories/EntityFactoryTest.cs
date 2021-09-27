@@ -27,20 +27,5 @@ namespace NotesApi.Tests.V2.Factories
             databaseNote.Title.Should().Be(note.Title);
             databaseNote.Highlight.Should().Be(note.Highlight);
         }
-
-        [Fact]
-        public void CanMapADomainEntityToADatabaseObject()
-        {
-            var note = _fixture.Create<Note>();
-            var databaseNote = note.ToDatabase();
-
-            note.Id.Should().Be(databaseNote.Id);
-            note.Author.Should().BeEquivalentTo(databaseNote.Author);
-            note.Categorisation.Should().BeEquivalentTo(databaseNote.Categorisation);
-            note.CreatedAt.Should().Be(databaseNote.CreatedAt);
-            note.Description.Should().Be(databaseNote.Description);
-            note.TargetId.Should().Be(databaseNote.TargetId);
-            note.TargetType.Should().Be(databaseNote.TargetType);
-        }
     }
 }

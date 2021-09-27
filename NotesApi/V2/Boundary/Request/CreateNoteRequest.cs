@@ -5,6 +5,8 @@ namespace NotesApi.V2.Boundary.Request
 {
     public class CreateNoteRequest
     {
+        public string Title { get; set; }
+
         public string Description { get; set; }
 
         public TargetType? TargetType { get; set; }
@@ -16,5 +18,7 @@ namespace NotesApi.V2.Boundary.Request
         public Categorisation Categorisation { get; set; }
 
         public AuthorDetails Author { get; set; }
+
+        public bool Highlight { get; set; }
     }
 }
