@@ -9,6 +9,7 @@ using Hackney.Core.Logging;
 using Hackney.Core.Middleware.CorrelationId;
 using Hackney.Core.Middleware.Exception;
 using Hackney.Core.Middleware.Logging;
+using Hackney.Core.Validation.AspNet;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using NotesApi.V1.Boundary.Request.Validation;
 using NotesApi.V1.Gateways;
 using NotesApi.V1.Infrastructure;
 using NotesApi.V1.UseCase;
@@ -63,7 +65,7 @@ namespace NotesApi
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddFluentValidation();
+            services.AddFluentValidation(Assembly.GetAssembly(typeof(CreateNoteRequestValidator)));
 
             services.AddApiVersioning(o =>
             {
