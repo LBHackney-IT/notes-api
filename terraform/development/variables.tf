@@ -1,9 +1,9 @@
 variable "environment_name" {
-    type = string
-    default = "development"
+  type    = string
+  default = "development"
 }
 
 variable "project_name" {
-    type = string
-    default = "Housing-Development"
+  type    = string
+  default = "MTFH"
 }
