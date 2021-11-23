@@ -4,7 +4,7 @@ orbs:
   aws-ecr: circleci/aws-ecr@3.0.0
   aws-cli: circleci/aws-cli@0.1.9
   aws_assume_role: lbh-hackit/aws_assume_role@0.1.0
-  dotnet-sonarscanner: storytel/dotnet-sonarscanner@1.4.3
+  sonarcloud: sonarsource/sonarcloud@1.0.2
 
 executors:
   docker-python:
@@ -100,6 +100,15 @@ jobs:
       - run:
           name: Run formatter check
           command: ./dotnet-format-local/dotnet-format --check
+      - run:
+          name: Install SonarCloud dependencies
+          command: dotnet tool install --global dotnet-sonarscanner --version 5.3.2
+      - run:
+          name: Build solution
+          command: dotnet build ./
+      - run:
+          name: Run SonarCloud
+          command: sonarscanner begin /k:"LBHackney-IT_notes-api" /o:"lbhackney-it" /d:sonar.login="$SONAR_TOKEN"
   build-and-test:
     executor: docker-python
     steps:
@@ -111,9 +120,7 @@ jobs:
       - run:
           name: Run tests
           command: docker-compose run notes-api-test
-      - dotnet-sonarscanner/sonar-install
-      - dotnet-sonarscanner/sonar-begin
-      - dotnet-sonarscanner/sonar-end
+      - sonarcloud/scan
   assume-role-development:
     executor: docker-python
     steps:
@@ -166,7 +173,8 @@ workflows:
   check-and-deploy-development:
     jobs:
       - check-code-formatting
-      - build-and-test
+      - build-and-test:
+          context: SonarCloud
       - assume-role-development:
           context: api-assume-role-housing-development-context
           requires:
