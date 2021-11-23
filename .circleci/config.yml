@@ -107,7 +107,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: build
-          command: docker-compose build notes-api-test --build-arg SONAR_TOKEN=$SONAR_TOKEN
+          command: docker-compose build --build-arg SONAR_TOKEN=$SONAR_TOKEN notes-api-test
       - run:
           name: Run tests
           command: docker-compose run notes-api-test
