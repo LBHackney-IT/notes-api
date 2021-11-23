@@ -35,6 +35,13 @@ RUN dotnet restore ./NotesApi.csproj
 # Copy everything else and build
 COPY . ./
 
+# Build and test the application
+RUN dotnet publish --output /out/
+RUN dotnet test \
+  /p:CollectCoverage=true \
+  /p:CoverletOutputFormat=opencover \
+  /p:CoverletOutput="/coverage"
+
 RUN dotnet build -c Release -o out ./NotesApi.csproj
 RUN dotnet publish -c Release -o out ./NotesApi.csproj
 
