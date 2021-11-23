@@ -116,6 +116,7 @@ jobs:
                   echo $SONAR_TOKEN
                   export PATH="$PATH:/root/.dotnet/tools" ;
                   dotnet sonarscanner begin /k:"LBHackney-IT_notes-api" /o:"lbhackney-it" /d:sonar.login="$SONAR_TOKEN" ;
+          context: SonarCloud
   build-and-test:
     executor: docker-python
     steps:
@@ -127,7 +128,6 @@ jobs:
       - run:
           name: Run tests
           command: docker-compose run notes-api-test
-      # - sonarcloud/scan
   assume-role-development:
     executor: docker-python
     steps:
@@ -180,8 +180,7 @@ workflows:
   check-and-deploy-development:
     jobs:
       - check-code-formatting
-      - build-and-test:
-          context: SonarCloud
+      - build-and-test
       - assume-role-development:
           context: api-assume-role-housing-development-context
           requires:
