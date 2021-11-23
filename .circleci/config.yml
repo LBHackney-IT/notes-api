@@ -113,6 +113,7 @@ jobs:
           name: Run SonarCloud
           command:
                   |
+                  echo $SONAR_TOKEN
                   export PATH="$PATH:/root/.dotnet/tools" ;
                   dotnet sonarscanner begin /k:"LBHackney-IT_notes-api" /o:"lbhackney-it" /d:sonar.login="$SONAR_TOKEN" ;
   build-and-test:
