@@ -111,7 +111,10 @@ jobs:
           command: dotnet build ./
       - run:
           name: Run SonarCloud
-          command: dotnet sonarscanner begin /k:"LBHackney-IT_notes-api" /o:"lbhackney-it" /d:sonar.login="$SONAR_TOKEN"
+          command:
+                  |
+                  export PATH="$PATH:/root/.dotnet/tools" ;
+                  dotnet sonarscanner begin /k:"LBHackney-IT_notes-api" /o:"lbhackney-it" /d:sonar.login="$SONAR_TOKEN" ;
   build-and-test:
     executor: docker-python
     steps:
