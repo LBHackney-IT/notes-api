@@ -102,7 +102,10 @@ jobs:
           command: ./dotnet-format-local/dotnet-format --check
       - run:
           name: Install SonarCloud dependencies
-          command: dotnet tool install --global dotnet-sonarscanner --version 5.3.2
+          command: 
+                  |
+                  export PATH="$PATH:/root/.dotnet/tools" ;
+                  dotnet tool install --global dotnet-sonarscanner --version 5.3.2 ;
       - run:
           name: Build solution
           command: dotnet build ./
@@ -120,7 +123,7 @@ jobs:
       - run:
           name: Run tests
           command: docker-compose run notes-api-test
-      - sonarcloud/scan
+      # - sonarcloud/scan
   assume-role-development:
     executor: docker-python
     steps:
