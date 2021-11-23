@@ -111,9 +111,6 @@ jobs:
       - run:
           name: Run tests
           command: docker-compose run notes-api-test
-      - run:
-          name: Run SonarCloud scan
-          command: docker-compose run
 
   assume-role-development:
     executor: docker-python
