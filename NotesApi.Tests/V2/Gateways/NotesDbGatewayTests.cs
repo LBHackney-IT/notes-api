@@ -1,34 +1,35 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Amazon.DynamoDBv2.DataModel;
 using AutoFixture;
 using FluentAssertions;
+using Hackney.Core.Testing.DynamoDb;
+using Hackney.Core.Testing.Shared;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NotesApi.V2.Boundary.Request;
 using NotesApi.V2.Domain;
 using NotesApi.V2.Gateways;
 using NotesApi.V2.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace NotesApi.Tests.V2.Gateways
 {
-    [Collection("DynamoDb collection")]
+    [Collection("AppTest collection")]
     public class NotesDbGatewayTests : IDisposable
     {
         private readonly Fixture _fixture = new Fixture();
         private readonly Mock<ILogger<NotesDbGateway>> _logger;
-        private readonly IDynamoDBContext _dynamoDb;
+        private readonly IDynamoDbFixture _dbFixture;
         private readonly NotesDbGateway _classUnderTest;
         private readonly List<Action> _cleanup = new List<Action>();
 
-        public NotesDbGatewayTests(DynamoDbIntegrationTests<Startup> dbTestFixture)
+        public NotesDbGatewayTests(MockWebApplicationFactory<Startup> appFactory)
         {
             _logger = new Mock<ILogger<NotesDbGateway>>();
-            _dynamoDb = dbTestFixture.DynamoDbContext;
-            _classUnderTest = new NotesDbGateway(_dynamoDb, _logger.Object);
+            _dbFixture = appFactory.DynamoDbFixture;
+            _classUnderTest = new NotesDbGateway(_dbFixture.DynamoDbContext, _logger.Object);
         }
 
         public void Dispose()
@@ -63,21 +64,10 @@ namespace NotesApi.Tests.V2.Gateways
 
             foreach (var note in notes)
             {
-                _dynamoDb.SaveAsync(note).GetAwaiter().GetResult();
-                _cleanup.Add(async () => await _dynamoDb.DeleteAsync(note, default).ConfigureAwait(false));
+                _dbFixture.SaveEntityAsync(note).GetAwaiter().GetResult();
             }
 
             return notes;
-        }
-
-        private static CreateNoteRequest CreateNoteRequest()
-        {
-            var note = new Fixture().Create<CreateNoteRequest>();
-
-            note.TargetId = Guid.NewGuid();
-            note.CreatedAt = DateTime.Now;
-            note.Author.Email = "something@somewhere.com";
-            return note;
         }
 
         #region GetByTargetId Tests

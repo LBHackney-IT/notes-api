@@ -1,6 +1,7 @@
-using Amazon.DynamoDBv2.DataModel;
 using AutoFixture;
 using FluentAssertions;
+using Hackney.Core.Testing.DynamoDb;
+using Hackney.Core.Testing.Shared;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NotesApi.V1.Boundary.Request;
@@ -15,22 +16,22 @@ using Xunit;
 
 namespace NotesApi.Tests.V1.Gateways
 {
-    [Collection("DynamoDb collection")]
+    [Collection("AppTest collection")]
     public class NotesDbGatewayTests : IDisposable
     {
         private readonly Fixture _fixture = new Fixture();
         private readonly Mock<ILogger<NotesDbGateway>> _logger;
         private readonly Mock<IDbFilterExpressionFactory> _expressionFactory;
-        private readonly IDynamoDBContext _dynamoDb;
+        private readonly IDynamoDbFixture _dbFixture;
         private readonly NotesDbGateway _classUnderTest;
         private readonly List<Action> _cleanup = new List<Action>();
-        public NotesDbGatewayTests(DynamoDbIntegrationTests<Startup> dbTestFixture)
+        public NotesDbGatewayTests(MockWebApplicationFactory<Startup> appFactory)
         {
             _logger = new Mock<ILogger<NotesDbGateway>>();
             _expressionFactory = new Mock<IDbFilterExpressionFactory>();
-            _dynamoDb = dbTestFixture.DynamoDbContext;
+            _dbFixture = appFactory.DynamoDbFixture;
 
-            _classUnderTest = new NotesDbGateway(_dynamoDb, _logger.Object, _expressionFactory.Object);
+            _classUnderTest = new NotesDbGateway(_dbFixture.DynamoDbContext, _logger.Object, _expressionFactory.Object);
         }
 
         public void Dispose()
@@ -65,8 +66,7 @@ namespace NotesApi.Tests.V1.Gateways
 
             foreach (var note in notes)
             {
-                _dynamoDb.SaveAsync(note).GetAwaiter().GetResult();
-                _cleanup.Add(async () => await _dynamoDb.DeleteAsync(note, default).ConfigureAwait(false));
+                _dbFixture.SaveEntityAsync(note).GetAwaiter().GetResult();
             }
 
             return notes;
@@ -165,7 +165,7 @@ namespace NotesApi.Tests.V1.Gateways
             var response = await _classUnderTest.PostNewNoteAsync(request).ConfigureAwait(false);
             request.Should().NotBeNull();
             _cleanup.Add(async () =>
-                await _dynamoDb.DeleteAsync<NoteDb>(response.TargetId, response.Id, default).ConfigureAwait(false));
+                await _dbFixture.DynamoDbContext.DeleteAsync<NoteDb>(response.TargetId, response.Id, default).ConfigureAwait(false));
 
             request.Should().BeEquivalentTo(response, (opt) => opt.Excluding(x => x.Id));
             response.Id.Should().NotBeEmpty();
@@ -184,7 +184,7 @@ namespace NotesApi.Tests.V1.Gateways
             var response = await _classUnderTest.PostNewNoteAsync(request).ConfigureAwait(false);
             request.Should().NotBeNull();
             _cleanup.Add(async () =>
-                await _dynamoDb.DeleteAsync<NoteDb>(response.TargetId, response.Id, default).ConfigureAwait(false));
+                await _dbFixture.DynamoDbContext.DeleteAsync<NoteDb>(response.TargetId, response.Id, default).ConfigureAwait(false));
 
             request.Should().BeEquivalentTo(response, (opt) => opt.Excluding(x => x.Id)
                                                       .Excluding(y => y.Author)

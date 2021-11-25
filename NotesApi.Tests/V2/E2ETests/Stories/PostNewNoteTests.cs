@@ -1,7 +1,8 @@
-using System;
+using Hackney.Core.Testing.DynamoDb;
 using NotesApi.Tests.V2.E2ETests.Fixtures;
 using NotesApi.Tests.V2.E2ETests.Steps;
 using NotesApi.V2.Boundary.Request.Validation;
+using System;
 using TestStack.BDDfy;
 using Xunit;
 
@@ -11,18 +12,18 @@ namespace NotesApi.Tests.V2.E2ETests.Stories
         AsA = "Internal Hackney user (such as a Housing Officer or Area housing Manager)",
         IWant = "to add a new note against a Person",
         SoThat = "I can add/track important information against a person in one place")]
-    [Collection("DynamoDb collection")]
+    [Collection("AppTest collection")]
     public class PostNewNoteTests : IDisposable
     {
-        private readonly DynamoDbIntegrationTests<Startup> _dbFixture;
+        private readonly IDynamoDbFixture _dbFixture;
         private readonly NotesFixture _notesFixture;
         private readonly PostNoteSteps _steps;
 
-        public PostNewNoteTests(DynamoDbIntegrationTests<Startup> dbFixture)
+        public PostNewNoteTests(MockWebApplicationFactory<Startup> appFactory)
         {
-            _dbFixture = dbFixture;
+            _dbFixture = appFactory.DynamoDbFixture;
             _notesFixture = new NotesFixture(_dbFixture.DynamoDbContext);
-            _steps = new PostNoteSteps(_dbFixture.Client);
+            _steps = new PostNoteSteps(appFactory.Client);
         }
 
         public void Dispose()

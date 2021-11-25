@@ -1,6 +1,7 @@
-using System;
+using Hackney.Core.Testing.DynamoDb;
 using NotesApi.Tests.V2.E2ETests.Fixtures;
 using NotesApi.Tests.V2.E2ETests.Steps;
+using System;
 using TestStack.BDDfy;
 using Xunit;
 
@@ -10,18 +11,18 @@ namespace NotesApi.Tests.V2.E2ETests.Stories
         AsA = "Internal Hackney user (such as a Housing Officer or Area housing Manager)",
         IWant = "to be able to view notes against a person",
         SoThat = "all the relevant commentary with regards to that person can be stored and viewed in one place")]
-    [Collection("DynamoDb collection")]
+    [Collection("AppTest collection")]
     public class GetNotesByTargetIdTests : IDisposable
     {
-        private readonly DynamoDbIntegrationTests<Startup> _dbFixture;
+        private readonly IDynamoDbFixture _dbFixture;
         private readonly NotesFixture _notesFixture;
         private readonly GetNotesSteps _steps;
 
-        public GetNotesByTargetIdTests(DynamoDbIntegrationTests<Startup> dbFixture)
+        public GetNotesByTargetIdTests(MockWebApplicationFactory<Startup> appFactory)
         {
-            _dbFixture = dbFixture;
+            _dbFixture = appFactory.DynamoDbFixture;
             _notesFixture = new NotesFixture(_dbFixture.DynamoDbContext);
-            _steps = new GetNotesSteps(_dbFixture.Client);
+            _steps = new GetNotesSteps(appFactory.Client);
         }
 
         public void Dispose()
