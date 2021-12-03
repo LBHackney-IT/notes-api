@@ -12,6 +12,9 @@ ARG SONAR_TOKEN
 ENV SONAR_TOKEN=$SONAR_TOKEN
 
 WORKDIR /app
+# Install and run sonar cloud scanner
+RUN dotnet tool install --global dotnet-sonarscanner
+RUN dotnet sonarscanner begin /k:"LBHackney-IT_notes-api" /o:"lbhackney-it" /d:sonar.login="$SONAR_TOKEN"
 
 # Copy csproj and nuget config and restore as distinct layers
 COPY ./NotesApi.sln ./
@@ -26,12 +29,9 @@ RUN dotnet restore ./NotesApi.Tests/NotesApi.Tests.csproj
 # Copy everything else and build
 COPY . .
 
-RUN dotnet tool install --global dotnet-sonarscanner
-RUN dotnet sonarscanner begin /k:"LBHackney-IT_notes-api" /o:"lbhackney-it" /d:sonar.login=SONAR_TOKEN
 RUN dotnet build -c Release -o out NotesApi/NotesApi.csproj
-
-RUN dotnet sonarscanner end /d:sonar.login=SONAR_TOKEN
-
 RUN dotnet build -c debug -o out NotesApi.Tests/NotesApi.Tests.csproj
 
 CMD dotnet test
+
+RUN dotnet sonarscanner end /d:sonar.login="$SONAR_TOKEN"
