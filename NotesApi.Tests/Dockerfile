@@ -18,7 +18,7 @@ RUN apt-get update
 RUN dotnet tool install --global dotnet-sonarscanner
 ENV PATH="$PATH:/root/.dotnet/tools"
 
-RUN dotnet sonarscanner begin /k:"LBHackney-IT_notes-api" /o:"lbhackney-it" /d:sonar.login=$SONAR_TOKEN
+RUN dotnet sonarscanner begin /k:"LBHackney-IT_notes-api" /o:"lbhackney-it" /d:sonar.login="${SONAR_TOKEN}"
 
 # Copy csproj and nuget config and restore as distinct layers
 COPY ./NotesApi.sln ./
@@ -38,4 +38,4 @@ RUN dotnet build -c debug -o out NotesApi.Tests/NotesApi.Tests.csproj
 
 CMD dotnet test
 
-RUN dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN
+RUN dotnet sonarscanner end /d:sonar.login="${SONAR_TOKEN}"
