@@ -26,7 +26,7 @@ RUN dotnet restore ./NotesApi.Tests/NotesApi.Tests.csproj
 # Copy everything else and build
 COPY . .
 
-RUN dotnet tool install dotnet-sonarscanner
+RUN dotnet tool install --global dotnet-sonarscanner
 RUN dotnet sonarscanner begin /k:"LBHackney-IT_notes-api" /o:"lbhackney-it" /d:sonar.login=SONAR_TOKEN
 RUN dotnet build -c Release -o out NotesApi/NotesApi.csproj
 
