@@ -109,7 +109,7 @@ jobs:
       - sonarcloud/scan
       - run:
           name: build
-          command: docker-compose build notes-api-test
+          command: docker-compose build notes-api-test && docker-compose build notes-api
       - run:
           name: Run tests
           command: docker-compose run notes-api-test
