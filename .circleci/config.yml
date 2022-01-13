@@ -4,6 +4,7 @@ orbs:
   aws-ecr: circleci/aws-ecr@3.0.0
   aws-cli: circleci/aws-cli@0.1.9
   aws_assume_role: lbh-hackit/aws_assume_role@0.1.0
+  sonarcloud: sonarsource/sonarcloud@1.0.2
 
 executors:
   docker-python:
@@ -100,10 +101,12 @@ jobs:
           name: Run formatter check
           command: ./dotnet-format-local/dotnet-format --check
   build-and-test:
-    executor: docker-python
+    docker:
+      - image: cimg/python:3.10.0
     steps:
       - checkout
       - setup_remote_docker
+      - sonarcloud/scan
       - run:
           name: build
           command: docker-compose build notes-api-test
@@ -161,8 +164,12 @@ jobs:
 workflows:
   check-and-deploy-development:
     jobs:
-      - check-code-formatting
-      - build-and-test
+      - check-code-formatting:
+          context: api-nuget-token-context 
+      - build-and-test:
+          context: 
+            - api-nuget-token-context
+            - SonarCloud
       - assume-role-development:
           context: api-assume-role-housing-development-context
           requires:
@@ -177,6 +184,7 @@ workflows:
             branches:
               only: master
       - deploy-to-development:
+          context: api-nuget-token-context
           requires:
             - terraform-init-and-apply-to-development
           filters:
@@ -184,8 +192,10 @@ workflows:
               only: master
   check-and-deploy-staging-and-production:
       jobs:
-      - check-code-formatting
+      - check-code-formatting:
+          context: api-nuget-token-context
       - build-and-test:
+          context: api-nuget-token-context
           filters:
             branches:
               only: release
@@ -203,6 +213,7 @@ workflows:
             branches:
               only: release
       - deploy-to-staging:
+          context: api-nuget-token-context
           requires:
             - terraform-init-and-apply-to-staging
           filters:
@@ -232,7 +243,8 @@ workflows:
           filters:
             branches:
               only: release
-      - deploy-to-production:                            
+      - deploy-to-production:   
+          context: api-nuget-token-context                         
           requires:
             - permit-production-release
             - assume-role-production
