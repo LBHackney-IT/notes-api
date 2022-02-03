@@ -107,8 +107,6 @@ commands:
     parameters:
       stage:
         type: string
-      aws-account:
-        type: string
     steps:
       - *attach_workspace
       - checkout
@@ -131,7 +129,7 @@ commands:
           name: Deploy lambda
           command: |
             cd ./NotesApi/
-            sls deploy --stage <<parameters.stage>> --account <<parameters.aws-account>> --conceal
+            sls deploy --stage <<parameters.stage>> --conceal
 
 jobs:
   check-code-formatting:

@@ -50,3 +50,16 @@ module "notes_api_cloudwatch_dashboard" {
   dynamodb_table_name = aws_dynamodb_table.notesapi_dynamodb_table.name
   include_sns_widget  = false
 }
+
+data "aws_ssm_parameter" "sns_topic_arn" {
+  name = "/housing-tl/${var.environment_name}/cloudwatch-alarms-topic-arn"
+}
+
+module "api-alarm" {
+  source           = "github.com/LBHackney-IT/aws-hackney-common-terraform.git//modules/cloudwatch/api-alarm"
+  environment_name = var.environment_name
+  api_name         = "notes-api"
+  alarm_period     = "300" #TODO: confirm this number
+  error_threshold  = "3" #TODO: confirm this number
+  sns_topic_arn    = data.aws_ssm_parameter.sns_topic_arn.value
+}
