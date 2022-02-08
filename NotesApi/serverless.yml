@@ -13,6 +13,9 @@ provider:
 package:
   artifact: ./bin/release/netcoreapp3.1/notes-api.zip
 
+plugins:
+  - serverless-associate-waf
+
 functions:
   NotesApi:
     name: ${self:service}-${self:provider.stage}
@@ -29,7 +32,7 @@ functions:
             type: request
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
-            managedExternally: true          
+            managedExternally: true
           cors:
             origin: '*'
             headers:
@@ -136,6 +139,9 @@ resources:
                     - "lambda:InvokeFunction"
                   Resource: "*"
 custom:
+  associateWaf:
+    name: NotesApiWafAcl
+    version: V2
   vpcId:
     development: vpc-0d15f152935c8716f
     staging: vpc-064521a7a4109ba31
