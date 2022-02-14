@@ -15,6 +15,7 @@ package:
 
 plugins:
   - serverless-associate-waf
+  - '@serverless/safeguards-plugin'
 
 functions:
   NotesApi:
@@ -139,6 +140,10 @@ resources:
                     - "lambda:InvokeFunction"
                   Resource: "*"
 custom:
+  safeguards:
+    - title: Require authorizer
+      safeguard: require-authorizer
+      path: ./policies
   associateWaf:
     name: Platform_APIs_Web_ACL
     version: V2
