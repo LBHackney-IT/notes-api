@@ -107,8 +107,6 @@ commands:
     parameters:
       stage:
         type: string
-      aws-account:
-        type: string
     steps:
       - *attach_workspace
       - checkout
@@ -131,7 +129,8 @@ commands:
           name: Deploy lambda
           command: |
             cd ./NotesApi/
-            sls deploy --stage <<parameters.stage>> --account <<parameters.aws-account>> --conceal
+            npm i serverless-associate-waf
+            sls deploy --stage <<parameters.stage>> --conceal
 
 jobs:
   check-code-formatting:
@@ -222,26 +221,23 @@ jobs:
     steps:
       - deploy-lambda:
           stage: "development"
-          aws-account: $AWS_ACCOUNT_DEVELOPMENT
   deploy-to-staging:
     executor: docker-dotnet
     steps:
       - deploy-lambda:
           stage: "staging"
-          aws-account: $AWS_ACCOUNT_STAGING
   deploy-to-production:
     executor: docker-dotnet
     steps:
       - deploy-lambda:
           stage: "production"
-          aws-account: $AWS_ACCOUNT_PRODUCTION
 workflows:
   check-and-deploy-development:
     jobs:
       - check-code-formatting:
-          context: api-nuget-token-context 
+          context: api-nuget-token-context
       - build-and-test:
-          context: 
+          context:
             - api-nuget-token-context
             - SonarCloud
       - assume-role-development:
