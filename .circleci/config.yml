@@ -130,6 +130,7 @@ commands:
           command: |
             cd ./NotesApi/
             npm i serverless-associate-waf
+            npm i @serverless/safeguards-plugin --save-dev
             sls deploy --stage <<parameters.stage>> --conceal
 
 jobs:
