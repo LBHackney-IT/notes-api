@@ -1,7 +1,10 @@
 using Hackney.Core.Testing.DynamoDb;
+using Hackney.Core.Testing.Sns;
 using NotesApi.Tests.V2.E2ETests.Fixtures;
 using NotesApi.Tests.V2.E2ETests.Steps;
 using NotesApi.V2.Boundary.Request.Validation;
+using NotesApi.V2.Domain;
+using NotesApi.V2.Infrastructure.JWT;
 using System;
 using TestStack.BDDfy;
 using Xunit;
@@ -16,12 +19,14 @@ namespace NotesApi.Tests.V2.E2ETests.Stories
     public class PostNewNoteTests : IDisposable
     {
         private readonly IDynamoDbFixture _dbFixture;
+        private readonly ISnsFixture _snsFixture;
         private readonly NotesFixture _notesFixture;
         private readonly PostNoteSteps _steps;
 
-        public PostNewNoteTests(MockWebApplicationFactory<Startup> appFactory)
+        public PostNewNoteTests(AwsMockWebApplicationFactory<Startup> appFactory)
         {
             _dbFixture = appFactory.DynamoDbFixture;
+            _snsFixture = appFactory.SnsFixture;
             _notesFixture = new NotesFixture(_dbFixture.DynamoDbContext);
             _steps = new PostNoteSteps(appFactory.Client);
         }
@@ -38,19 +43,25 @@ namespace NotesApi.Tests.V2.E2ETests.Stories
         {
             if (disposing && !_disposed)
             {
-                if (null != _notesFixture)
-                    _notesFixture.Dispose();
+                _notesFixture?.Dispose();
+                _snsFixture?.PurgeAllQueueMessages();
 
                 _disposed = true;
             }
         }
 
-        [Fact]
-        public void PostingANoteTestNoteCreated()
+        [Theory]
+        [InlineData(TargetType.asset, NoteCreatedEventConstants.ASSET_DOMAIN)]
+        [InlineData(TargetType.person, NoteCreatedEventConstants.PERSON_DOMAIN)]
+        [InlineData(TargetType.process, NoteCreatedEventConstants.PROCESS_DOMAIN)]
+        [InlineData(TargetType.repair, NoteCreatedEventConstants.REPAIR_DOMAIN)]
+        [InlineData(TargetType.tenure, NoteCreatedEventConstants.TENURE_DOMAIN)]
+        public void PostingANoteTestNoteCreated(TargetType targetType, string sourceDomain)
         {
-            this.Given(g => _notesFixture.GivenANewNoteIsCreated())
+            this.Given(g => _notesFixture.GivenANewNoteIsCreated(targetType))
                 .When(w => _steps.WhenPostingANote(_notesFixture))
                 .Then(t => _steps.ThenTheNoteHasBeenPersisted(_notesFixture))
+                   .And(a => _steps.ThenTheNoteCreatedEventIsRaised(_notesFixture, _snsFixture, sourceDomain))
                 .BDDfy();
         }
 

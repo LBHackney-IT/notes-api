@@ -25,7 +25,7 @@ namespace NotesApi.Tests.V2.Gateways
         private readonly NotesDbGateway _classUnderTest;
         private readonly List<Action> _cleanup = new List<Action>();
 
-        public NotesDbGatewayTests(MockWebApplicationFactory<Startup> appFactory)
+        public NotesDbGatewayTests(AwsMockWebApplicationFactory<Startup> appFactory)
         {
             _logger = new Mock<ILogger<NotesDbGateway>>();
             _dbFixture = appFactory.DynamoDbFixture;

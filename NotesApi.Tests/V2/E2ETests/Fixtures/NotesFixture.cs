@@ -54,10 +54,11 @@ namespace NotesApi.Tests.V2.E2ETests.Fixtures
             }
         }
 
-        private CreateNoteRequest CreateNote()
+        private CreateNoteRequest CreateNote(TargetType targetType)
         {
             var note = _fixture.Build<CreateNoteRequest>()
                                .With(x => x.TargetId, Guid.NewGuid())
+                               .With(x => x.TargetType, targetType)
                                .With(x => x.CreatedAt, DateTime.UtcNow)
                                .With(x => x.Description, "Some valid note description.")
                                .Create();
@@ -66,9 +67,9 @@ namespace NotesApi.Tests.V2.E2ETests.Fixtures
             return note;
         }
 
-        public void GivenANewNoteIsCreated()
+        public void GivenANewNoteIsCreated(TargetType targetType)
         {
-            NoteRequest = CreateNote();
+            NoteRequest = CreateNote(targetType);
         }
 
         public void GivenTargetNotesAlreadyExist()
@@ -115,13 +116,13 @@ namespace NotesApi.Tests.V2.E2ETests.Fixtures
 
         public void GivenANewNotePayloadWithDescription(string desc)
         {
-            NoteRequest = CreateNote();
+            NoteRequest = CreateNote(TargetType.person);
             NoteRequest.Description = desc;
         }
 
         public void GivenANewNotePayloadWithTooLongDescription()
         {
-            NoteRequest = CreateNote();
+            NoteRequest = CreateNote(TargetType.person);
             var msgToRepeat = "This description is to long. ";
             string description = "";
             while (description.Length <= 500)
@@ -131,19 +132,19 @@ namespace NotesApi.Tests.V2.E2ETests.Fixtures
 
         public void GivenANewNotePayloadWithNoTargetId()
         {
-            NoteRequest = CreateNote();
+            NoteRequest = CreateNote(TargetType.person);
             NoteRequest.TargetId = null;
         }
 
         public void GivenANewNotePayloadWithNoTargetType()
         {
-            NoteRequest = CreateNote();
+            NoteRequest = CreateNote(TargetType.person);
             NoteRequest.TargetType = null;
         }
 
         public void GivenANewNotePayloadWithNoCreatedAt()
         {
-            NoteRequest = CreateNote();
+            NoteRequest = CreateNote(TargetType.person);
             NoteRequest.CreatedAt = null;
         }
     }

@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using Hackney.Core.DynamoDb;
+using Hackney.Core.Http;
+using Hackney.Core.JWT;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NotesApi.V2.Boundary.Request;
@@ -19,6 +21,10 @@ namespace NotesApi.Tests.V2.Controllers
     {
         private readonly Mock<IGetByTargetIdUseCase> _mockGetByTargetIdUseCase;
         private readonly Mock<IPostNewNoteUseCase> _mockPostNewNoteUseCase;
+
+        private readonly Mock<ITokenFactory> _mockTokenFactory;
+        private readonly Mock<IHttpContextWrapper> _mockContextWrapper;
+
         private readonly NotesApiController _sut;
         private readonly Fixture _fixture = new Fixture();
 
@@ -26,8 +32,10 @@ namespace NotesApi.Tests.V2.Controllers
         {
             _mockGetByTargetIdUseCase = new Mock<IGetByTargetIdUseCase>();
             _mockPostNewNoteUseCase = new Mock<IPostNewNoteUseCase>();
+            _mockTokenFactory = new Mock<ITokenFactory>();
+            _mockContextWrapper = new Mock<IHttpContextWrapper>();
 
-            _sut = new NotesApiController(_mockGetByTargetIdUseCase.Object, _mockPostNewNoteUseCase.Object);
+            _sut = new NotesApiController(_mockGetByTargetIdUseCase.Object, _mockPostNewNoteUseCase.Object, _mockContextWrapper.Object, _mockTokenFactory.Object);
         }
 
         [Theory]
@@ -94,7 +102,7 @@ namespace NotesApi.Tests.V2.Controllers
         {
             // Arrange
             var exception = new ApplicationException("Test exception");
-            _mockPostNewNoteUseCase.Setup(x => x.ExecuteAsync(It.IsAny<CreateNoteRequest>())).ThrowsAsync(exception);
+            _mockPostNewNoteUseCase.Setup(x => x.ExecuteAsync(It.IsAny<CreateNoteRequest>(), It.IsAny<Token>())).ThrowsAsync(exception);
 
             // Act
             Func<Task<IActionResult>> func = async () => await _sut.PostNewNote(new CreateNoteRequest()).ConfigureAwait(false);
@@ -108,7 +116,7 @@ namespace NotesApi.Tests.V2.Controllers
         {
             // Arrange
             var newNote = _fixture.Create<NoteResponseObject>();
-            _mockPostNewNoteUseCase.Setup(x => x.ExecuteAsync(It.IsAny<CreateNoteRequest>())).
+            _mockPostNewNoteUseCase.Setup(x => x.ExecuteAsync(It.IsAny<CreateNoteRequest>(), It.IsAny<Token>())).
                 ReturnsAsync(newNote);
 
             // Act

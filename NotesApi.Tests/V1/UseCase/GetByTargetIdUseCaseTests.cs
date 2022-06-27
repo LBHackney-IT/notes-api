@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NotesApi.Tests.V1.Helper;
 using NotesApi.V1.Infrastructure;
 using Xunit;
 

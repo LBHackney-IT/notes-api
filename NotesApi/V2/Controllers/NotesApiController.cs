@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Hackney.Core.Http;
+using Hackney.Core.JWT;
 using Hackney.Core.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +22,15 @@ namespace NotesApi.V2.Controllers
     {
         private readonly IGetByTargetIdUseCase _getByTargetIdUseCase;
         private readonly IPostNewNoteUseCase _newNoteUseCase;
+        private readonly IHttpContextWrapper _contextWrapper;
+        private readonly ITokenFactory _tokenFactory;
 
-        public NotesApiController(IGetByTargetIdUseCase getByTargetIdUseCase, IPostNewNoteUseCase newNoteUseCase)
+        public NotesApiController(IGetByTargetIdUseCase getByTargetIdUseCase, IPostNewNoteUseCase newNoteUseCase, IHttpContextWrapper contextWrapper, ITokenFactory tokenFactory)
         {
             _getByTargetIdUseCase = getByTargetIdUseCase;
             _newNoteUseCase = newNoteUseCase;
+            _contextWrapper = contextWrapper;
+            _tokenFactory = tokenFactory;
         }
 
         /// <summary>
@@ -61,8 +67,10 @@ namespace NotesApi.V2.Controllers
         [HttpPost]
         public async Task<IActionResult> PostNewNote([FromBody] CreateNoteRequest noteRequest)
         {
-            var newNote = await _newNoteUseCase.ExecuteAsync(noteRequest).ConfigureAwait(false);
-            return Created(new Uri($"api/v1/notes?targetId={newNote.TargetId}", UriKind.Relative), newNote);
+            var token = _tokenFactory.Create(_contextWrapper.GetContextRequestHeaders(HttpContext));
+
+            var newNote = await _newNoteUseCase.ExecuteAsync(noteRequest, token).ConfigureAwait(false);
+            return Created(new Uri($"api/v2/notes?targetId={newNote.TargetId}", UriKind.Relative), newNote);
         }
     }
 }

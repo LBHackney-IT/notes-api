@@ -6,11 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Hackney.Core.DynamoDb;
+using Hackney.Core.Sns;
+using Hackney.Core.Testing.Sns;
 using Newtonsoft.Json;
 using NotesApi.Tests.V2.E2ETests.Fixtures;
+using NotesApi.Tests.V2.E2ETests.Steps.Constants;
+using NotesApi.V2.Domain;
 using NotesApi.V2.Boundary.Request;
 using NotesApi.V2.Boundary.Response;
 using NotesApi.V2.Infrastructure;
+using NotesApi.V2.Infrastructure.JWT;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace NotesApi.Tests.V2.E2ETests.Steps
@@ -31,9 +36,14 @@ namespace NotesApi.Tests.V2.E2ETests.Steps
             var route = $"api/v2/notes";
             var uri = new Uri(route, UriKind.Relative);
 
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            message.Method = HttpMethod.Post;
 
-            _lastResponse = await _httpClient.PostAsync(uri, data).ConfigureAwait(false);
+            var token = TestToken.Value;
+            message.Headers.Add("Authorization", token);
+
+            _lastResponse = await _httpClient.SendAsync(message).ConfigureAwait(false);
             return _lastResponse;
         }
 
@@ -100,6 +110,36 @@ namespace NotesApi.Tests.V2.E2ETests.Steps
                 Highlight = note.Highlight
             };
             notesFixture.Notes.Add(dbNote);
+        }
+
+        public async Task ThenTheNoteCreatedEventIsRaised(NotesFixture notesFixture, ISnsFixture snsFixture, string sourceDomain)
+        {
+            var dbRecord = notesFixture.Notes.LastOrDefault();
+
+            Action<EntityEventSns> verifyFunc = (actual) =>
+            {
+                actual.CorrelationId.Should().NotBeEmpty();
+                actual.DateTime.Should().BeCloseTo(DateTime.UtcNow, 2000);
+                actual.EntityId.Should().Be(dbRecord.Id);
+
+                var actualNewData = JsonConvert.DeserializeObject<Note>(actual.EventData.NewData.ToString());
+                // actualNewData.Should().BeEquivalentTo(dbRecord.ToDomain());
+
+                actual.EventData.OldData.Should().BeNull();
+
+                actual.EventType.Should().Be(NoteCreatedEventConstants.EVENTTYPE);
+                actual.Id.Should().NotBeEmpty();
+                actual.SourceDomain.Should().Be(sourceDomain);
+                actual.SourceSystem.Should().Be(NoteCreatedEventConstants.SOURCE_SYSTEM);
+                actual.User.Email.Should().Be(TestToken.UserEmail);
+                actual.User.Name.Should().Be(TestToken.UserName);
+                actual.Version.Should().Be(NoteCreatedEventConstants.V2_VERSION);
+            };
+
+            var snsVerifier = snsFixture.GetSnsEventVerifier<EntityEventSns>();
+            var snsResult = await snsVerifier.VerifySnsEventRaised(verifyFunc);
+
+            if (!snsResult && snsVerifier.LastException != null) throw snsVerifier.LastException;
         }
 
         public void ThenBadRequestIsReturned()

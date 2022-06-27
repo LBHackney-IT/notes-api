@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using FluentAssertions;
-using NotesApi.V1.Gateways;
 using NotesApi.V1.Infrastructure;
 using Xunit;
 
