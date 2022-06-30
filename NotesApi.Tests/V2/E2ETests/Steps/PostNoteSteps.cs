@@ -17,6 +17,7 @@ using NotesApi.V2.Boundary.Response;
 using NotesApi.V2.Infrastructure;
 using NotesApi.V2.Infrastructure.JWT;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using NotesApi.V2.Factories;
 
 namespace NotesApi.Tests.V2.E2ETests.Steps
 {
@@ -120,10 +121,10 @@ namespace NotesApi.Tests.V2.E2ETests.Steps
             {
                 actual.CorrelationId.Should().NotBeEmpty();
                 actual.DateTime.Should().BeCloseTo(DateTime.UtcNow, 2000);
-                actual.EntityId.Should().Be(dbRecord.Id);
+                actual.EntityId.Should().Be(dbRecord.TargetId);
 
                 var actualNewData = JsonConvert.DeserializeObject<Note>(actual.EventData.NewData.ToString());
-                // actualNewData.Should().BeEquivalentTo(dbRecord.ToDomain());
+                actualNewData.Should().BeEquivalentTo(dbRecord.ToDomain());
 
                 actual.EventData.OldData.Should().BeNull();
 

@@ -51,7 +51,7 @@ module "notes_api_cloudwatch_dashboard" {
   include_sns_widget  = false
 }
 
-data "aws_ssm_parameter" "sns_topic_arn" {
+data "aws_ssm_parameter" "cloudwatch_topic_arn" {
   name = "/housing-tl/${var.environment_name}/cloudwatch-alarms-topic-arn"
 }
 
@@ -61,5 +61,18 @@ module "api-alarm" {
   api_name         = "notes-api"
   alarm_period     = "300"
   error_threshold  = "1"
-  sns_topic_arn    = data.aws_ssm_parameter.sns_topic_arn.value
+  sns_topic_arn    = data.aws_ssm_parameter.cloudwatch_topic_arn.value
 }
+
+resource "aws_sns_topic" "notes" {
+  name                        = "notes.fifo"
+  fifo_topic                  = true
+  content_based_deduplication = true
+  kms_master_key_id = "alias/aws/sns"
+}
+
+resource "aws_ssm_parameter" "notes_sns_arn" {
+  name  = "/sns-topic/${var.environment_name}/notes/arn"
+  type  = "String"
+  value = aws_sns_topic.notes.arn
+}  

@@ -14,7 +14,7 @@ namespace NotesApi.V2.Factories
             {
                 CorrelationId = Guid.NewGuid(),
                 DateTime = DateTime.UtcNow,
-                EntityId = note.Id,
+                EntityId = note.TargetId,
                 Id = Guid.NewGuid(),
                 EventType = NoteCreatedEventConstants.EVENTTYPE,
                 Version = NoteCreatedEventConstants.V2_VERSION,
