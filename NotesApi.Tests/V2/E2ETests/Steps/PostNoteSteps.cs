@@ -113,7 +113,7 @@ namespace NotesApi.Tests.V2.E2ETests.Steps
             notesFixture.Notes.Add(dbNote);
         }
 
-        public async Task ThenTheNoteCreatedEventIsRaised(NotesFixture notesFixture, ISnsFixture snsFixture, string sourceDomain)
+        public async Task ThenTheNoteCreatedEventIsRaised(NotesFixture notesFixture, ISnsFixture snsFixture, string eventType)
         {
             var dbRecord = notesFixture.Notes.LastOrDefault();
 
@@ -128,9 +128,9 @@ namespace NotesApi.Tests.V2.E2ETests.Steps
 
                 actual.EventData.OldData.Should().BeNull();
 
-                actual.EventType.Should().Be(NoteCreatedEventConstants.EVENTTYPE);
+                actual.EventType.Should().Be(eventType);
                 actual.Id.Should().NotBeEmpty();
-                actual.SourceDomain.Should().Be(sourceDomain);
+                actual.SourceDomain.Should().Be(NoteCreatedEventConstants.SOURCE_DOMAIN);
                 actual.SourceSystem.Should().Be(NoteCreatedEventConstants.SOURCE_SYSTEM);
                 actual.User.Email.Should().Be(TestToken.UserEmail);
                 actual.User.Name.Should().Be(TestToken.UserName);

@@ -51,17 +51,17 @@ namespace NotesApi.Tests.V2.E2ETests.Stories
         }
 
         [Theory]
-        [InlineData(TargetType.asset, NoteCreatedEventConstants.ASSET_DOMAIN)]
-        [InlineData(TargetType.person, NoteCreatedEventConstants.PERSON_DOMAIN)]
-        [InlineData(TargetType.process, NoteCreatedEventConstants.PROCESS_DOMAIN)]
-        [InlineData(TargetType.repair, NoteCreatedEventConstants.REPAIR_DOMAIN)]
-        [InlineData(TargetType.tenure, NoteCreatedEventConstants.TENURE_DOMAIN)]
-        public void PostingANoteTestNoteCreated(TargetType targetType, string sourceDomain)
+        [InlineData(TargetType.asset, NoteCreatedEventConstants.ASSET_NOTE_EVENT)]
+        [InlineData(TargetType.person, NoteCreatedEventConstants.PERSON_NOTE_EVENT)]
+        [InlineData(TargetType.repair, NoteCreatedEventConstants.REPAIR_NOTE_EVENT)]
+        [InlineData(TargetType.tenure, NoteCreatedEventConstants.TENURE_NOTE_EVENT)]
+        [InlineData(TargetType.process, NoteCreatedEventConstants.PROCESS_NOTE_EVENT)]
+        public void PostingANoteTestNoteCreated(TargetType targetType, string eventType)
         {
             this.Given(g => _notesFixture.GivenANewNoteIsCreated(targetType))
                 .When(w => _steps.WhenPostingANote(_notesFixture))
                 .Then(t => _steps.ThenTheNoteHasBeenPersisted(_notesFixture))
-                   .And(a => _steps.ThenTheNoteCreatedEventIsRaised(_notesFixture, _snsFixture, sourceDomain))
+                   .And(a => _steps.ThenTheNoteCreatedEventIsRaised(_notesFixture, _snsFixture, eventType))
                 .BDDfy();
         }
 
