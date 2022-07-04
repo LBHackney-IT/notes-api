@@ -1,6 +1,5 @@
 using AutoFixture;
 using FluentAssertions;
-using NotesApi.V2.Domain;
 using NotesApi.V2.Factories;
 using NotesApi.V2.Infrastructure;
 using Xunit;

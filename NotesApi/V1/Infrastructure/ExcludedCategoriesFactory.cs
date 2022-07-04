@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NotesApi.V1.Gateways;
 
 namespace NotesApi.V1.Infrastructure
 {

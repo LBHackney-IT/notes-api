@@ -24,6 +24,7 @@ functions:
     role: lambdaExecutionRole
     environment:
       ASPNETCORE_ENVIRONMENT:  ${ssm:/housing-tl/${self:provider.stage}/aspnetcore-environment}
+      NOTES_SNS_ARN:  ${ssm:/sns-topic/${self:provider.stage}/notes/arn}
     events:
       - http:
           path: /{proxy+}
@@ -77,6 +78,15 @@ resources:
           - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
           - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
         Policies:
+          - PolicyName: postToSns
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - "sns:Publish"
+                  Resource:
+                    - ${ssm:/sns-topic/${self:provider.stage}/notes/arn}
           - PolicyName: dynamoDBAccess
             PolicyDocument:
               Version: '2012-10-17'

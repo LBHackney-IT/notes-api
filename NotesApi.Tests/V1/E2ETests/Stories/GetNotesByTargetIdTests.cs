@@ -18,7 +18,7 @@ namespace NotesApi.Tests.V1.E2ETests.Stories
         private readonly NotesFixture _notesFixture;
         private readonly GetNotesSteps _steps;
 
-        public GetNotesByTargetIdTests(MockWebApplicationFactory<Startup> appFactory)
+        public GetNotesByTargetIdTests(AwsMockWebApplicationFactory<Startup> appFactory)
         {
             _dbFixture = appFactory.DynamoDbFixture;
             _notesFixture = new NotesFixture(_dbFixture.DynamoDbContext);

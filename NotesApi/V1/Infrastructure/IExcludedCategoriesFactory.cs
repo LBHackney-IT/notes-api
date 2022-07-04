@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using NotesApi.V1.Gateways;
 
 namespace NotesApi.V1.Infrastructure
 {

@@ -1,7 +1,9 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Hackney.Core.DynamoDb;
+using Hackney.Core.Sns;
 using Hackney.Core.Testing.DynamoDb;
+using Hackney.Core.Testing.Sns;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +14,7 @@ using System.Net.Http;
 
 namespace NotesApi.Tests
 {
-    public class MockWebApplicationFactory<TStartup>
+    public class AwsMockWebApplicationFactory<TStartup>
         : WebApplicationFactory<TStartup> where TStartup : class
     {
         private readonly List<TableDef> _tables = new List<TableDef>
@@ -40,30 +42,30 @@ namespace NotesApi.Tests
             }
         };
 
-        public HttpClient Client { get; private set; }
         public IDynamoDbFixture DynamoDbFixture { get; private set; }
+        public HttpClient Client { get; private set; }
+        public ISnsFixture SnsFixture { get; private set; }
 
-        public MockWebApplicationFactory()
+
+        public AwsMockWebApplicationFactory()
         {
             EnsureEnvVarConfigured("DynamoDb_LocalMode", "true");
             EnsureEnvVarConfigured("DynamoDb_LocalServiceUrl", "http://localhost:8000");
 
+            EnsureEnvVarConfigured("Sns_LocalMode", "true");
+            EnsureEnvVarConfigured("Localstack_SnsServiceUrl", "http://localhost:4566");
+
             Client = CreateClient();
         }
 
-        private bool _disposed;
-
+        private bool _disposed = false;
         protected override void Dispose(bool disposing)
         {
             if (disposing && !_disposed)
             {
-                if (null != DynamoDbFixture)
-                    (DynamoDbFixture as DynamoDbFixture).Dispose();
-                if (null != Client)
-                    Client.Dispose();
-
-                base.Dispose(true);
-
+                DynamoDbFixture?.Dispose();
+                SnsFixture?.Dispose();
+                Client?.Dispose();
                 _disposed = true;
             }
         }
@@ -82,11 +84,17 @@ namespace NotesApi.Tests
             {
                 services.ConfigureDynamoDB();
                 services.ConfigureDynamoDbFixture();
+                services.ConfigureSns();
+                services.ConfigureSnsFixture();
+
 
                 var serviceProvider = services.BuildServiceProvider();
 
                 DynamoDbFixture = serviceProvider.GetRequiredService<IDynamoDbFixture>();
                 DynamoDbFixture.EnsureTablesExist(_tables);
+
+                SnsFixture = serviceProvider.GetRequiredService<ISnsFixture>();
+                SnsFixture.CreateSnsTopic<EntityEventSns>("notes.fifo", "NOTES_SNS_ARN");
             });
         }
     }
