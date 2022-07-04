@@ -202,7 +202,6 @@ namespace NotesApi
             app.UseLoggingScope();
             app.UseCustomExceptionHandler(logger);
             app.UseXRay("notes-api");
-            app.EnableRequestBodyRewind();
 
             //Get All ApiVersions,
             var api = app.ApplicationServices.GetService<IApiVersionDescriptionProvider>();
