@@ -14,7 +14,7 @@ namespace NotesApi.Tests.V2.E2ETests.Stories
     {
         private readonly HealthCheckSteps _steps;
 
-        public HealthCheckTests(MockWebApplicationFactory<Startup> appFactory)
+        public HealthCheckTests(AwsMockWebApplicationFactory<Startup> appFactory)
         {
             _steps = new HealthCheckSteps(appFactory.Client);
         }

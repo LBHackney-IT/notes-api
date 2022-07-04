@@ -4,11 +4,14 @@ using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using Hackney.Core.DynamoDb;
 using Hackney.Core.DynamoDb.HealthCheck;
 using Hackney.Core.HealthCheck;
+using Hackney.Core.Http;
 using Hackney.Core.JWT;
 using Hackney.Core.Logging;
+using Hackney.Core.Middleware;
 using Hackney.Core.Middleware.CorrelationId;
 using Hackney.Core.Middleware.Exception;
 using Hackney.Core.Middleware.Logging;
+using Hackney.Core.Sns;
 using Hackney.Core.Validation.AspNet;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -26,6 +29,7 @@ using NotesApi.V1.Gateways;
 using NotesApi.V1.Infrastructure;
 using NotesApi.V1.UseCase;
 using NotesApi.V1.UseCase.Interfaces;
+using NotesApi.V2.Factories;
 using NotesApi.Versioning;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
@@ -139,15 +143,28 @@ namespace NotesApi
             AWSXRayRecorder.InitializeInstance(Configuration);
             AWSXRayRecorder.RegisterLogger(LoggingOptions.SystemDiagnostics);
 
-            services.AddTokenFactory();
             services.AddLogCallAspect();
             services.ConfigureDynamoDB();
+            services.ConfigureSns();
+
             RegisterGateways(services);
             RegisterUseCases(services);
 
+            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddScoped<ISnsFactory, SnsFactory>();
             services.AddScoped<IDbFilterExpressionFactory, DbFilterExpressionFactory>();
             services.AddScoped<IExcludedCategoriesFactory, ExcludedCategoriesFactory>();
+
+            ConfigureHackneyCoreDI(services);
         }
+
+        private static void ConfigureHackneyCoreDI(IServiceCollection services)
+        {
+            services.AddSnsGateway()
+                    .AddTokenFactory()
+                    .AddHttpContextWrapper();
+        }
+
 
         private static void RegisterGateways(IServiceCollection services)
         {

@@ -8,6 +8,7 @@ namespace NotesApi.V2.Domain
         person,
         asset,
         tenure,
-        repair
+        repair,
+        process
     }
 }

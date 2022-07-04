@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace NotesApi.V1.Infrastructure
 {
     public class ExcludedCategory
