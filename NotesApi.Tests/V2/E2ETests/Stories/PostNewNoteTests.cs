@@ -91,7 +91,7 @@ namespace NotesApi.Tests.V2.E2ETests.Stories
             this.Given(g => _notesFixture.GivenANewNotePayloadWithTooLongDescription())
                 .When(w => _steps.WhenPostingANote(_notesFixture))
                 .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Description", ErrorCodes.DescriptionTooLong,
-                                    "'Description' must be between 1 and 500 characters."))
+                                    "'Description' must be between 1 and 1000 characters."))
                 .BDDfy();
         }
 

@@ -11,7 +11,7 @@ namespace NotesApi.V2.Boundary.Request.Validation
             RuleFor(x => x.Description).NotNull()
                                        .NotEmpty()
                                        .WithErrorCode(ErrorCodes.DescriptionMandatory);
-            RuleFor(x => x.Description).Length(1, 500)
+            RuleFor(x => x.Description).Length(1, 1000)
                                        .WithErrorCode(ErrorCodes.DescriptionTooLong)
                                        .When(x => !string.IsNullOrEmpty(x.Description));
             RuleFor(x => x.Description).NotXssString()

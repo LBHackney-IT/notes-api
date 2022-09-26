@@ -125,7 +125,7 @@ namespace NotesApi.Tests.V2.E2ETests.Fixtures
             NoteRequest = CreateNote(TargetType.person);
             var msgToRepeat = "This description is to long. ";
             string description = "";
-            while (description.Length <= 500)
+            while (description.Length <= 1000)
                 description += msgToRepeat;
             NoteRequest.Description = description;
         }
