@@ -122,13 +122,13 @@ commands:
       - run:
           name: Build lambda
           command: |
-            cd ./ProcessesApi/
+            cd ./NotesApi/
             chmod +x ./build.sh
             ./build.sh
       - run:
           name: Deploy lambda
           command: |
-            cd ./ProcessesApi/
+            cd ./NotesApi/
             npm i serverless-associate-waf
             npm i @serverless/safeguards-plugin --save-dev
             sls deploy --stage <<parameters.stage>> --conceal
