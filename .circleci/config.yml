@@ -9,10 +9,10 @@ orbs:
 executors:
   docker-python:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.8.4
   docker-terraform:
     docker:
-      - image: "hashicorp/terraform:light"
+      - image: "hashicorp/terraform:1.1.9"
   docker-dotnet:
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:3.1
@@ -122,13 +122,13 @@ commands:
       - run:
           name: Build lambda
           command: |
-            cd ./NotesApi/
+            cd ./ProcessesApi/
             chmod +x ./build.sh
             ./build.sh
       - run:
           name: Deploy lambda
           command: |
-            cd ./NotesApi/
+            cd ./ProcessesApi/
             npm i serverless-associate-waf
             npm i @serverless/safeguards-plugin --save-dev
             sls deploy --stage <<parameters.stage>> --conceal
@@ -145,8 +145,7 @@ jobs:
           name: Run formatter check
           command: ./dotnet-format-local/dotnet-format --check
   build-and-test:
-    docker:
-      - image: cimg/python:3.10.0
+    executor: docker-python
     steps:
       - checkout
       - setup_remote_docker
@@ -232,6 +231,7 @@ jobs:
     steps:
       - deploy-lambda:
           stage: "production"
+
 workflows:
   check-and-deploy-development:
     jobs:
@@ -269,7 +269,9 @@ workflows:
       - check-code-formatting:
           context: api-nuget-token-context
       - build-and-test:
-          context: api-nuget-token-context
+          context:
+            - api-nuget-token-context
+            - SonarCloud
           filters:
             branches:
               only: release
