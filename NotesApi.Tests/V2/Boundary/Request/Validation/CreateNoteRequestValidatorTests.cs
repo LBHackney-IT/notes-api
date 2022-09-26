@@ -43,7 +43,7 @@ namespace NotesApi.Tests.V2.Boundary.Request.Validation
         {
             var msgToRepeat = "This description is to long. ";
             string description = "";
-            while (description.Length <= 500)
+            while (description.Length <= 1000)
                 description += msgToRepeat;
             var model = new CreateNoteRequest() { Description = description };
             var result = _sut.TestValidate(model);
