@@ -82,7 +82,7 @@ namespace NotesApi.Tests.V2.Controllers
         [InlineData(null)]
         [InlineData("")]
         [InlineData("some-value")]
-        public void GetPersonByIdAsyncExceptionIsThrown(string paginationToken)
+        public async Task GetPersonByIdAsyncExceptionIsThrown(string paginationToken)
         {
             // Arrange
             var id = Guid.NewGuid();
@@ -94,11 +94,11 @@ namespace NotesApi.Tests.V2.Controllers
             Func<Task<IActionResult>> func = async () => await _sut.GetByTargetIdAsync(query).ConfigureAwait(false);
 
             // Assert
-            func.Should().Throw<ApplicationException>().WithMessage(exception.Message);
+            (await func.Should().ThrowAsync<ApplicationException>()).WithMessage(exception.Message);
         }
 
         [Fact]
-        public void PostNewNoteAsyncExceptionIsThrown()
+        public async Task PostNewNoteAsyncExceptionIsThrown()
         {
             // Arrange
             var exception = new ApplicationException("Test exception");
@@ -108,7 +108,7 @@ namespace NotesApi.Tests.V2.Controllers
             Func<Task<IActionResult>> func = async () => await _sut.PostNewNote(new CreateNoteRequest()).ConfigureAwait(false);
 
             // Assert
-            func.Should().Throw<ApplicationException>().WithMessage(exception.Message);
+            (await func.Should().ThrowAsync<ApplicationException>()).WithMessage(exception.Message);
         }
 
         [Fact]

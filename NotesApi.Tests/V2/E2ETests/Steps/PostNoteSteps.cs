@@ -120,7 +120,7 @@ namespace NotesApi.Tests.V2.E2ETests.Steps
             Action<EntityEventSns> verifyFunc = (actual) =>
             {
                 actual.CorrelationId.Should().NotBeEmpty();
-                actual.DateTime.Should().BeCloseTo(DateTime.UtcNow, 2000);
+                actual.DateTime.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMilliseconds(2000));
                 actual.EntityId.Should().Be(dbRecord.TargetId);
 
                 var actualNewData = JsonConvert.DeserializeObject<Note>(actual.EventData.NewData.ToString());
