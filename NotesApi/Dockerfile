@@ -9,7 +9,7 @@ ENV LBHPACKAGESTOKEN=$LBHPACKAGESTOKEN
 WORKDIR /app
 
 # Copy csproj and nuget config and restore as distinct layers
-COPY */NotesApi/NotesApi.csproj ./
+COPY ./NotesApi/NotesApi.csproj ./
 COPY /NuGet.Config /root/.nuget/NuGet/NuGet.Config
 
 RUN dotnet restore ./NotesApi.csproj
