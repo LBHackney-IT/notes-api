@@ -7,7 +7,7 @@ orbs:
 executors:
   docker-python:
     docker:
-      - image: cimg/python:3.8.4
+      - image: cimg/python:3.7
   docker-terraform:
     docker:
       - image: "hashicorp/terraform:1.1.9"
@@ -256,7 +256,9 @@ workflows:
             branches:
               only: master
       - deploy-to-development:
-          context: api-nuget-token-context
+          context:
+            - api-nuget-token-context
+            - "Serverless Framework" 
           requires:
             - terraform-apply-development
           filters:
@@ -266,6 +268,9 @@ workflows:
       jobs:
       - check-code-formatting:
           context: api-nuget-token-context
+          filters:
+            branches:
+              only: release
       - build-and-test:
           context:
             - api-nuget-token-context
@@ -299,7 +304,9 @@ workflows:
             branches:
               only: release
       - deploy-to-staging:
-          context: api-nuget-token-context
+          context:
+            - api-nuget-token-context
+            - "Serverless Framework" 
           requires:
             - terraform-apply-staging
           filters:
@@ -309,6 +316,9 @@ workflows:
           type: approval
           requires:
             - deploy-to-staging
+          filters:
+            branches:
+              only: release
       - assume-role-production:
           context: api-assume-role-housing-production-context
           requires:
@@ -342,7 +352,9 @@ workflows:
             branches:
               only: release
       - deploy-to-production:
-          context: api-nuget-token-context
+          context:
+            - api-nuget-token-context
+            - "Serverless Framework"
           requires:
             - permit-production-release
           filters:
