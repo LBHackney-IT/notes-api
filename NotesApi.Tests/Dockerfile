@@ -15,6 +15,8 @@ WORKDIR /app
 
 # Install and run sonar cloud scanner
 RUN apt-get update && apt-get install -y openjdk-17-jdk
+RUN apt-get clean
+
 RUN dotnet tool install --global dotnet-sonarscanner --version 5.6.0
 ENV PATH="$PATH:/root/.dotnet/tools"
 
