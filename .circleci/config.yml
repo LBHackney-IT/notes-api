@@ -1,21 +1,19 @@
 version: 2.1
 
 orbs:
-  aws-ecr: circleci/aws-ecr@3.0.0
-  aws-cli: circleci/aws-cli@0.1.9
   aws_assume_role: lbh-hackit/aws_assume_role@0.1.0
-  sonarcloud: sonarsource/sonarcloud@1.1.1
+  sonarcloud: sonarsource/sonarcloud@2.0.0
 
 executors:
   docker-python:
     docker:
-      - image: cimg/python:3.8.4
+      - image: cimg/python:3.7
   docker-terraform:
     docker:
       - image: "hashicorp/terraform:1.1.9"
   docker-dotnet:
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:6.0
+      - image: mcr.microsoft.com/dotnet/sdk:8.0
 
 references:
   workspace_root: &workspace_root "~"
@@ -114,7 +112,7 @@ commands:
       - run:
           name: Install Node.js
           command: |
-            curl -sL https://deb.nodesource.com/setup_18.x | bash -
+            curl -sL https://deb.nodesource.com/setup_20.x | bash -
             apt-get update && apt-get install -y nodejs
       - run:
           name: Install serverless CLI
@@ -258,7 +256,9 @@ workflows:
             branches:
               only: master
       - deploy-to-development:
-          context: api-nuget-token-context
+          context:
+            - api-nuget-token-context
+            - "Serverless Framework" 
           requires:
             - terraform-apply-development
           filters:
@@ -268,6 +268,9 @@ workflows:
       jobs:
       - check-code-formatting:
           context: api-nuget-token-context
+          filters:
+            branches:
+              only: release
       - build-and-test:
           context:
             - api-nuget-token-context
@@ -301,7 +304,9 @@ workflows:
             branches:
               only: release
       - deploy-to-staging:
-          context: api-nuget-token-context
+          context:
+            - api-nuget-token-context
+            - "Serverless Framework" 
           requires:
             - terraform-apply-staging
           filters:
@@ -311,6 +316,9 @@ workflows:
           type: approval
           requires:
             - deploy-to-staging
+          filters:
+            branches:
+              only: release
       - assume-role-production:
           context: api-assume-role-housing-production-context
           requires:
@@ -344,7 +352,9 @@ workflows:
             branches:
               only: release
       - deploy-to-production:
-          context: api-nuget-token-context
+          context:
+            - api-nuget-token-context
+            - "Serverless Framework"
           requires:
             - permit-production-release
           filters:
