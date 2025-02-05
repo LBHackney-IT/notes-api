@@ -14,9 +14,9 @@ ENV SONAR_TOKEN=$SONAR_TOKEN
 WORKDIR /app
 
 # Install and run sonar cloud scanner
-RUN apt-get update && apt-get install -y openjdk-17-jdk && apt-get clean
+RUN apt-get update && apt-get install -y openjdk-17-jdk && apt-get clean && \
 
-&& dotnet tool install --global dotnet-sonarscanner --version 5.6.0
+dotnet tool install --global dotnet-sonarscanner --version 5.6.0
 ENV PATH="$PATH:/root/.dotnet/tools"
 
 RUN dotnet sonarscanner begin /k:"LBHackney-IT_notes-api" /o:"lbhackney-it" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login="${SONAR_TOKEN}"
@@ -27,15 +27,15 @@ COPY ./NotesApi/NotesApi.csproj ./NotesApi/
 COPY ./NotesApi.Tests/NotesApi.Tests.csproj ./NotesApi.Tests/
 COPY /NuGet.Config /root/.nuget/NuGet/NuGet.Config
 
-RUN dotnet restore ./NotesApi/NotesApi.csproj
-&& dotnet restore ./NotesApi.Tests/NotesApi.Tests.csproj
+RUN dotnet restore ./NotesApi/NotesApi.csproj && \
+ dotnet restore ./NotesApi.Tests/NotesApi.Tests.csproj
 
 
 # Copy everything else and build
 COPY . .
 
-RUN dotnet build -c Release -o out NotesApi/NotesApi.csproj
-&& dotnet build -c debug -o out NotesApi.Tests/NotesApi.Tests.csproj
+RUN dotnet build -c Release -o out NotesApi/NotesApi.csproj && \
+dotnet build -c debug -o out NotesApi.Tests/NotesApi.Tests.csproj
 
 CMD dotnet test
 RUN dotnet sonarscanner end /d:sonar.login="${SONAR_TOKEN}"
