@@ -40,7 +40,7 @@ namespace NotesApi.Tests.V1.UseCase
         }
 
         [Fact]
-        public void PostNewNoteUseCaseExceptionIsThrown()
+        public async Task PostNewNoteUseCaseExceptionIsThrown()
         {
             // Arrange
             var exception = new ApplicationException("Test exception");
@@ -51,7 +51,7 @@ namespace NotesApi.Tests.V1.UseCase
                 await _classUnderTest.ExecuteAsync(new CreateNoteRequest()).ConfigureAwait(false);
 
             // Assert
-            func.Should().Throw<ApplicationException>().WithMessage(exception.Message);
+            (await func.Should().ThrowAsync<ApplicationException>()).WithMessage(exception.Message);
         }
     }
 }

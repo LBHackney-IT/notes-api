@@ -100,7 +100,7 @@ namespace NotesApi.Tests.V2.E2ETests.Stories
         {
             this.Given(g => _notesFixture.GivenANewNotePayloadWithNoTargetId())
                 .When(w => _steps.WhenPostingANote(_notesFixture))
-                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("TargetId"))
+                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Target Id"))
                 .BDDfy();
         }
 
@@ -109,7 +109,7 @@ namespace NotesApi.Tests.V2.E2ETests.Stories
         {
             this.Given(g => _notesFixture.GivenANewNotePayloadWithNoTargetType())
                 .When(w => _steps.WhenPostingANote(_notesFixture))
-                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("TargetType"))
+                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Target Type"))
                 .BDDfy();
         }
 
@@ -118,7 +118,7 @@ namespace NotesApi.Tests.V2.E2ETests.Stories
         {
             this.Given(g => _notesFixture.GivenANewNotePayloadWithNoCreatedAt())
                 .When(w => _steps.WhenPostingANote(_notesFixture))
-                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("CreatedAt"))
+                .Then(t => _steps.ThenBadRequestValidationErrorResultIsReturned("Created At"))
                 .BDDfy();
         }
     }

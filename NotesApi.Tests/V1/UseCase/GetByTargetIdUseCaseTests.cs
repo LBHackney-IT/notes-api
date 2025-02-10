@@ -99,7 +99,7 @@ namespace NotesApi.Tests.V1.UseCase
         [InlineData(null)]
         [InlineData("")]
         [InlineData("some-value")]
-        public void GetByTargetIdExceptionIsThrown(string paginationToken)
+        public async Task GetByTargetIdExceptionIsThrown(string paginationToken)
         {
             // Arrange
             var id = Guid.NewGuid();
@@ -112,7 +112,7 @@ namespace NotesApi.Tests.V1.UseCase
                 await _classUnderTest.ExecuteAsync(query, new List<string>()).ConfigureAwait(false);
 
             // Assert
-            func.Should().Throw<ApplicationException>().WithMessage(exception.Message);
+            (await func.Should().ThrowAsync<ApplicationException>()).WithMessage(exception.Message);
         }
     }
 }

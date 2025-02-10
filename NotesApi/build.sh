@@ -18,4 +18,4 @@ then
 fi
 
 dotnet restore
-dotnet lambda package --configuration release --framework netcoreapp3.1 --output-package ./bin/release/netcoreapp3.1/notes-api.zip
+dotnet lambda package --configuration release --framework net8.0 --output-package ./bin/release/net8.0/notes-api.zip
