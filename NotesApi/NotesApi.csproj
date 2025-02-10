@@ -13,11 +13,11 @@
 
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="7.2.0" />
-    <PackageReference Include="AWSXRayRecorder.Core" Version="2.11.1" />
+    <PackageReference Include="AWSXRayRecorder.Core" Version="2.13.0" />
     <PackageReference Include="AWSXRayRecorder.Handlers.AspNetCore" Version="2.8.1" />
-    <PackageReference Include="AWSXRayRecorder.Handlers.AwsSdk" Version="2.9.1" />
+    <PackageReference Include="AWSXRayRecorder.Handlers.AwsSdk" Version="2.11.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.3" />
-    <PackageReference Include="Hackney.Core.DynamoDb" Version="1.77.0-feat-fix-enum0001" />
+    <PackageReference Include="Hackney.Core.DynamoDb" Version="1.84.0" />
     <PackageReference Include="Hackney.Core.HealthCheck" Version="1.49.0" />
     <PackageReference Include="Hackney.Core.Http" Version="1.63.0" />
     <PackageReference Include="Hackney.Core.JWT" Version="1.49.0" />
