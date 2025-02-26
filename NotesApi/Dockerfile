@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1
+FROM mcr.microsoft.com/dotnet/sdk:8.0
 
 ENV DynamoDb_LocalMode='true'
 ENV Sns_LocalMode='true'
@@ -9,7 +9,7 @@ ENV LBHPACKAGESTOKEN=$LBHPACKAGESTOKEN
 WORKDIR /app
 
 # Copy csproj and nuget config and restore as distinct layers
-COPY */NotesApi/NotesApi.csproj ./
+COPY ./NotesApi/NotesApi.csproj ./
 COPY /NuGet.Config /root/.nuget/NuGet/NuGet.Config
 
 RUN dotnet restore ./NotesApi.csproj

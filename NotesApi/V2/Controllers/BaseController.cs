@@ -12,7 +12,6 @@ namespace NotesApi.V2.Controllers
         {
             ConfigureJsonSerializer();
         }
-
         public string GetCorrelationId()
         {
             if (HttpContext.Request.Headers[HeaderConstants.CorrelationId].Count == 0)

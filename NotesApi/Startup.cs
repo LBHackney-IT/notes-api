@@ -39,6 +39,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace NotesApi
 {
@@ -62,12 +64,11 @@ namespace NotesApi
             services.AddCors();
 
             services
-                .AddMvc()
+                .AddControllers()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                });
 
             services.AddFluentValidation(Assembly.GetAssembly(typeof(CreateNoteRequestValidator)));
 
