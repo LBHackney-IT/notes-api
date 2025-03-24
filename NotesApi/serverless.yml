@@ -30,7 +30,7 @@ functions:
           path: /{proxy+}
           method: ANY
           authorizer:
-            arn: ${ssm:/api-authenticator/${self:provider.stage}/arn}
+            arn: ${self:custom.authorizerArns.${opt:stage}}
             type: request
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
@@ -150,6 +150,10 @@ resources:
                     - "lambda:InvokeFunction"
                   Resource: "*"
 custom:
+  authorizerArns:
+    development: arn:aws:lambda:eu-west-2:859159924354:function:api-auth-verify-token-development-apiauthverifytoken
+    staging:     arn:aws:lambda:eu-west-2:715003523189:function:api-auth-verify-token-new-staging-apiauthverifytokennew
+    production:  arn:aws:lambda:eu-west-2:153306643385:function:api-auth-verify-token-production-apiauthverifytoken
   safeguards:
     - title: Require authorizer
       safeguard: require-authorizer
