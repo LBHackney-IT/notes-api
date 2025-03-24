@@ -151,7 +151,7 @@ resources:
                   Resource: "*"
 custom:
   authorizerArns:
-    development: arn:aws:lambda:eu-west-2:859159924354:function:api-auth-verify-token-development-apiauthverifytoken
+    development: arn:aws:lambda:eu-west-2:859159924354:function:api-auth-verify-token-new-development-apiauthverifytokennew
     staging:     arn:aws:lambda:eu-west-2:715003523189:function:api-auth-verify-token-new-staging-apiauthverifytokennew
     production:  arn:aws:lambda:eu-west-2:153306643385:function:api-auth-verify-token-production-apiauthverifytoken
   safeguards:
