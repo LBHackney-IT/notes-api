@@ -132,15 +132,6 @@ resources:
                           - Ref: 'AWS::Region'
                           - Ref: 'AWS::AccountId'
                           - 'log-group:/aws/lambda/*:*:*'
-                - Effect: "Allow"
-                  Action:
-                    - "s3:PutObject"
-                    - "s3:GetObject"
-                  Resource:
-                    Fn::Join:
-                      - ""
-                      - - "arn:aws:s3:::"
-                        - "Ref": "ServerlessDeploymentBucket"
           - PolicyName: lambdaInvocation
             PolicyDocument:
               Version: '2012-10-17'
@@ -154,6 +145,7 @@ custom:
     development: arn:aws:lambda:eu-west-2:859159924354:function:api-auth-verify-token-new-development-apiauthverifytokennew
     staging:     arn:aws:lambda:eu-west-2:715003523189:function:api-auth-verify-token-new-staging-apiauthverifytokennew
     production:  arn:aws:lambda:eu-west-2:153306643385:function:api-auth-verify-token-new-production-apiauthverifytokennew
+    pre-production: arn:aws:lambda:eu-west-2:578479666894:function:api-auth-verify-token-new-pre-production-apiauthverifytokennew
   safeguards:
     - title: Require authorizer
       safeguard: require-authorizer
@@ -184,3 +176,9 @@ custom:
       subnetIds:
         - subnet-06a697d86a9b6ed01
         - subnet-0beb266003a56ca82
+    pre-production:
+      securityGroupIds:
+        - Ref: LambdaSecurityGroup
+      subnetIds:
+        - subnet-08aa35159a8706faa
+        - subnet-0b848c5b14f841dfb
