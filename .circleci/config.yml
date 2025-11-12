@@ -50,7 +50,6 @@ commands:
             cd ./terraform/<<parameters.environment>>/
             terraform get -update=true
             terraform init
-            terraform import aws_dynamodb_table.notesapi_dynamodb_table Notes
           name: get and init
       - run:
           name: plan
