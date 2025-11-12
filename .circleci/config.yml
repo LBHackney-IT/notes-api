@@ -204,17 +204,17 @@ jobs:
     executor: docker-terraform
     steps:
       - terraform-init-then-plan:
-          environment: "production"
+          environment: "prod"
   terraform-compliance-production:
     executor: docker-terraform
     steps:
       - terraform-compliance:
-          environment: "production"
+          environment: "prod"
   terraform-apply-production:
     executor: docker-terraform
     steps:
       - terraform-apply:
-          environment: "production"
+          environment: "prod"
   deploy-to-development:
     executor: docker-dotnet
     steps:
