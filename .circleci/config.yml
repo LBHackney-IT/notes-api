@@ -213,7 +213,7 @@ jobs:
     executor: docker-terraform
     steps:
       - terraform-apply:
-          environment: "prod"
+          environment: "production"
   deploy-to-development:
     executor: docker-dotnet
     steps:
