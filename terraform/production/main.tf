@@ -36,7 +36,7 @@ locals {
 
 terraform {
   backend "s3" {
-    bucket  = "terraform-state-housing-production"
+    bucket  = "terraform-state-disaster-recovery"
     encrypt = true
     region  = "eu-west-2"
     key     = "services/notes-api/state"
@@ -51,18 +51,18 @@ module "notes_api_cloudwatch_dashboard" {
   include_sns_widget  = false
 }
 
-data "aws_ssm_parameter" "cloudwatch_topic_arn" {
-  name = "/housing-tl/${var.environment_name}/cloudwatch-alarms-topic-arn"
-}
+# data "aws_ssm_parameter" "cloudwatch_topic_arn" {
+#   name = "/housing-tl/${var.environment_name}/cloudwatch-alarms-topic-arn"
+# }
 
-module "api-alarm" {
-  source           = "github.com/LBHackney-IT/aws-hackney-common-terraform.git//modules/cloudwatch/api-alarm"
-  environment_name = var.environment_name
-  api_name         = "notes-api"
-  alarm_period     = "300"
-  error_threshold  = "1"
-  sns_topic_arn    = data.aws_ssm_parameter.cloudwatch_topic_arn.value
-}
+# module "api-alarm" {
+#   source           = "github.com/LBHackney-IT/aws-hackney-common-terraform.git//modules/cloudwatch/api-alarm"
+#   environment_name = var.environment_name
+#   api_name         = "notes-api"
+#   alarm_period     = "300"
+#   error_threshold  = "1"
+#   sns_topic_arn    = data.aws_ssm_parameter.cloudwatch_topic_arn.value
+# }
 
 resource "aws_sns_topic" "notes" {
   name                        = "notes.fifo"
