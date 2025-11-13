@@ -64,21 +64,21 @@ module "notes_api_cloudwatch_dashboard" {
 #   sns_topic_arn    = data.aws_ssm_parameter.cloudwatch_topic_arn.value
 # }
 
-resource "aws_sns_topic" "notes" {
-  name                        = "notes.fifo"
-  fifo_topic                  = true
-  content_based_deduplication = true
-  kms_master_key_id = "alias/aws/sns"
-  sqs_success_feedback_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LBH_SNS_DELIVERY_LOGGING_ROLE"
-  sqs_success_feedback_sample_rate = "100"
-  sqs_failure_feedback_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LBH_SNS_DELIVERY_LOGGING_ROLE"
-}
+# resource "aws_sns_topic" "notes" {
+#   name                        = "notes.fifo"
+#   fifo_topic                  = true
+#   content_based_deduplication = true
+#   kms_master_key_id = "alias/aws/sns"
+#   sqs_success_feedback_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LBH_SNS_DELIVERY_LOGGING_ROLE"
+#   sqs_success_feedback_sample_rate = "100"
+#   sqs_failure_feedback_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LBH_SNS_DELIVERY_LOGGING_ROLE"
+# }
 
-resource "aws_ssm_parameter" "notes_sns_arn" {
-  name  = "/sns-topic/${var.environment_name}/notes/arn"
-  type  = "String"
-  value = aws_sns_topic.notes.arn
-}  
+# resource "aws_ssm_parameter" "notes_sns_arn" {
+#   name  = "/sns-topic/${var.environment_name}/notes/arn"
+#   type  = "String"
+#   value = aws_sns_topic.notes.arn
+# }  
 
 # TODO: Fix as not working - needs to be tested in dev/staging  
 
