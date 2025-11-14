@@ -28,7 +28,7 @@ locals {
   parameter_store = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter"
   default_tags = {
     Name              = "notes-api-${var.environment_name}"
-    Environment       = var.environment_name
+    Environment       = "prod"
     terraform-managed = true
     project_name      = var.project_name
   }
@@ -43,13 +43,13 @@ terraform {
   }
 }
 
-module "notes_api_cloudwatch_dashboard" {
-  source              = "github.com/LBHackney-IT/aws-hackney-common-terraform.git//modules/cloudwatch/dashboards/api-dashboard"
-  environment_name    = var.environment_name
-  api_name            = "notes-api"
-  dynamodb_table_name = aws_dynamodb_table.notesapi_dynamodb_table.name
-  include_sns_widget  = false
-}
+# module "notes_api_cloudwatch_dashboard" {
+#   source              = "github.com/LBHackney-IT/aws-hackney-common-terraform.git//modules/cloudwatch/dashboards/api-dashboard"
+#   environment_name    = var.environment_name
+#   api_name            = "notes-api"
+#   dynamodb_table_name = aws_dynamodb_table.notesapi_dynamodb_table.name
+#   include_sns_widget  = false
+# }
 
 # data "aws_ssm_parameter" "cloudwatch_topic_arn" {
 #   name = "/housing-tl/${var.environment_name}/cloudwatch-alarms-topic-arn"
@@ -78,6 +78,7 @@ resource "aws_ssm_parameter" "notes_sns_arn" {
   name  = "/sns-topic/${var.environment_name}/notes/arn"
   type  = "String"
   value = aws_sns_topic.notes.arn
+  overwrite = true
 }  
 
 # TODO: Fix as not working - needs to be tested in dev/staging  
