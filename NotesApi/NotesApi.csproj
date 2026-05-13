@@ -20,7 +20,7 @@
     <PackageReference Include="Hackney.Core.DynamoDb" Version="1.84.0" />
     <PackageReference Include="Hackney.Core.HealthCheck" Version="1.49.0" />
     <PackageReference Include="Hackney.Core.Http" Version="1.63.0" />
-    <PackageReference Include="Hackney.Core.JWT" Version="1.49.0" />
+    <PackageReference Include="Hackney.Core.JWT" Version="1.87.0" />
     <PackageReference Include="Hackney.Core.Logging" Version="1.49.0" />
     <PackageReference Include="Hackney.Core.Middleware" Version="1.49.0" />
     <PackageReference Include="Hackney.Core.Sns" Version="1.52.0" />
