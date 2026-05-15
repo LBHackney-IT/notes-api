@@ -143,7 +143,7 @@ resources:
 custom:
   authorizerArns:
     development: arn:aws:lambda:eu-west-2:859159924354:function:api-gateway-lambda-authorizer
-    staging:     arn:aws:lambda:eu-west-2:715003523189:function:api-auth-verify-token-new-staging-apiauthverifytokennew
+    staging:     arn:aws:lambda:eu-west-2:715003523189:function:api-gateway-lambda-authorizer
     production:  arn:aws:lambda:eu-west-2:153306643385:function:api-auth-verify-token-new-production-apiauthverifytokennew
     pre-production: arn:aws:lambda:eu-west-2:578479666894:function:api-auth-verify-token-new-pre-production-apiauthverifytokennew
   safeguards:
