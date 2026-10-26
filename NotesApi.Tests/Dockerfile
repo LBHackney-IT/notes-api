@@ -13,10 +13,9 @@ ENV SONAR_TOKEN=$SONAR_TOKEN
 
 WORKDIR /app
 
-# Install and run sonar cloud scanner
-RUN apt-get update && apt-get install -y openjdk-17-jdk && apt-get clean && \
-
-dotnet tool install --global dotnet-sonarscanner --version 5.6.0
+# SonarCloud rejects Java 17. Scanner 5.6.0 does not provision its own JRE.
+RUN apt-get update && apt-get install -y openjdk-21-jdk && apt-get clean \
+    && dotnet tool install --global dotnet-sonarscanner --version 5.6.0
 ENV PATH="$PATH:/root/.dotnet/tools"
 
 RUN dotnet sonarscanner begin /k:"LBHackney-IT_notes-api" /o:"lbhackney-it" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login="${SONAR_TOKEN}"
