@@ -31,7 +31,7 @@ dotnet run --project NotesApi --launch-profile notes_api
 dotnet test NotesApi.sln
 ```
 
-Gateway tests and end-to-end tests use the `AppTest` collection. That fixture creates the Notes table in DynamoDB Local and a `notes.fifo` topic in LocalStack. Those tests need the containers from the previous section, plus `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`. Docker Compose sets both to `local` for the test container.
+Gateway tests and end-to-end tests use the `AppTest` collection. That fixture creates the Notes table in DynamoDB Local and a `notes.fifo` topic in LocalStack. Those tests need the containers from the previous section, plus `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`. Docker Compose sets both to `local` for the test container. The test host also sets `AWS_XRAY_CONTEXT_MISSING` to `LOG_ERROR`, because table setup runs before any request and X-Ray would otherwise throw with no segment.
 
 The CircleCI test image is `NotesApi.Tests/Dockerfile`. The pipeline builds it and runs:
 

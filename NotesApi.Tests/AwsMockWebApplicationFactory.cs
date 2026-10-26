@@ -54,6 +54,8 @@ namespace NotesApi.Tests
 
             EnsureEnvVarConfigured("Sns_LocalMode", "true");
             EnsureEnvVarConfigured("Localstack_SnsServiceUrl", "http://localhost:4566");
+            // Table setup runs during host build, outside a request, so X-Ray has no segment.
+            EnsureEnvVarConfigured("AWS_XRAY_CONTEXT_MISSING", "LOG_ERROR");
 
             Client = CreateClient();
         }
