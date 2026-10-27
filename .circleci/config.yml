@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  aws_assume_role: lbh-hackit/aws_assume_role@0.1.0
+  aws_assume_role: lbh-hackit/aws_assume_role@0.1.1
   sonarcloud: sonarsource/sonarcloud@4.0.0
 
 executors:
