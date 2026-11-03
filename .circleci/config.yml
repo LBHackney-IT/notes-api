@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  aws_assume_role: lbh-hackit/aws_assume_role@0.1.0
-  sonarcloud: sonarsource/sonarcloud@2.0.0
+  aws_assume_role: lbh-hackit/aws_assume_role@0.1.1
+  sonarcloud: sonarsource/sonarcloud@4.0.0
 
 executors:
   docker-python:
@@ -13,7 +13,7 @@ executors:
       - image: "hashicorp/terraform:1.1.9"
   docker-dotnet:
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:8.0
+      - image: mcr.microsoft.com/dotnet/sdk:10.0
 
 references:
   workspace_root: &workspace_root "~"
@@ -154,7 +154,8 @@ jobs:
           command: docker-compose build notes-api-test
       - run:
           name: Run tests
-          command: docker-compose run notes-api-test
+          command: docker-compose run -T notes-api-test dotnet test --logger "console;verbosity=normal" -tl:off
+          no_output_timeout: 20m
   assume-role-development:
     executor: docker-python
     steps:

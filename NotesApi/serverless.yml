@@ -1,7 +1,7 @@
 service: notes-api
 provider:
   name: aws
-  runtime: dotnet8
+  runtime: dotnet10
   memorySize: 2048
   tracing:
     lambda: true
@@ -11,7 +11,7 @@ provider:
   region: eu-west-2
 
 package:
-  artifact: ./bin/release/net8.0/notes-api.zip
+  artifact: ./bin/release/net10.0/notes-api.zip
 
 plugins:
   - serverless-associate-waf
