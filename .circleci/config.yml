@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  aws_assume_role: lbh-hackit/aws_assume_role@0.1.0
-  sonarcloud: sonarsource/sonarcloud@2.0.0
+  aws_assume_role: lbh-hackit/aws_assume_role@0.1.1
+  sonarcloud: sonarsource/sonarcloud@4.0.0
 
 executors:
   docker-python:
@@ -13,7 +13,7 @@ executors:
       - image: "hashicorp/terraform:1.1.9"
   docker-dotnet:
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:8.0
+      - image: mcr.microsoft.com/dotnet/sdk:10.0
 
 references:
   workspace_root: &workspace_root "~"
@@ -154,7 +154,8 @@ jobs:
           command: docker-compose build notes-api-test
       - run:
           name: Run tests
-          command: docker-compose run notes-api-test
+          command: docker-compose run -T notes-api-test dotnet test --logger "console;verbosity=normal" -tl:off
+          no_output_timeout: 20m
   assume-role-development:
     executor: docker-python
     steps:
@@ -230,31 +231,6 @@ jobs:
     steps:
       - deploy-lambda:
           stage: "production"
-  assume-role-pre-production:
-    executor: docker-python
-    steps:
-      - assume-role-and-persist-workspace:
-          aws-account: $AWS_ACCOUNT_PRE_PRODUCTION
-  terraform-init-and-plan-pre-production:
-    executor: docker-terraform
-    steps:
-      - terraform-init-then-plan:
-          environment: "pre-production"
-  terraform-compliance-pre-production:
-    executor: docker-terraform
-    steps:
-      - terraform-compliance:
-          environment: "pre-production"
-  terraform-apply-pre-production:
-    executor: docker-terraform
-    steps:
-      - terraform-apply:
-          environment: "pre-production"
-  deploy-to-pre-production:
-    executor: docker-dotnet
-    steps:
-      - deploy-lambda:
-          stage: "pre-production"
 
 workflows:
   check-and-deploy-development:
@@ -383,72 +359,6 @@ workflows:
             - "Serverless Framework"
           requires:
             - permit-production-release
-          filters:
-            branches:
-              only: release
-
-  deploy-terraform-pre-production:
-    jobs:
-      - permit-pre-production-terraform-workflow:
-          type: approval
-          filters:
-            branches:
-              only: release
-      - assume-role-pre-production:
-          context: api-assume-role-housing-pre-production-context
-          requires:
-            - permit-pre-production-terraform-workflow
-          filters:
-            branches:
-              only: release
-      - terraform-init-and-plan-pre-production:
-          requires:
-            - assume-role-pre-production
-          filters:
-            branches:
-              only: release
-      - terraform-compliance-pre-production:
-          requires:
-            - terraform-init-and-plan-pre-production
-          filters:
-            branches:
-              only: release
-      - permit-pre-production-terraform-deployment:
-          type: approval
-          requires:
-            - terraform-compliance-pre-production
-          filters:
-            branches:
-              only: release
-      - terraform-apply-pre-production:
-          requires:
-            - permit-pre-production-terraform-deployment
-          filters:
-            branches:
-              only: release
-
-  deploy-code-pre-production:
-    jobs:
-      - build-and-test:
-          context: 
-            - api-nuget-token-context
-            - SonarCloud
-          filters:
-            branches:
-              only: release
-      - assume-role-pre-production:
-          context: api-assume-role-housing-pre-production-context
-          requires:
-            - build-and-test
-          filters:
-            branches:
-              only: release
-      - deploy-to-pre-production:
-          context:
-          - api-nuget-token-context
-          - "Serverless Framework"
-          requires:
-            - assume-role-pre-production        
           filters:
             branches:
               only: release
